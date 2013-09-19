@@ -1,0 +1,14 @@
+
+.*
+*~
+*~
+*.class
+*.ear
+!.gitignore
+*.jar
+.netrwhist
+# Package Files #
+*.s[a-w][a-z]
+Session.vim
+*.un~
+*.war

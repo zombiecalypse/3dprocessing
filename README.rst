@@ -1,11 +1,9 @@
 ========
-Octogit
+My solutions to the 3d processing exercises
 ========
 
-This repository has been created with Octogit.
-
-.. image:: http://myusuf3.github.com/octogit/assets/img/readme_image.png
+Course in University of Bern. Solve it yourself, but you might look at my code for inspiration.
 
 Author
 ======
-Mahdi Yusuf (@myusuf3)
+Aaron Karper
