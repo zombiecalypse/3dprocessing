@@ -9,7 +9,6 @@ import openGL.gl.GLDisplayable;
 import openGL.gl.GLRenderer;
 import openGL.gl.GLDisplayable.Semantic;
 import openGL.objects.Transformation;
-
 import meshes.WireframeMesh;
 
 
