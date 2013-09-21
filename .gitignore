@@ -12,3 +12,4 @@
 Session.vim
 *.un~
 *.war
+/target

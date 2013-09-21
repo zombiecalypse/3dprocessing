@@ -38,9 +38,7 @@ public class Face extends HEElement {
 	 * @return
 	 */
 	public Iterator<HalfEdge> iteratorFE(){
-		//Implement this
-
-		return null;
+		return new IteratorFE(anEdge);
 	}
 	
 	public String toString(){
@@ -60,16 +58,16 @@ public class Face extends HEElement {
 	
 
 	/**
-	 * Iterator to iterate over the vertices on a face
-	 * @author Alf
+	 * Iterator to iterate over the edges on a face
+	 * @author Aaron
 	 *
 	 */
-	public final class IteratorFV implements Iterator<Vertex> {
+	public final class IteratorFE implements Iterator<HalfEdge> {
 		
 		
 		private HalfEdge first, actual;
 
-		public IteratorFV(HalfEdge anEdge) {
+		public IteratorFE(HalfEdge anEdge) {
 			first = anEdge;
 			actual = null;
 		}
@@ -80,7 +78,7 @@ public class Face extends HEElement {
 		}
 
 		@Override
-		public Vertex next() {
+		public HalfEdge next() {
 			//make sure eternam iteration is impossible
 			if(!hasNext()){
 				throw new NoSuchElementException();
@@ -90,7 +88,7 @@ public class Face extends HEElement {
 			actual = (actual == null?
 						first:
 						actual.next);
-			return actual.incident_v;
+			return actual;
 		}
 
 		
@@ -106,6 +104,34 @@ public class Face extends HEElement {
 		 */
 		public Face face() {
 			return first.incident_f;
+		}
+	}
+	
+	/**
+	 * Iterator to iterate over the vertices on a face
+	 * @author Aaron
+	 *
+	 */
+	public final class IteratorFV implements Iterator<Vertex> {
+		private IteratorFE iterator;
+
+		public IteratorFV(HalfEdge anEdge) {
+			this.iterator = new IteratorFE(anEdge);
+		}
+
+		@Override
+		public boolean hasNext() {
+			return iterator.hasNext();
+		}
+
+		@Override
+		public Vertex next() {
+			return iterator.next().incident_v;
+		}
+
+		@Override
+		public void remove() {
+			iterator.remove();
 		}
 	}
 
