@@ -1,8 +1,12 @@
 package glWrapper;
 
+import helpers.Function;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 import javax.media.opengl.GL;
 import javax.vecmath.Point3f;
@@ -21,7 +25,6 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 
 	public GLHalfEdgeStructure(HalfEdgeStructure s) {
 		super(s.getVertices().size());
-		System.out.format("n: %d\n", s.getVertices().size());
 
 		this.structure = s;
 		// Add Vertices
@@ -32,6 +35,22 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 		this.addElement(vert, Semantic.USERSPECIFIED, 3, "color");
 		int[] trigs = flatTriags(s);
 		this.addIndices(trigs);
+		
+		HashMap<String, Function<Vertex, Float>> extractors = s.getExtractors1d();
+		for (String name: extractors.keySet()) {
+			Function<Vertex, Float> f = extractors.get(name);
+			float[] values = new float[s.getVertices().size()];
+			int index = 0;
+			for (Vertex v: s.getVertices()) {
+				values[index++] = f.call(v);
+			}
+			this.addElement(values, Semantic.USERSPECIFIED, 1, name);
+			System.out.println(name);
+			for (int i = 0; i<100; i++) {
+				System.out.format("%.2f ", values[i]);
+			}
+			System.out.println();
+		}
 	}
 
 	private static float[] flatVertices(HalfEdgeStructure s) {

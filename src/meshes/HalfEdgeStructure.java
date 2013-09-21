@@ -1,10 +1,13 @@
 package meshes;
 
+import helpers.Function;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.concurrent.Callable;
 
 import javax.vecmath.Point3f;
 
@@ -32,16 +35,25 @@ import meshes.exception.MeshNotOrientedException;
 
 public class HalfEdgeStructure {
 	
-	private ArrayList<HalfEdge> edges;
+	ArrayList<HalfEdge> edges;
 	ArrayList<Face> faces;
 	ArrayList<Vertex> vertices;
+	HashMap<String, Function<Vertex, Float>> extractors1d;
 	
+	public HashMap<String, Function<Vertex, Float>> getExtractors1d() {
+		return extractors1d;
+	}
+	
+	public void putExtractor(String name, Function<Vertex, Float> f) {
+		extractors1d.put(name, f);
+	}
+
 	public HalfEdgeStructure(){
 		faces = new ArrayList<Face>();
 		edges = new ArrayList<HalfEdge>();
 		vertices = new ArrayList<Vertex>();
+		extractors1d = new HashMap<String, Function<Vertex, Float>>();
 	}
-	
 	
 	public ArrayList<Vertex> getVertices() {
 		return vertices;
