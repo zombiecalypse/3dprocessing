@@ -6,7 +6,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.vecmath.Tuple3f;
+
 public class StaticHelpers {
+	public static float norm(Tuple3f v) {
+		return (float) Math.sqrt(v.x*v.x + v.y*v.y + v.z * v.z);
+	}
+	
 	public static <A, B> Iterable<Pair<A, B>> zip(Iterable<A> a, Iterable<B> b) {
 		Iterator<A> iter_a = a.iterator();
 		Iterator<B> iter_b = b.iterator();

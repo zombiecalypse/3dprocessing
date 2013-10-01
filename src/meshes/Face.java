@@ -1,7 +1,14 @@
 package meshes;
 
+
+import static helpers.StaticHelpers.*;
+
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
+
+import javax.vecmath.Vector3f;
 
 /**
  * Implementation of a face for the {@link HalfEdgeStructure}
@@ -142,6 +149,29 @@ public class Face extends HEElement {
 		public void remove() {
 			iterator.remove();
 		}
+	}
+
+	public Vector3f normal() {
+		assert len(this.iteratorFV()) == 3;
+		Iterator<HalfEdge> edges = iteratorFE();
+		Vector3f edge1 = edges.next().asVector();
+		Vector3f edge2 = edges.next().asVector();
+		Vector3f normal = new Vector3f();
+		normal.cross(edge1, edge2);
+		return normal;
+	}
+
+	public float angle_in(Vertex v) {
+		List<Vector3f> adj_edges = new ArrayList<Vector3f>();
+		for (HalfEdge e: iter(iteratorFE())) {
+			if (e.end() == v || e.start() == v) {
+				adj_edges.add(e.asVector());
+			}
+		}
+		assert len(adj_edges) == 2;
+		Vector3f e1 = adj_edges.get(0);
+		Vector3f e2 = adj_edges.get(1);
+		return e1.angle(e2);
 	}
 
 }

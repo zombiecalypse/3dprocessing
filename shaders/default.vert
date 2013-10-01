@@ -13,7 +13,7 @@ in vec4 position;
 //The following would declare and additional variable that could be passed to the shader.
 //It would correspond to the data passed via
 //glDisplayable.addElement(float[], Semantic.USERDEFINED, 3, "color");
-//in vec4 color;
+in vec4 color;
 
 // Output variables are passed to the fragment shader, or, if existent to the geometry shader.
 // They have to be declared as in variables in the next shader.
@@ -22,7 +22,7 @@ out vec4 frag_color;
 void main()
 {
 	//compute a color and pass it to the fragment shader.
-	frag_color = clamp(abs(position),0,0.75);
+	frag_color = color;
 	// Note: gl_Position is a default output variable containing
 	// the transformed vertex position, this variable has to be computed
 	// either in the vertex shader or in the geometry shader, if present.

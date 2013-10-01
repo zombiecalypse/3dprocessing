@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.concurrent.Callable;
 
 import javax.vecmath.Point3f;
+import javax.vecmath.Tuple3f;
 
 import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;
@@ -42,7 +43,16 @@ public class HalfEdgeStructure {
 	ArrayList<Face> faces;
 	ArrayList<Vertex> vertices;
 	HashMap<String, Function<Vertex, Float>> extractors1d;
-	private HashMap<String, Function<Vertex, Point3f>> extractors3d;
+	private HashMap<String, Function<Vertex, Tuple3f>> extractors3d;
+	String title;
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
 	public HashMap<String, Function<Vertex, Float>> getExtractors1d() {
 		return extractors1d;
@@ -57,7 +67,7 @@ public class HalfEdgeStructure {
 		edges = new ArrayList<HalfEdge>();
 		vertices = new ArrayList<Vertex>();
 		extractors1d = new HashMap<String, Function<Vertex, Float>>();
-		extractors3d = new HashMap<String, Function<Vertex, Point3f>>();
+		extractors3d = new HashMap<String, Function<Vertex, Tuple3f>>();
 	}
 
 	public ArrayList<Vertex> getVertices() {
@@ -350,12 +360,15 @@ public class HalfEdgeStructure {
 		});
 	}
 
-	public HashMap<String, Function<Vertex, Point3f>> getExtractors3d() {
+	public HashMap<String, Function<Vertex, Tuple3f>> getExtractors3d() {
 		return extractors3d;
 	}
 
-	public void putExtractor3d(String string, Function<Vertex, Point3f> function) {
+	public void putExtractor3d(String string, Function<Vertex, Tuple3f> function) {
 		extractors3d.put(string, function);
 	}
 
+	public String toString() {
+		return title == null ? super.toString() : title;
+	}
 }

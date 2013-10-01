@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import javax.media.opengl.GL;
 import javax.vecmath.Point3f;
+import javax.vecmath.Tuple3f;
 
 import static helpers.StaticHelpers.*;
 import meshes.Face;
@@ -32,7 +33,6 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 		float[] vert = flatVertices(s);
 		this.addElement(vert, Semantic.POSITION, 3);
 
-		this.addElement(vert, Semantic.USERSPECIFIED, 3, "color");
 		int[] trigs = flatTriags(s);
 		this.addIndices(trigs);
 
@@ -42,15 +42,15 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 	}
 
 	private void addExtracted3d(HalfEdgeStructure s) {
-		HashMap<String, Function<Vertex, Point3f>> extractors3d = s
+		HashMap<String, Function<Vertex, Tuple3f>> extractors3d = s
 				.getExtractors3d();
 		for (String name : extractors3d.keySet()) {
 			System.out.print(name + " ");
-			Function<Vertex, Point3f> f = extractors3d.get(name);
+			Function<Vertex, Tuple3f> f = extractors3d.get(name);
 			float[] values = new float[s.getVertices().size() * 3];
 			int index = 0;
 			for (Vertex v : s.getVertices()) {
-				Point3f p = f.call(v);
+				Tuple3f p = f.call(v);
 				values[index++] = p.x;
 				values[index++] = p.y;
 				values[index++] = p.z;
@@ -141,6 +141,10 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 		// where type is the appropriate type, e.g. float / vec3 / mat4 etc.
 		// this method is called at every rendering pass.
 
+	}
+	
+	public String toString() {
+		return structure.toString();
 	}
 
 }
