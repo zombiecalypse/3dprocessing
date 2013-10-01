@@ -14,7 +14,7 @@ import static helpers.StaticHelpers.*;
 public class Vertex extends HEElement implements Cloneable {
 
 	/** position */
-	Point3f pos;
+	public Point3f pos;
 	/** adjacent edge: this vertex is startVertex of anEdge */
 	HalfEdge anEdge;
 
