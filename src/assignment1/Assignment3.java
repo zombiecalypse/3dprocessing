@@ -15,7 +15,7 @@ import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;
 import meshes.reader.ObjReader;
 import openGL.MyDisplay;
-import transformers.Smoother;
+import transformers.TrivialSmoother;
 import transformers.Transformer;
 import glWrapper.GLHalfEdgeStructure;
 import helpers.Function;
@@ -24,7 +24,7 @@ public class Assignment3 {
 
 	public static void main(String[] args) throws IOException {
 		// Load a wireframe mesh
-		WireframeMesh m = ObjReader.read("./objs/teapot.obj", true);
+		WireframeMesh m = ObjReader.read("./objs/cat.obj", true);
 
 		HalfEdgeStructure hs0 = new HalfEdgeStructure();
 
@@ -40,14 +40,17 @@ public class Assignment3 {
 			return;
 		}
 
-		Transformer smoother = new Smoother();
+		Transformer smoother = new TrivialSmoother();
 		HalfEdgeStructure hs = hs0;
-		for (int i = 0; i < 10; i++) {
-			GLHalfEdgeStructure glpot = new GLHalfEdgeStructure(hs);
-			// choose the shader for the data
-			glpot.configurePreferredShader("shaders/trimesh_flat.vert",
-					"shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
-			disp.addToDisplay(glpot);
+		for (int i = 0; i < 20; i++) {
+			if (i % 2 == 0) {
+				GLHalfEdgeStructure glpot = new GLHalfEdgeStructure(hs);
+				// choose the shader for the data
+				glpot.configurePreferredShader("shaders/trimesh_flat.vert",
+						"shaders/trimesh_flat.frag",
+						"shaders/trimesh_flat.geom");
+				disp.addToDisplay(glpot);
+			}
 			hs = smoother.call(hs);
 		}
 	}

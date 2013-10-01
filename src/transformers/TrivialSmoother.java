@@ -7,7 +7,7 @@ import javax.vecmath.Point3f;
 import meshes.HalfEdgeStructure;
 import meshes.Vertex;
 
-public class Smoother implements Transformer {
+public class TrivialSmoother implements Transformer {
 
 	@Override
 	public HalfEdgeStructure call(HalfEdgeStructure hs0) {
