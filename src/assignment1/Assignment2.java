@@ -7,6 +7,9 @@ import static helpers.StaticHelpers.*;
 
 import java.io.IOException;
 
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
+
 import openGL.MyDisplay;
 import meshes.HalfEdgeStructure;
 import meshes.Vertex;
@@ -20,18 +23,19 @@ import meshes.reader.ObjReader;
  * @author Alf
  * 
  */
-public class Assignment1 {
+public class Assignment2 {
 
 	public static void main(String[] args) throws IOException {
 		// Load a wireframe mesh
 		WireframeMesh m = ObjReader.read("./objs/teapot.obj", true);
-		
+
 		HalfEdgeStructure hs = new HalfEdgeStructure();
 		hs.putExtractor("valence", new Function<Vertex, Float>() {
 			@Override
 			public Float call(Vertex a) {
 				return (float) len(a.iteratorVE());
-			}});
+			}
+		});
 
 		MyDisplay disp = new MyDisplay();
 

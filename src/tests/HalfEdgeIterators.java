@@ -44,10 +44,9 @@ public class HalfEdgeIterators extends TestCase {
 	public void setUp() throws IOException, MeshNotOrientedException,
 			DanglingTriangleException {
 		WireframeMesh m = ObjReader.read("./objs/oneNeighborhood.obj", true);
-		this.hs = new HalfEdgeStructure();
+		this.hs = new HalfEdgeStructure(m);
+		this.hs = new HalfEdgeStructure(hs);
 
-		hs.init(m);
-		
 		this.vertex = hs.getVertices().get(index);
 	}
 	

@@ -11,9 +11,14 @@ public class Face extends HEElement {
 
 	//an adjacent edge, which is positively oriented with respect to the face.
 	private HalfEdge anEdge;
+	int index;
 	
 	public Face(){
 		anEdge = null;
+	}
+	
+	public Face(HalfEdge he) {
+		anEdge = he;
 	}
 
 	public void setHalfEdge(HalfEdge he) {
@@ -68,6 +73,7 @@ public class Face extends HEElement {
 		private HalfEdge first, actual;
 
 		public IteratorFE(HalfEdge anEdge) {
+			assert anEdge != null;
 			first = anEdge;
 			actual = null;
 		}
@@ -88,6 +94,7 @@ public class Face extends HEElement {
 			actual = (actual == null?
 						first:
 						actual.next);
+			assert actual != null;
 			return actual;
 		}
 
@@ -126,7 +133,9 @@ public class Face extends HEElement {
 
 		@Override
 		public Vertex next() {
-			return iterator.next().incident_v;
+			HalfEdge n = iterator.next();
+			assert n != null;
+			return n.incident_v;
 		}
 
 		@Override

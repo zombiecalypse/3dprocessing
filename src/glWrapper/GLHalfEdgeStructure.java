@@ -35,18 +35,48 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 		this.addElement(vert, Semantic.USERSPECIFIED, 3, "color");
 		int[] trigs = flatTriags(s);
 		this.addIndices(trigs);
-		
-		HashMap<String, Function<Vertex, Float>> extractors = s.getExtractors1d();
-		for (String name: extractors.keySet()) {
+
+		addExtracted1d(s);
+
+		addExtracted3d(s);
+	}
+
+	private void addExtracted3d(HalfEdgeStructure s) {
+		HashMap<String, Function<Vertex, Point3f>> extractors3d = s
+				.getExtractors3d();
+		for (String name : extractors3d.keySet()) {
+			System.out.print(name + " ");
+			Function<Vertex, Point3f> f = extractors3d.get(name);
+			float[] values = new float[s.getVertices().size() * 3];
+			int index = 0;
+			for (Vertex v : s.getVertices()) {
+				Point3f p = f.call(v);
+				values[index++] = p.x;
+				values[index++] = p.y;
+				values[index++] = p.z;
+			}
+			this.addElement(values, Semantic.USERSPECIFIED, 3, name);
+			for (int i = 0; i < 100; i++) {
+				System.out.format("%.2f ", values[i]);
+			}
+			System.out.println();
+		}
+	}
+
+	private void addExtracted1d(HalfEdgeStructure s) {
+		HashMap<String, Function<Vertex, Float>> extractors = s
+				.getExtractors1d();
+		for (String name : extractors.keySet()) {
+			System.out.print(name + " ");
 			Function<Vertex, Float> f = extractors.get(name);
 			float[] values = new float[s.getVertices().size()];
 			int index = 0;
-			for (Vertex v: s.getVertices()) {
+			for (Vertex v : s.getVertices()) {
 				values[index++] = f.call(v);
 			}
 			this.addElement(values, Semantic.USERSPECIFIED, 1, name);
-			System.out.println(name);
-			for (int i = 0; i<100; i++) {
+
+			for (int i = 0; i < 100; i++) {
 				System.out.format("%.2f ", values[i]);
 			}
 			System.out.println();

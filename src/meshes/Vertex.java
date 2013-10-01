@@ -11,7 +11,7 @@ import static helpers.StaticHelpers.*;
 /**
  * Implementation of a vertex for the {@link HalfEdgeStructure}
  */
-public class Vertex extends HEElement {
+public class Vertex extends HEElement implements Cloneable {
 
 	/** position */
 	Point3f pos;
@@ -87,7 +87,7 @@ public class Vertex extends HEElement {
 			this.first = Vertex.this.anEdge;
 			this.current = null;
 		}
-		
+
 		@Override
 		public boolean hasNext() {
 			return first != current;
@@ -95,7 +95,8 @@ public class Vertex extends HEElement {
 
 		@Override
 		public HalfEdge next() {
-			if (this.current == null) this.current = first;
+			if (this.current == null)
+				this.current = first;
 			HalfEdge returned = this.current;
 			this.current = current.opposite.next;
 			return returned;
@@ -106,10 +107,10 @@ public class Vertex extends HEElement {
 			throw new UnsupportedOperationException();
 		}
 	}
-	
+
 	public final class IteratorVV implements Iterator<Vertex> {
 		private Iterator<HalfEdge> iter;
-		
+
 		public IteratorVV() {
 			this.iter = new IteratorVE();
 		}
@@ -130,10 +131,11 @@ public class Vertex extends HEElement {
 			iter.remove();
 		}
 	}
-	
+
 	public final class IteratorVF implements Iterator<Face> {
 		private Iterator<HalfEdge> iter;
 		private Face next = null;
+
 		public IteratorVF() {
 			this.iter = new IteratorVE();
 		}
@@ -147,7 +149,7 @@ public class Vertex extends HEElement {
 				next = iter.next().getFace();
 			}
 			return true;
-			
+
 		}
 
 		@Override

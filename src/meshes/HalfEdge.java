@@ -17,6 +17,8 @@ public class HalfEdge extends HEElement{
 	
 	/**the opposite, next and previous edge*/
 	HalfEdge opposite, next, prev;
+
+	int index;
 	
 	/**
 	 * Initialize a half-edge with the Face it belongs to (the face it is
