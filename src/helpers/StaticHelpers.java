@@ -8,7 +8,16 @@ import java.util.Set;
 
 import javax.vecmath.Tuple3f;
 
-public class StaticHelpers {
+public final class StaticHelpers {
+	public static <A, B, C> Function<A, C> comp(final Function<B, C> g, final Function<A, B> f) {
+		return new Function<A, C>() {
+			@Override
+			public C call(A a) {
+				return g.call(f.call(a));
+			}
+		};
+	}
+	
 	public static float norm(Tuple3f v) {
 		return (float) Math.sqrt(v.x*v.x + v.y*v.y + v.z * v.z);
 	}

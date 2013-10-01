@@ -3,6 +3,7 @@ package assignment1;
 import glWrapper.GLHalfEdgeStructure;
 import glWrapper.GLWireframeMesh;
 import helpers.Function;
+import helpers.Functions;
 import static helpers.StaticHelpers.*;
 
 import java.io.IOException;
@@ -55,14 +56,7 @@ public class Assignment2 {
 		final float max_valence = max_valence_;
 		final float min_valence = min_valence_;
 		
-		hs.putExtractor3d("color", new Function<Vertex, Tuple3f>() {
-			@Override
-			public Tuple3f call(Vertex a) {
-				float l = len(a.iteratorVE());
-				float color = (l-min_valence)/(max_valence-min_valence);
-				return new Vector3f(color, color, color);
-			}
-		});
+		hs.putExtractor3d("color", Functions.asColor(comp(Functions.spread(min_valence, max_valence), Functions.valence())));
 
 		GLHalfEdgeStructure glpot = new GLHalfEdgeStructure(hs);
 		// choose the shader for the data

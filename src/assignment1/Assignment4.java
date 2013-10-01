@@ -3,6 +3,7 @@ package assignment1;
 import glWrapper.GLHalfEdgeStructure;
 import glWrapper.GLWireframeMesh;
 import helpers.Function;
+import helpers.Functions;
 import static helpers.StaticHelpers.*;
 
 import java.io.IOException;
@@ -30,26 +31,12 @@ public class Assignment4 {
 
 	public static void main(String[] args) throws IOException {
 		// Load a wireframe mesh
-		WireframeMesh m = ObjReader.read("./objs/teapot.obj", true);
+		WireframeMesh m = ObjReader.read("./objs/dragon.obj", true);
 
 		HalfEdgeStructure hs = new HalfEdgeStructure();
 		hs.setTitle("Normals");
 		final Tuple3f normalizer = new Vector3f(0.5f, 0.5f, 0.5f);
-		hs.putExtractor3d("color", new Function<Vertex, Tuple3f>() {
-
-			@Override
-			public Tuple3f call(Vertex v) {
-				List<Face> faces = list(v.iteratorVF());
-				Tuple3f normal = new Vector3f();
-				for (Face f : faces) {
-					Vector3f normal_f = f.normal();
-					normal_f.scale(f.angle_in(v));
-					normal.add(normal_f);
-				}
-				normal.scale(1/norm(normal)/2);
-				normal.add(normalizer);
-				return normal;
-			}});
+		hs.putExtractor3d("color", Functions.centered_normals());
 
 		MyDisplay disp = new MyDisplay();
 
