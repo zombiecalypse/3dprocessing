@@ -44,6 +44,7 @@ public class Assignment3 {
 		HalfEdgeStructure hs = hs0;
 		for (int i = 0; i < 20; i++) {
 			if (i % 2 == 0) {
+				hs.setTitle(String.format("smooth n=%d", i));
 				GLHalfEdgeStructure glpot = new GLHalfEdgeStructure(hs);
 				// choose the shader for the data
 				glpot.configurePreferredShader("shaders/trimesh_flat.vert",
