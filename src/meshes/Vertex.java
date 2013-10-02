@@ -167,4 +167,12 @@ public class Vertex extends HEElement implements Cloneable {
 			iter.remove();
 		}
 	}
+
+	public HalfEdge edgeBetween(Vertex a) {
+		for (HalfEdge e: iter(this.iteratorVE())){
+			if ((e.start() == a && e.end() == this) || (e.start() == this && e.end() == a))
+				return e;
+		}
+		throw new AssertionError(String.format("No edge between %s and %s", this, a));
+	}
 }

@@ -161,7 +161,7 @@ public class Face extends HEElement {
 		return normal;
 	}
 
-	public float angle_in(Vertex v) {
+	public float angleIn(Vertex v) {
 		List<Vector3f> adj_edges = new ArrayList<Vector3f>();
 		for (HalfEdge e: iter(iteratorFE())) {
 			if (e.end() == v || e.start() == v) {
@@ -172,6 +172,24 @@ public class Face extends HEElement {
 		Vector3f e1 = adj_edges.get(0);
 		Vector3f e2 = adj_edges.get(1);
 		return e1.angle(e2);
+	}
+
+	public boolean obtuse() {
+		for (Vertex v: iter(this.iteratorFV())) {
+			float angle = angleIn(v);
+			if (angle > Math.PI/2 && angle < Math.PI)
+				return true;
+		}
+		return false;
+	}
+
+	public float area() {
+		Iterator<HalfEdge> adj_edges = iteratorFE();
+		Vector3f e1 = adj_edges.next().asVector();
+		Vector3f e2 = adj_edges.next().asVector();
+		Vector3f normal = new Vector3f();
+		normal.cross(e1, e2);
+		return norm(normal)/2;
 	}
 
 }

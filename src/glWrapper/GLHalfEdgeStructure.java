@@ -1,11 +1,15 @@
 package glWrapper;
 
 import helpers.Function;
+import helpers.Functions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 
 import javax.media.opengl.GL;
@@ -49,8 +53,9 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 			Function<Vertex, Tuple3f> f = extractors3d.get(name);
 			float[] values = new float[s.getVertices().size() * 3];
 			int index = 0;
-			for (Vertex v : s.getVertices()) {
-				Tuple3f p = f.call(v);
+			List<Tuple3f> tuples = map(f, s.getVertices());
+
+			for (Tuple3f p : tuples) {
 				values[index++] = p.x;
 				values[index++] = p.y;
 				values[index++] = p.z;
@@ -142,7 +147,7 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 		// this method is called at every rendering pass.
 
 	}
-	
+
 	public String toString() {
 		return structure.toString();
 	}

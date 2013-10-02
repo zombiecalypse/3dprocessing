@@ -1,5 +1,8 @@
 package meshes;
 
+
+import static helpers.StaticHelpers.*;
+
 import javax.vecmath.Vector3f;
 
 /**
@@ -10,7 +13,7 @@ import javax.vecmath.Vector3f;
 public class HalfEdge extends HEElement{
 	
 	/** The end vertex of this edge*/
-	Vertex incident_v;
+	public Vertex incident_v;
 	
 	/**The face this half edge belongs to, which is the face
 	* this edge is positively oriented for. This can be null if
@@ -18,7 +21,9 @@ public class HalfEdge extends HEElement{
 	Face incident_f;
 	
 	/**the opposite, next and previous edge*/
-	HalfEdge opposite, next, prev;
+	HalfEdge opposite, next;
+
+	public HalfEdge prev;
 
 	int index;
 	
@@ -130,6 +135,11 @@ public class HalfEdge extends HEElement{
 		vec.add(this.incident_v.pos);
 		vec.sub(this.opposite.incident_v.pos);
 		return vec;
+	}
+
+	public float opposingAngle() {
+		if (this.incident_f == null) throw new AssertionError("No face to opposing angle");
+		return next.asVector().angle(next.next.asVector());
 	}
 
 }

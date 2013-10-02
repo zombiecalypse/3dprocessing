@@ -1,6 +1,7 @@
 package helpers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -9,6 +10,27 @@ import java.util.Set;
 import javax.vecmath.Tuple3f;
 
 public final class StaticHelpers {
+	
+	public static float cot(float x) {
+		return (float) (1/(1e-7 + Math.tan(x)));
+	}
+	
+	public static <B,A extends Comparable<A>> A maximize(Function<B, A> f, List<B> l) {
+		return Collections.max(map(f, l));
+	}
+
+	public static <B,A extends Comparable<A>> A minimize(Function<B, A> f, List<B> l) {
+		return Collections.min(map(f, l));
+	}
+	
+	public static <A, B> List<A> map(Function<B,A> f, Iterable<B> m) {
+		List<A> l = new ArrayList<A>();
+		for (B b: m) {
+			l.add(f.call(b));
+		}
+		return l;
+	}
+	
 	public static <A, B, C> Function<A, C> comp(final Function<B, C> g, final Function<A, B> f) {
 		return new Function<A, C>() {
 			@Override
