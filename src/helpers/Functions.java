@@ -128,7 +128,7 @@ public final class Functions {
 				}
 				assert !Float.isNaN(sum.length());
 				assert !Float.isInfinite(sum.length());
-				float ret = sum.length() / (2 * Math.abs(aMixed(a)));
+				float ret = sum.length() / (4 * Math.abs(aMixed(a)));
 				assert !Float.isInfinite(ret);
 				assert !Float.isNaN(ret);
 				assert ret >= 0;

@@ -47,14 +47,12 @@ public class Assignment5 {
 			return;
 		}
 
-		float min_l = minimize(Functions.laplacian(), hs.getVertices());
-		
-		Function<Vertex, Float> f = comp(Functions.logNormalize(1), Functions.laplacian());
+		Function<Vertex, Float> f = comp(Functions.logNormalize(10), Functions.laplacian());
 		
 		float min_trans = minimize(f, hs.getVertices());
 		float max_trans = maximize(f, hs.getVertices());
 		
-		hs.putExtractor3d("color", Functions.asColor(comp(Functions.spread(min_trans, max_trans), f)));
+		hs.putExtractor3d("color", Functions.asColor(f));
 
 
 		GLHalfEdgeStructure glpot = new GLHalfEdgeStructure(hs);
