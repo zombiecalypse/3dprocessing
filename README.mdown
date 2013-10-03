@@ -1,0 +1,8 @@
+# My solutions to the 3d processing exercises
+
+Course in University of Bern. Solve it yourself, but you might look at my code for inspiration.
+
+![ugly](additonal/weird_dragon.JPG) ![ugly](additonal/ugly_cat.jpg)
+
+## Author
+Aaron Karper
