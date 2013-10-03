@@ -76,7 +76,7 @@ public final class Functions {
 			@Override
 			public Tuple3f call(Vertex a) {
 				float v = f.call(a);
-				return new Vector3f(v, v, v);
+				return new Vector3f(v, 1-v, 1-v);
 			}
 		};
 	}

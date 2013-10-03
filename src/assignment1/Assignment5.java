@@ -49,11 +49,7 @@ public class Assignment5 {
 
 		Function<Vertex, Float> f = comp(Functions.logNormalize(10), Functions.laplacian());
 		
-		float min_trans = minimize(f, hs.getVertices());
-		float max_trans = maximize(f, hs.getVertices());
-		
 		hs.putExtractor3d("color", Functions.asColor(f));
-
 
 		GLHalfEdgeStructure glpot = new GLHalfEdgeStructure(hs);
 		// choose the shader for the data
