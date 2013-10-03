@@ -27,14 +27,17 @@ import meshes.reader.ObjReader;
  * @author Alf
  * 
  */
-public class Assignment5 {
+public class Exercise4 {
 
 	public static void main(String[] args) throws IOException {
 		// Load a wireframe mesh
-		WireframeMesh m = ObjReader.read("./objs/cat.obj", true);
+		WireframeMesh m = ObjReader.read("./objs/dragon.obj", true);
 
 		HalfEdgeStructure hs = new HalfEdgeStructure();
-		hs.setTitle("Curvature");
+		hs.setTitle("Normals");
+		final Tuple3f normalizer = new Vector3f(0.5f, 0.5f, 0.5f);
+		hs.putExtractor3d("color", Functions.centered_normals());
+
 		MyDisplay disp = new MyDisplay();
 
 		// create a half-edge structure out of the wireframe description.
@@ -46,10 +49,6 @@ public class Assignment5 {
 			e.printStackTrace();
 			return;
 		}
-
-		Function<Vertex, Float> f = comp(Functions.logNormalize(10), Functions.laplacian());
-		
-		hs.putExtractor3d("color", Functions.asColor(f));
 
 		GLHalfEdgeStructure glpot = new GLHalfEdgeStructure(hs);
 		// choose the shader for the data

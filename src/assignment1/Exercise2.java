@@ -7,14 +7,12 @@ import helpers.Functions;
 import static helpers.StaticHelpers.*;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
 import openGL.MyDisplay;
-import meshes.Face;
 import meshes.HalfEdgeStructure;
 import meshes.Vertex;
 import meshes.WireframeMesh;
@@ -27,16 +25,14 @@ import meshes.reader.ObjReader;
  * @author Alf
  * 
  */
-public class Assignment4 {
+public class Exercise2 {
 
 	public static void main(String[] args) throws IOException {
 		// Load a wireframe mesh
-		WireframeMesh m = ObjReader.read("./objs/dragon.obj", true);
+		WireframeMesh m = ObjReader.read("./objs/teapot.obj", true);
 
 		HalfEdgeStructure hs = new HalfEdgeStructure();
-		hs.setTitle("Normals");
-		final Tuple3f normalizer = new Vector3f(0.5f, 0.5f, 0.5f);
-		hs.putExtractor3d("color", Functions.centered_normals());
+		hs.setTitle("Valence");
 
 		MyDisplay disp = new MyDisplay();
 
@@ -49,6 +45,18 @@ public class Assignment4 {
 			e.printStackTrace();
 			return;
 		}
+		
+		float max_valence_ = Float.MIN_NORMAL;
+		float min_valence_ = Float.MAX_VALUE;
+		for (Vertex a: hs.getVertices()) {
+			float val = len(a.iteratorVE());
+			max_valence_ = Math.max(val, max_valence_);
+			min_valence_ = Math.min(val, min_valence_);
+		}
+		final float max_valence = max_valence_;
+		final float min_valence = min_valence_;
+		
+		hs.putExtractor3d("color", Functions.asColor(comp(Functions.spread(min_valence, max_valence), Functions.valence())));
 
 		GLHalfEdgeStructure glpot = new GLHalfEdgeStructure(hs);
 		// choose the shader for the data

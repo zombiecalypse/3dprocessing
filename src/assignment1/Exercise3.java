@@ -20,7 +20,7 @@ import transformers.Transformer;
 import glWrapper.GLHalfEdgeStructure;
 import helpers.Function;
 
-public class Assignment3 {
+public class Exercise3 {
 
 	public static void main(String[] args) throws IOException {
 		// Load a wireframe mesh
