@@ -27,17 +27,19 @@ public class MortonCodes {
 	 * return the (positive) neighbor code at the relative position encoded by
 	 * 0bxyz using dilated addition
 	 * 
-	 * @param code
+	 * @param v
 	 * @param level
-	 * @param Obxyz
+	 * @param w
 	 * @return
 	 */
-	public static long nbrCode(long code, int level, long Obxyz) {
-		long ret = -1;
-
-		// implement this
+	public static long nbrCode(long v, int level, long w) {
+		long ret = (
+				(( (v|~X) + (w&X)) & X) |
+				(( (v|~Y) + (w&Y)) & Y) |
+				(( (v|~Z) + (w&Z)) & Z));
 
 		if (overflowTest(ret, level)) {
+			System.err.format("overflowed with %s\n", Long.toBinaryString(ret));
 			return -1L;
 		}
 		return ret;
@@ -47,17 +49,19 @@ public class MortonCodes {
 	 * return the (negative) neighbor code at the relative position encoded by
 	 * 0bxyz using dilated subtraction
 	 * 
-	 * @param code
+	 * @param v
 	 * @param level
-	 * @param Obxyz
+	 * @param w
 	 * @return
 	 */
-	public static long nbrCodeMinus(long code, int level, long Obxyz) {
-		long ret = -1;
-
-		// implement this
+	public static long nbrCodeMinus(long v, int level, long w) {
+		long ret = (
+				(( (v&X) - (w&X)) & X) |
+				(( (v&Y) - (w&Y)) & Y) |
+				(( (v&Z) - (w&Z)) & Z));
 
 		if (overflowTest(ret, level)) {
+			System.err.format("overflowed with %s\n", Long.toBinaryString(ret));
 			return -1L;
 		}
 		return ret;
@@ -72,11 +76,8 @@ public class MortonCodes {
 	 * @return
 	 */
 	public static boolean overflowTest(long code, int level) {
-
 		// implement this
-
-		return true;
-
+		return !isCellOnLevelXGrid(code, level);
 	}
 
 	/**
@@ -88,7 +89,7 @@ public class MortonCodes {
 	 * @return
 	 */
 	public static boolean isCellOnLevelXGrid(long cell_code, int level) {
-		return cell_code >> (3 * level) == 1l;
+		return (cell_code >> (3 * level)) == 1l;
 	}
 
 	/**
