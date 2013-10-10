@@ -25,7 +25,7 @@ public class Assignment2 extends Template {
 				"./objs/octreeTest2.ply", true);
 
 
-		for (GLDisplayable d: hashTreeDemo("Alt", pointCloud2)) {
+		for (GLDisplayable d: hashTreeDemo("Simple", pointCloud2)) {
 			display.addToDisplay(d);
 		}
 	}
