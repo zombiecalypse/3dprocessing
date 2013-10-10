@@ -1,10 +1,12 @@
 package helpers;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import static helpers.StaticHelpers.*;
 
 public class IndexBuffer {
-	private ArrayList<Integer> indices;
+	private List<Integer> indices = new ArrayList<>();
 	
 	public void add(int... is) {
 		for (int i: is) {

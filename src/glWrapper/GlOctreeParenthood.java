@@ -1,6 +1,10 @@
 package glWrapper;
 
 import static helpers.StaticHelpers.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import helpers.Function;
 import helpers.IndexBuffer;
 
@@ -21,15 +25,23 @@ public class GlOctreeParenthood extends GLVertexDisplayer {
 	};
 
 	public GlOctreeParenthood(HashOctree oct) {
-		super(oct.numberOfCells()*2);
-		float[] verts = packPoints(map(cellCenter, oct.getCells()));
+		super(oct.numberOfCells());
+		ArrayList<HashOctreeCell> cells = new ArrayList<>(oct.getCells());
+		float[] verts = packPoints(map(cellCenter, cells));
 		IndexBuffer ind = new IndexBuffer();
 		for (HashOctreeCell c : oct.getCells()) {
-			ind.add(c.leafIndex, oct.getParent(c).leafIndex);
+			HashOctreeCell parent = oct.getParent(c);
+			if (parent != null) {
+				ind.add(cells.indexOf(c), cells.indexOf(parent));
+			}
 		}
-		
+
 		this.addElement(verts, Semantic.POSITION, 3);
 		this.addIndices(ind.render());
+		
+		System.out.println(Arrays.toString(ind.render()));
+		
+//		this.configurePreferredShader("shaders/default.vert", "shaders/default.frag", null);
 	}
 
 	@Override

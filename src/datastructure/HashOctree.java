@@ -133,6 +133,7 @@ public class HashOctree {
 		enumerateVertices();
 		enumerateLeafs();
 
+		
 		assert (nrPoints == pc.points.size());
 	}
 
