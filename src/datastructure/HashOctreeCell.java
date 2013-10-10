@@ -1,5 +1,7 @@
 package datastructure;
 
+import helpers.MortonCodes;
+
 import java.util.ArrayList;
 
 import javax.vecmath.Point3f;
@@ -137,8 +139,13 @@ public class HashOctreeCell {
 		target.y += ((Obxyz & 0b010) == 0       ? -side/2: side/2);
 		target.z += ((Obxyz & 0b001) == 0       ? -side/2: side/2);
 	}
-
-
+	
+	public Point3f computeVertexPos(int Obxyz) {
+		Point3f target = new Point3f();
+		computeVertexPos(Obxyz, target);
+		return target;
+	}
+	
 	public boolean isLeaf() {
 		return points != null;
 	}

@@ -3,6 +3,7 @@ package assignment2;
 import glWrapper.GLHashtree;
 import glWrapper.GLHashtree_Vertices;
 import glWrapper.GLPointCloud;
+import glWrapper.GlOctreeParenthood;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -49,11 +50,13 @@ public class Assignment2 {
 		GLHashtree glOct = new GLHashtree(oct);
 		glOct.setName(name + " Oct");
 		
+		GlOctreeParenthood parent = new GlOctreeParenthood(oct);
+		
 		glOct.configurePreferredShader("shaders/octree.vert", "shaders/octree.frag", "shaders/octree.geom");
 		
 		GLHashtree_Vertices glVerts = new GLHashtree_Vertices(oct);
 		glVerts.setName(name + " Verts");
-		
-		return Arrays.asList(glPointCloud, glOct, glVerts);
+
+		return Arrays.asList(glPointCloud, glOct, glVerts, parent);
 	}
 }
