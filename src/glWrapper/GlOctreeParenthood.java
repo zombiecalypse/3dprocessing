@@ -14,6 +14,7 @@ import javax.vecmath.Point3f;
 import datastructure.HashOctree;
 import datastructure.HashOctreeCell;
 import openGL.gl.GLRenderer;
+import openGL.gl.GLDisplayable.Semantic;
 import openGL.objects.Transformation;
 
 public class GlOctreeParenthood extends GLVertexDisplayer {
@@ -37,11 +38,13 @@ public class GlOctreeParenthood extends GLVertexDisplayer {
 		}
 
 		this.addElement(verts, Semantic.POSITION, 3);
+		this.addElement(verts, Semantic.USERSPECIFIED, 3, "color");
 		this.addIndices(ind.render());
 		
-		System.out.println(Arrays.toString(ind.render()));
 		
-//		this.configurePreferredShader("shaders/default.vert", "shaders/default.frag", null);
+		System.out.format("total: %s\n", verts.length/3);
+		
+		this.configurePreferredShader("shaders/default.vert", "shaders/default.frag", null);
 	}
 
 	@Override

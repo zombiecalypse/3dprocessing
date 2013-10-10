@@ -8,31 +8,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.naming.OperationNotSupportedException;
 import javax.vecmath.Tuple3f;
 
 public final class StaticHelpers {
-	
+
 	public static float cot(float x) {
-		return (float) (1/(1e-7 + Math.tan(x)));
+		return (float) (1 / (1e-7 + Math.tan(x)));
 	}
-	
-	public static <B,A extends Comparable<A>> A maximize(Function<B, A> f, List<B> l) {
+
+	public static <B, A extends Comparable<A>> A maximize(Function<B, A> f,
+			List<B> l) {
 		return Collections.max(map(f, l));
 	}
 
-	public static <B,A extends Comparable<A>> A minimize(Function<B, A> f, List<B> l) {
+	public static <B, A extends Comparable<A>> A minimize(Function<B, A> f,
+			List<B> l) {
 		return Collections.min(map(f, l));
 	}
-	
-	public static <A, B> List<A> map(Function<B,A> f, Iterable<B> m) {
+
+	public static <A, B> List<A> map(Function<B, A> f, Iterable<B> m) {
 		List<A> l = new ArrayList<A>();
-		for (B b: m) {
+		for (B b : m) {
 			l.add(f.call(b));
 		}
 		return l;
 	}
-	
-	public static <A, B, C> Function<A, C> comp(final Function<B, C> g, final Function<A, B> f) {
+
+	public static <A, B, C> Function<A, C> comp(final Function<B, C> g,
+			final Function<A, B> f) {
 		return new Function<A, C>() {
 			@Override
 			public C call(A a) {
@@ -40,11 +44,11 @@ public final class StaticHelpers {
 			}
 		};
 	}
-	
+
 	public static float norm(Tuple3f v) {
-		return (float) Math.sqrt(v.x*v.x + v.y*v.y + v.z * v.z);
+		return (float) Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 	}
-	
+
 	public static <A, B> Iterable<Pair<A, B>> zip(Iterable<A> a, Iterable<B> b) {
 		Iterator<A> iter_a = a.iterator();
 		Iterator<B> iter_b = b.iterator();
@@ -56,7 +60,7 @@ public final class StaticHelpers {
 		}
 		return ret;
 	}
-	
+
 	public static <A, B> Iterable<Pair<A, B>> zip(Iterator<A> a, Iterator<B> b) {
 		return zip(iter(a), iter(b));
 	}
@@ -64,11 +68,11 @@ public final class StaticHelpers {
 	public static <A, B> Iterable<Pair<A, B>> zip(Iterable<A> a, Iterator<B> b) {
 		return zip(iter(a), iter(b));
 	}
-	
+
 	public static <A, B> Iterable<Pair<A, B>> zip(Iterator<A> a, Iterable<B> b) {
 		return zip(iter(a), iter(b));
 	}
-	
+
 	public static Iterator<Integer> count(final int start) {
 		return new Iterator<Integer>() {
 			int current = start;
@@ -88,7 +92,7 @@ public final class StaticHelpers {
 				throw new UnsupportedOperationException();
 			}
 		};
-		
+
 	}
 
 	public static <A> Iterable<A> iter(Iterable<A> x) {
@@ -141,6 +145,88 @@ public final class StaticHelpers {
 			this.a = a;
 			this.b = b;
 		}
+	}
+
+	public static float[] concat(float[] x, float[] y) {
+		float[] new_array = new float[x.length + y.length];
+		for (Pair<Integer, Float> p : zip(count(0), iter(x))) {
+			new_array[p.a] = p.b;
+		}
+		for (Pair<Integer, Float> p : zip(count(x.length), iter(y))) {
+			new_array[p.a] = p.b;
+		}
+		return new_array;
+	}
+
+	public static <A> Iterable<A> iter(A[] y) {
+		return new ArrayIterable<>(y);
+	}
+
+	public static Iterable<Float> iter(float[] y) {
+		return new ArrayIterableFloat(y);
+	}
+}
+
+class ArrayIterableFloat implements Iterable<Float> {
+	private float[] as;
+
+	public ArrayIterableFloat(float[] as) {
+		this.as = as;
+	}
+
+	public Iterator<Float> iterator() {
+		return new ArrayIter();
+	}
+
+	final class ArrayIter implements Iterator<Float> {
+		int n = 0;
+
+		@Override
+		public boolean hasNext() {
+			return n < as.length;
+		}
+
+		@Override
+		public Float next() {
+			return as[n++];
+		}
+
+		@Override
+		public void remove() {
+			throw new AssertionError("Removal not supported");
+		}
+	}
+}
+
+class ArrayIterable<A> implements Iterable<A> {
+	private A[] as;
+
+	public ArrayIterable(A[] as) {
+		this.as = as;
+	}
+
+	public Iterator<A> iterator() {
+		return new ArrayIter();
+	}
+
+	final class ArrayIter implements Iterator<A> {
+		int n = 0;
+
+		@Override
+		public boolean hasNext() {
+			return n < as.length;
+		}
+
+		@Override
+		public A next() {
+			return as[n++];
+		}
+
+		@Override
+		public void remove() {
+			throw new AssertionError("Removal not supported");
+		}
+
 	}
 }
 
