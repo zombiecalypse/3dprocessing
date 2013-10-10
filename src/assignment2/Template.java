@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 import meshes.PointCloud;
 import openGL.gl.GLDisplayable;
-import datastructure.HashOctree;
+import datastructure.octree.HashOctree;
 
 public class Template {
 

@@ -1,4 +1,4 @@
-package datastructure;
+package datastructure.octree;
 
 import static helpers.MortonCodes.*;
 
@@ -408,7 +408,13 @@ public class HashOctree {
 	 * @return
 	 */
 	public HashOctreeCell getNbr_c2c(HashOctreeCell cell, int Obxyz) {
-		return this.getCell(nbrCode(cell.code, cell.lvl, Obxyz));
+		long neighbor_code = nbrCode(cell.code, cell.lvl, Obxyz);
+		HashOctreeCell neighbor = this.getCell(neighbor_code);
+		while (neighbor == null && neighbor_code > -1 && neighbor_code > root.code) {
+			neighbor_code = parentCode(neighbor_code);
+			neighbor = this.getCell(neighbor_code);
+		}
+		return neighbor;
 	}
 
 	/**
@@ -420,8 +426,13 @@ public class HashOctree {
 	 * @return
 	 */
 	public HashOctreeCell getNbr_c2cMinus(HashOctreeCell cell, int Obxyz) {
-
-		return this.getCell(nbrCodeMinus(cell.code, cell.lvl, Obxyz));
+		long neighbor_code = nbrCodeMinus(cell.code, cell.lvl, Obxyz);
+		HashOctreeCell neighbor = this.getCell(neighbor_code);
+		while (neighbor == null && neighbor_code > -1 && neighbor_code > root.code) {
+			neighbor_code = parentCode(neighbor_code);
+			neighbor = this.getCell(neighbor_code);
+		}
+		return neighbor;
 	}
 
 	/**
@@ -435,10 +446,8 @@ public class HashOctree {
 	 * @return
 	 */
 	public HashOctreeVertex getNbr_v2v(HashOctreeVertex v, int nbr_0bxyz) {
-
-		// TODO implement this
-
-		return null;
+		HashOctreeCell c = getCell(v.code);
+		return getVertex(getNbr_c2c(c, nbr_0bxyz).code);
 	}
 
 	/**

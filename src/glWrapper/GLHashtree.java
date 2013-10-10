@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import javax.media.opengl.GL;
 
-import datastructure.HashOctree;
-import datastructure.HashOctreeCell;
+import datastructure.octree.HashOctree;
+import datastructure.octree.HashOctreeCell;
 import openGL.gl.GLDisplayable;
 import openGL.gl.GLRenderer;
 import openGL.objects.Transformation;

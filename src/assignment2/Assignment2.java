@@ -9,7 +9,7 @@ import glWrapper.GlOctreeVertexToCell;
 import java.io.IOException;
 import java.util.Arrays;
 
-import datastructure.HashOctree;
+import datastructure.octree.HashOctree;
 import openGL.MyDisplay;
 import openGL.gl.GLDisplayable;
 import meshes.PointCloud;

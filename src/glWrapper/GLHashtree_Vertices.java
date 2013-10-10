@@ -5,8 +5,8 @@ import java.util.Collection;
 
 import javax.media.opengl.GL;
 
-import datastructure.HashOctree;
-import datastructure.HashOctreeVertex;
+import datastructure.octree.HashOctree;
+import datastructure.octree.HashOctreeVertex;
 import openGL.gl.GLDisplayable;
 import openGL.gl.GLRenderer;
 import openGL.gl.GLDisplayable.Semantic;

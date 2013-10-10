@@ -1,44 +1,36 @@
 package glWrapper;
 
-import static helpers.StaticHelpers.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
+import static helpers.StaticHelpers.map;
 import helpers.Function;
 import helpers.IndexBuffer;
+
+import java.util.ArrayList;
 
 import javax.media.opengl.GL;
 import javax.vecmath.Point3f;
 
+import openGL.gl.GLRenderer;
+import openGL.objects.Transformation;
 import datastructure.octree.HashOctree;
 import datastructure.octree.HashOctreeCell;
-import openGL.gl.GLRenderer;
-import openGL.gl.GLDisplayable.Semantic;
-import openGL.objects.Transformation;
 
-public class GlOctreeNeighbors extends GLVertexDisplayer {
+public class GLOctreeVertexNeighbors  extends GLVertexDisplayer {
 	private static Function<HashOctreeCell, Point3f> cellCenter = new Function<HashOctreeCell, Point3f>() {
 		@Override
 		public Point3f call(HashOctreeCell a) {
 			return a.center;
 		}
 	};
-
-	public GlOctreeNeighbors(HashOctree oct) {
+	public GLOctreeVertexNeighbors(HashOctree oct) {
 		super(oct.numberOfCells());
 		ArrayList<HashOctreeCell> cells = new ArrayList<>(oct.getCells());
 		float[] verts = packPoints(map(cellCenter, cells));
 		IndexBuffer ind = new IndexBuffer();
 		for (HashOctreeCell c : oct.getCells()) {
-			for (int i = 0b100; i != 0; i = i >> 1) {
-				HashOctreeCell neighbor = oct.getNbr_c2c(c, i);
-				if (neighbor != null) {
-					ind.add(cells.indexOf(c), cells.indexOf(neighbor));
-				}
-				neighbor = oct.getNbr_c2cMinus(c, i);
-				if (neighbor != null) {
-					ind.add(cells.indexOf(c), cells.indexOf(neighbor));
+			for (int i = 0b001; i != 0b1000; i = i << 1) {
+				HashOctreeCell other = oct.getNbr_c2c(c, i);
+				if (other != null) {
+					ind.add(cells.indexOf(c), cells.indexOf(other));
 				}
 			}
 		}
@@ -64,5 +56,4 @@ public class GlOctreeNeighbors extends GLVertexDisplayer {
 		// TODO Auto-generated method stub
 
 	}
-
 }

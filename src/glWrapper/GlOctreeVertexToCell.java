@@ -12,9 +12,9 @@ import helpers.IndexBuffer;
 import javax.media.opengl.GL;
 import javax.vecmath.Point3f;
 
-import datastructure.HashOctree;
-import datastructure.HashOctreeCell;
-import datastructure.HashOctreeVertex;
+import datastructure.octree.HashOctree;
+import datastructure.octree.HashOctreeCell;
+import datastructure.octree.HashOctreeVertex;
 import openGL.gl.GLRenderer;
 import openGL.objects.Transformation;
 
