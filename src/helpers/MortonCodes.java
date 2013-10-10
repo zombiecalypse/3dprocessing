@@ -70,7 +70,6 @@ public class MortonCodes {
 	 * @return
 	 */
 	public static boolean overflowTest(long code, int level) {
-		// implement this
 		return !isCellOnLevelXGrid(code, level);
 	}
 

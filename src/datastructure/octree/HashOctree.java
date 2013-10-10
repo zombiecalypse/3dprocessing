@@ -300,7 +300,7 @@ public class HashOctree {
 		return this.depth;
 	}
 
-	public int numberofVertices() {
+	public int numberOfVertices() {
 		return vertexMap.size();
 	}
 
@@ -446,8 +446,16 @@ public class HashOctree {
 	 * @return
 	 */
 	public HashOctreeVertex getNbr_v2v(HashOctreeVertex v, int nbr_0bxyz) {
-		HashOctreeCell c = getCell(v.code);
-		return getVertex(getNbr_c2c(c, nbr_0bxyz).code);
+		long ncode = 0;
+		int current_lvl = v.maxLvl;
+		HashOctreeVertex n = null; 
+		while (n == null && ncode != -1 && current_lvl >= v.minLvl) {
+			int shift = 3*(depth - current_lvl);
+			ncode = nbrCode((v.code >> shift), current_lvl, nbr_0bxyz)<< shift;
+			n = getVertex(ncode);
+			current_lvl--;
+		}
+		return n;
 	}
 
 	/**
@@ -461,10 +469,16 @@ public class HashOctree {
 	 * @return
 	 */
 	public HashOctreeVertex getNbr_v2vMinus(HashOctreeVertex v, int nbr_0bxyz) {
-
-		// TODO implement this
-
-		return null;
+		long ncode = 0;
+		int current_lvl = v.maxLvl;
+		HashOctreeVertex n = null; 
+		while (n == null && ncode != -1 && current_lvl >= v.minLvl) {
+			int shift = 3*(depth - current_lvl);
+			ncode = nbrCodeMinus((v.code >> shift), current_lvl, nbr_0bxyz)<< shift;
+			n = getVertex(ncode);
+			current_lvl--;
+		}
+		return n;
 	}
 
 	/**

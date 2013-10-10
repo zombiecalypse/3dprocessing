@@ -22,4 +22,8 @@ public class FloatBuffer {
 		}
 		return ret;
 	}
+	
+	public int size() {
+		return floats.size();
+	}
 }

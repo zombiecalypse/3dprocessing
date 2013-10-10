@@ -44,5 +44,8 @@ public class HashOctreeVertex {
 		return false;
 	}
 	
+	public String toString() {
+		return Long.toBinaryString(code);
+	}
 	
 }

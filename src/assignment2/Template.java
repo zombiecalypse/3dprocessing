@@ -2,6 +2,7 @@ package assignment2;
 
 import glWrapper.GLHashtree;
 import glWrapper.GLHashtree_Vertices;
+import glWrapper.GLOctreeVertexNeighbors;
 import glWrapper.GLPointCloud;
 import glWrapper.GlOctreeNeighbors;
 import glWrapper.GlOctreeParenthood;
@@ -29,6 +30,8 @@ public class Template {
 		parenthood.setName(name + " parenthood");
 		GlOctreeNeighbors neighbors = new GlOctreeNeighbors(oct);
 		neighbors.setName(name + " neighbors");
+		GLOctreeVertexNeighbors vneighbors = GLOctreeVertexNeighbors.make(oct);
+		vneighbors.setName(name + " vertex neighbors");
 		
 		GlOctreeVertexToCell vertex_to_cell = GlOctreeVertexToCell.make(oct);
 		vertex_to_cell.setName(name + " Vertices");
@@ -38,6 +41,6 @@ public class Template {
 		GLHashtree_Vertices glVerts = new GLHashtree_Vertices(oct);
 		glVerts.setName(name + " Verts");
 
-		return Arrays.asList(glPointCloud, glOct, glVerts, parenthood, neighbors, vertex_to_cell);
+		return Arrays.asList(glPointCloud, glOct, glVerts, parenthood, neighbors, vneighbors, vertex_to_cell);
 	}
 }
