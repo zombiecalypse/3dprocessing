@@ -33,10 +33,7 @@ public class MortonCodes {
 	 * @return
 	 */
 	public static long nbrCode(long v, int level, long w) {
-		long ret = (
-				(( (v|~X) + (w&X)) & X) |
-				(( (v|~Y) + (w&Y)) & Y) |
-				(( (v|~Z) + (w&Z)) & Z));
+		long ret = ((((v | ~X) + (w & X)) & X) | (((v | ~Y) + (w & Y)) & Y) | (((v | ~Z) + (w & Z)) & Z));
 
 		if (overflowTest(ret, level)) {
 			System.err.format("overflowed with %s\n", Long.toBinaryString(ret));
@@ -55,10 +52,7 @@ public class MortonCodes {
 	 * @return
 	 */
 	public static long nbrCodeMinus(long v, int level, long w) {
-		long ret = (
-				(( (v&X) - (w&X)) & X) |
-				(( (v&Y) - (w&Y)) & Y) |
-				(( (v&Z) - (w&Z)) & Z));
+		long ret = ((((v & X) - (w & X)) & X) | (((v & Y) - (w & Y)) & Y) | (((v & Z) - (w & Z)) & Z));
 
 		if (overflowTest(ret, level)) {
 			System.err.format("overflowed with %s\n", Long.toBinaryString(ret));
@@ -95,19 +89,18 @@ public class MortonCodes {
 	/**
 	 * A test to check if the vertex_code (a morton code padded with zeros to
 	 * have the length 3*tree_depth + 1) is associated to a vertex which is part
-	 * of the
+	 * of the level-grid.
 	 * 
-	 * @param level
-	 *            -grid.
-	 * 
-	 *            This is determined by the number of trailing zeros, and if a
-	 *            vertex lies on some level k it will lie on the levels
-	 *            k+1,k+2... tree_depth too.
+	 * This is determined by the number of trailing zeros, and if a vertex lies
+	 * on some level k it will lie on the levels k+1,k+2... tree_depth too.
 	 */
 	public static boolean isVertexOnLevelXGrid(long vertex_code, int level,
 			int tree_depth) {
-		// implement this..
-		return false;
+		return (vertex_code & level_mask(level, tree_depth)) == 0;
+	}
+
+	private static long level_mask(int level, int tree_depth) {
+		return ~(-1L << (tree_depth - level)*3);
 	}
 
 	/**

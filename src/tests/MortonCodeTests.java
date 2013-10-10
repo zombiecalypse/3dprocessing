@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import static assignment2.MortonCodes.*;
 
-public class OctreeTest {
+public class MortonCodeTests {
 	// example of a level 4 (cell) morton code
 	long cellCode = 0b1000101000100;
 
@@ -48,17 +48,16 @@ public class OctreeTest {
 		assertThat(isCellOnLevelXGrid(cellCode, 4), is(true));
 	}
 
-	@Ignore
 	@Test
 	public void testVertexOnGridLevel() {
-		assertThat(minVertexLevel(vertexHash, 4), is(3));
-		assertThat(maxVertexLevel(vertexHash, 4), is(4));
 		for (Integer i : Arrays.asList(0, 1, 2)) {
 			assertThat(isVertexOnLevelXGrid(vertexHash, i, 4), is(false));
 		}
 		for (Integer i : Arrays.asList(3, 4)) {
-			assertThat(isCellOnLevelXGrid(vertexHash, i), is(true));
+			assertThat(isVertexOnLevelXGrid(vertexHash, i, 4), is(true));
 		}
+		assertThat(minVertexLevel(vertexHash, 4), is(3));
+		assertThat(maxVertexLevel(vertexHash, 4), is(4));
 	}
 
 	@Test
@@ -86,6 +85,11 @@ public class OctreeTest {
 		assertThat(cellLevel(nbrCodeMinus(cellCode, 4, 0b100)), is(4));
 		assertThat(cellLevel(nbrCodeMinus(nbr_plus_y, 4, 0b010)), is(4));
 		assertThat(cellLevel(nbrCodeMinus(cellCode, 4, 0b001)), is(4));
-
+	}
+	
+	@Test
+	public void testOverflow() {
+		assertThat(isVertexOnBoundary(cellCode, 4), is(true));
+		assertThat(nbrCodeMinus(cellCode, 4, 0b010), is(-1l));
 	}
 }
