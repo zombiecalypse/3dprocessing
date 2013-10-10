@@ -5,13 +5,12 @@ import java.util.Collection;
 
 import javax.media.opengl.GL;
 
+import datastructure.HashOctree;
+import datastructure.HashOctreeVertex;
 import openGL.gl.GLDisplayable;
 import openGL.gl.GLRenderer;
 import openGL.gl.GLDisplayable.Semantic;
 import openGL.objects.Transformation;
-
-import assignment2.HashOctree;
-import assignment2.HashOctreeVertex;
 
 /**
  * GLWrapper which will send the HashOctree vertex positions to the GPU

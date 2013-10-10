@@ -4,12 +4,11 @@ import java.util.ArrayList;
 
 import javax.media.opengl.GL;
 
+import datastructure.HashOctree;
+import datastructure.HashOctreeCell;
 import openGL.gl.GLDisplayable;
 import openGL.gl.GLRenderer;
 import openGL.objects.Transformation;
-
-import assignment2.HashOctree;
-import assignment2.HashOctreeCell;
 
 /**
  * Simple GLWrapper for the {@link HashOctree}.

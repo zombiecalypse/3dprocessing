@@ -1,4 +1,4 @@
-package assignment2;
+package helpers;
 
 /**
  * Implement the Morton Code manipulations here.

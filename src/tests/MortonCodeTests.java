@@ -1,5 +1,6 @@
 package tests;
 
+import static helpers.MortonCodes.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -8,8 +9,6 @@ import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import static assignment2.MortonCodes.*;
 
 public class MortonCodeTests {
 	// example of a level 4 (cell) morton code

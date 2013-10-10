@@ -1,4 +1,4 @@
-package assignment2;
+package datastructure;
 
 import java.util.ArrayList;
 

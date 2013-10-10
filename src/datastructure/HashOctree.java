@@ -1,4 +1,6 @@
-package assignment2;
+package datastructure;
+
+import helpers.MortonCodes;
 
 import java.util.ArrayList;
 import java.util.Collection;
