@@ -20,6 +20,7 @@ import openGL.objects.Transformation;
 public class GLHashtree extends GLDisplayable {
 
 	private HashOctree myTree;
+	private String name;
 	public GLHashtree(HashOctree tree) {
 		
 		super(tree.numberOfLeafs());
@@ -74,5 +75,13 @@ public class GLHashtree extends GLDisplayable {
 	public void loadAdditionalUniforms(GLRenderer glRenderContext,
 			Transformation mvMat) {
 		
+	}
+
+	public void setName(String string) {
+		this.name = string;
+	}
+	
+	public String toString() {
+		return name == null? super.toString() : name;
 	}
 }

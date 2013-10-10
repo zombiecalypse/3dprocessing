@@ -20,6 +20,7 @@ import openGL.objects.Transformation;
 public class GLHashtree_Vertices extends GLDisplayable {
 
 	private HashOctree myTree;
+	private String name;
 	public GLHashtree_Vertices(HashOctree tree) {
 		
 		super(tree.numberofVertices());
@@ -70,5 +71,13 @@ public class GLHashtree_Vertices extends GLDisplayable {
 			Transformation mvMat) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public void setName(String string) {
+		this.name = string;
+	}
+	
+	public String toString() {
+		return name;
 	}
 }
