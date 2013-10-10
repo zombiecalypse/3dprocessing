@@ -9,7 +9,6 @@ import openGL.gl.GLDisplayable;
 import openGL.gl.GLRenderer;
 import openGL.gl.GLDisplayable.Semantic;
 import openGL.objects.Transformation;
-
 import meshes.PointCloud;
 
 /**
@@ -20,6 +19,7 @@ import meshes.PointCloud;
 public class GLPointCloud extends GLDisplayable {
 
 	private PointCloud myCloud;
+	private String name;
 
 
 	public GLPointCloud(PointCloud cloud) {
@@ -68,6 +68,14 @@ public class GLPointCloud extends GLDisplayable {
 		// TODO Auto-generated method stub
 		
 	}
+
+
+	public void setName(String string) {
+		this.name = string;
+	}
 	
+	public String toString() {
+		return name == null ? super.toString() : name;
+	}
 	
 }
