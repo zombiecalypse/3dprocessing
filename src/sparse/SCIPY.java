@@ -1,5 +1,6 @@
 package sparse;
 
+import static helpers.StaticHelpers.*;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -7,6 +8,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 
 import sparse.CSRMatrix.col_val;
@@ -93,17 +96,23 @@ public class SCIPY {
 		
 		
 		/*execute the script*/
+		String python = resourcePath("../python/doLeastSqr.py");
+		String ifile = resourcePath("../python/temp/" + matrix_name + "ifile");
+		String jfile = resourcePath("../python/temp/" + matrix_name + "jfile");
+		String bfile = resourcePath("../python/temp/" + matrix_name + "bfile");
+		String vfile = resourcePath("../python/temp/" + matrix_name + "vfile");
 		Runtime rt = Runtime.getRuntime();
-		Process pr = rt.exec("python ./python/doLeastSqr.py " +
-				"-i \"./python/temp/" + matrix_name + "ifile\" " +
-				"-j \"./python/temp/" + matrix_name + "jfile\" " +
-				"-b \"./python/temp/" + matrix_name + "bfile\" " +
-				"-v \"./python/temp/" + matrix_name + "vfile\" " +
-				"-x \"./python/temp/" + matrix_name + "xout\" ");
+		String exec = String.format("python %s -i %s -j %s -b %s -v %s -x /tmp/%sxout", python, ifile, jfile, bfile, vfile, matrix_name);
+		System.out.format("Executing: %s\n", exec);
+		Process pr = rt.exec(exec);
 		
 	    
 		try {
 			pr.waitFor();
+			if (pr.exitValue() != 0) {
+				printConsoleOutput(pr);
+				throw new RuntimeException("Error in python");
+			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -112,7 +121,7 @@ public class SCIPY {
 		/*get std.err and std.out*/
 		printConsoleOutput(pr);
 		
-		readVector("./python/temp/" + matrix_name + "xout", x);
+		readVector("/tmp/" + matrix_name + "xout", x);
 		
 	}
 

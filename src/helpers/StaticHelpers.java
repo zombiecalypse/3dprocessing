@@ -1,6 +1,7 @@
 package helpers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -11,7 +12,26 @@ import java.util.Set;
 import javax.naming.OperationNotSupportedException;
 import javax.vecmath.Tuple3f;
 
+import sparse.SCIPY;
+
 public final class StaticHelpers {
+	
+	public static String resourcePath(String path) {
+		return StaticHelpers.class.getResource(path).getFile();
+	}
+	
+	/** All directions (including diagonals) in the 0bXYZ format */
+	public static Iterable<Integer> directions0bXYZ() {
+		return Arrays.asList(
+				0b100,
+				0b010,
+				0b001,
+				0b110,
+				0b101,
+				0b011,
+				0b111
+				);
+	}
 
 	public static float cot(float x) {
 		return (float) (1 / (1e-7 + Math.tan(x)));
