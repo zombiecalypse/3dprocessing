@@ -26,4 +26,8 @@ public class FloatBuffer {
 	public int size() {
 		return floats.size();
 	}
+
+	public void clear() {
+		floats.clear();
+	}
 }

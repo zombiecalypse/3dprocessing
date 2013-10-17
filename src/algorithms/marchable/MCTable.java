@@ -1,4 +1,4 @@
-package assignment3;
+package algorithms.marchable;
 
 import meshes.Point2i;
 

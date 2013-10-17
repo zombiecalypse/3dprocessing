@@ -22,15 +22,11 @@ public final class StaticHelpers {
 	
 	/** All directions (including diagonals) in the 0bXYZ format */
 	public static Iterable<Integer> directions0bXYZ() {
-		return Arrays.asList(
-				0b100,
-				0b010,
-				0b001,
-				0b110,
-				0b101,
-				0b011,
-				0b111
-				);
+		List<Integer> a = new ArrayList<>(7);
+		for (int i = 0; i < 8; i++) {
+			a.add(i);
+		}
+		return a;
 	}
 
 	public static float cot(float x) {
