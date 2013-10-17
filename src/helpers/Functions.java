@@ -7,9 +7,9 @@ import java.util.List;
 import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
-import meshes.Face;
-import meshes.HalfEdge;
-import meshes.Vertex;
+import datastructure.halfedge.Face;
+import datastructure.halfedge.HalfEdge;
+import datastructure.halfedge.Vertex;
 
 public final class Functions {
 	private static final Vector3f grey = new Vector3f(0.5f, 0.5f, 0.5f);

@@ -1,4 +1,4 @@
-package meshes;
+package datastructure.halfedge;
 
 import helpers.Function;
 import static helpers.StaticHelpers.*;
@@ -16,6 +16,8 @@ import java.util.concurrent.Callable;
 import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 
+import meshes.Point2i;
+import meshes.WireframeMesh;
 import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;
 

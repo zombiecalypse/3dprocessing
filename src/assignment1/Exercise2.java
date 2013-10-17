@@ -12,9 +12,9 @@ import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
+import datastructure.halfedge.HalfEdgeStructure;
+import datastructure.halfedge.Vertex;
 import openGL.MyDisplay;
-import meshes.HalfEdgeStructure;
-import meshes.Vertex;
 import meshes.WireframeMesh;
 import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;

@@ -1,6 +1,6 @@
 package transformers;
 
-import meshes.HalfEdgeStructure;
+import datastructure.halfedge.HalfEdgeStructure;
 
 public interface Transformer {
 	HalfEdgeStructure call(HalfEdgeStructure hs);

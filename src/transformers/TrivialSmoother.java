@@ -4,8 +4,8 @@ import static helpers.StaticHelpers.*;
 
 import javax.vecmath.Point3f;
 
-import meshes.HalfEdgeStructure;
-import meshes.Vertex;
+import datastructure.halfedge.HalfEdgeStructure;
+import datastructure.halfedge.Vertex;
 
 public class TrivialSmoother implements Transformer {
 

@@ -1,4 +1,4 @@
-package meshes;
+package datastructure.halfedge;
 
 public abstract class HEElement {
 

@@ -16,10 +16,10 @@ import javax.media.opengl.GL;
 import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 
+import datastructure.halfedge.Face;
+import datastructure.halfedge.HalfEdgeStructure;
+import datastructure.halfedge.Vertex;
 import static helpers.StaticHelpers.*;
-import meshes.Face;
-import meshes.HalfEdgeStructure;
-import meshes.Vertex;
 import openGL.gl.GLDisplayable;
 import openGL.gl.GLRenderer;
 import openGL.objects.Transformation;

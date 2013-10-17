@@ -11,10 +11,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
-import meshes.Face;
-import meshes.HalfEdge;
-import meshes.HalfEdgeStructure;
-import meshes.Vertex;
 import meshes.WireframeMesh;
 import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;
@@ -25,6 +21,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+
+import datastructure.halfedge.Face;
+import datastructure.halfedge.HalfEdge;
+import datastructure.halfedge.HalfEdgeStructure;
+import datastructure.halfedge.Vertex;
 
 @RunWith(Parameterized.class)
 public class DifferentialGeometryTest {

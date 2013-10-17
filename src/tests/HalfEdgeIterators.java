@@ -8,10 +8,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import junit.framework.TestCase;
-import meshes.Face;
-import meshes.HalfEdge;
-import meshes.HalfEdgeStructure;
-import meshes.Vertex;
 import meshes.WireframeMesh;
 import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;
@@ -22,6 +18,11 @@ import org.junit.runners.Parameterized.Parameters;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import datastructure.halfedge.Face;
+import datastructure.halfedge.HalfEdge;
+import datastructure.halfedge.HalfEdgeStructure;
+import datastructure.halfedge.Vertex;
 
 @RunWith(Parameterized.class)
 public class HalfEdgeIterators extends TestCase {

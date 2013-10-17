@@ -8,8 +8,8 @@ import java.io.IOException;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
-import meshes.HalfEdgeStructure;
-import meshes.Vertex;
+import datastructure.halfedge.HalfEdgeStructure;
+import datastructure.halfedge.Vertex;
 import meshes.WireframeMesh;
 import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;

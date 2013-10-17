@@ -1,4 +1,4 @@
-package meshes;
+package datastructure.halfedge;
 
 
 import static helpers.StaticHelpers.*;
