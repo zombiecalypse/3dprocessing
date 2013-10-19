@@ -43,11 +43,8 @@ public class Assignment3 {
 		//Do your magic here...
 		
 		MarchingCubes mc = new MarchingCubes(tree);
-		Map<Integer, Float> m = new HashMap<>();
-		for (HashOctreeVertex v : tree.getVertices()) {
-			m.put(v.index, x.get(v.index));
-		}
-		mc.primaryMC(m);
+		
+		mc.primaryMC(x);
 		
 		//And show off...
 		

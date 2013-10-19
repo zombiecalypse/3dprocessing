@@ -5,9 +5,12 @@ import helpers.V;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.vecmath.Point3f;
+
+import com.google.common.collect.Range;
 
 import meshes.Point2i;
 import meshes.WireframeMesh;
@@ -30,7 +33,7 @@ public class MarchingCubes {
 	// the tree to march
 	private HashOctree tree;
 	// per marchable cube values
-	private Map<Integer, Float> val;
+	private List<Float> val;
 
 	/**
 	 * Implementation of the marching cube algorithm. pass the tree and either
@@ -41,13 +44,16 @@ public class MarchingCubes {
 	 */
 	public MarchingCubes(HashOctree tree) {
 		this.tree = tree;
+		for (int i = 0; i < 15; i++) {
+			this.triags[i] = new Point2i(0,0);
+		}
 	}
 
 	/**
 	 * Perform primary Marching cubes on the tree.
 	 */
-	public void primaryMC(Map<Integer, Float> m) {
-		this.val = m;
+	public void primaryMC(List<Float> x) {
+		this.val = x;
 		this.result = new WireframeMesh();
 
 		// TODO
@@ -75,8 +81,7 @@ public class MarchingCubes {
 	 */
 	private void pushCube(final MarchableCube n) {
 		fb.clear();
-		fb.add(evaluateFunction(n.getIndex()));
-		for (final Integer i : directions0bXYZ()) {
+		for (int i = 0; i < 8; i++) {
 			fb.add(evaluateFunction(n.getCornerElement(i, tree).getIndex()));
 		}
 		
