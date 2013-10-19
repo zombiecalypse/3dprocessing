@@ -16,6 +16,10 @@ import sparse.SCIPY;
 
 public final class StaticHelpers {
 	
+	public static int[] asArray(int... is) {
+		return is;
+	}
+	
 	public static String resourcePath(String path) {
 		return StaticHelpers.class.getResource(path).getFile();
 	}
