@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 
+import algorithms.marchable.MarchableCube;
+
 /**
  * Implementation of a hashoctree cell. A cell stores its Morton code
  * and if it is a leaf cell it has a payload of Point3f's.
@@ -18,7 +20,7 @@ import javax.vecmath.Tuple3f;
  * @author bertholet
  *
  */
-public class HashOctreeCell {
+public class HashOctreeCell implements MarchableCube {
 	
 	/** the center of this cell*/
 	public Point3f center;
@@ -148,6 +150,24 @@ public class HashOctreeCell {
 	
 	public boolean isLeaf() {
 		return points != null;
+	}
+
+
+	@Override
+	public Point3f getPosition() {
+		return this.center;
+	}
+
+
+	@Override
+	public MarchableCube getCornerElement(int Obxyz, HashOctree tree) {
+		return tree.getNbr_c2c(this, Obxyz);
+	}
+
+
+	@Override
+	public int getIndex() {
+		return this.leafIndex;
 	}
 
 

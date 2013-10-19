@@ -5,13 +5,18 @@ import glWrapper.GLHashtree_Vertices;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
+import algorithms.marchable.MarchableCube;
+import algorithms.marchable.MarchingCubes;
 import meshes.PointCloud;
 import openGL.MyDisplay;
 import datastructure.octree.HashOctree;
+import datastructure.octree.HashOctreeCell;
 import datastructure.octree.HashOctreeVertex;
 
 public class Assignment3 {
@@ -37,6 +42,12 @@ public class Assignment3 {
 		
 		//Do your magic here...
 		
+		MarchingCubes mc = new MarchingCubes(tree);
+		Map<Integer, Float> m = new HashMap<>();
+		for (HashOctreeVertex v : tree.getVertices()) {
+			m.put(v.index, x.get(v.index));
+		}
+		mc.primaryMC(m);
 		
 		//And show off...
 		

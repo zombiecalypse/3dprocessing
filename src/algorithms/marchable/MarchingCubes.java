@@ -12,6 +12,7 @@ import javax.vecmath.Point3f;
 import meshes.Point2i;
 import meshes.WireframeMesh;
 import datastructure.octree.HashOctree;
+import datastructure.octree.HashOctreeCell;
 import datastructure.octree.HashOctreeVertex;
 import static helpers.StaticHelpers.*;
 
@@ -29,7 +30,7 @@ public class MarchingCubes {
 	// the tree to march
 	private HashOctree tree;
 	// per marchable cube values
-	private Map<Long, Float> val;
+	private Map<Integer, Float> val;
 
 	/**
 	 * Implementation of the marching cube algorithm. pass the tree and either
@@ -45,12 +46,14 @@ public class MarchingCubes {
 	/**
 	 * Perform primary Marching cubes on the tree.
 	 */
-	public void primaryMC(Map<Long, Float> byVertex) {
-		this.val = byVertex;
+	public void primaryMC(Map<Integer, Float> m) {
+		this.val = m;
 		this.result = new WireframeMesh();
 
 		// TODO
-
+		for (HashOctreeCell c : tree.getCells()) {
+			pushCube(c);
+		}
 	}
 
 	/**
@@ -85,30 +88,32 @@ public class MarchingCubes {
 			Point2i e3 = triags[i+2];
 			if (isEmpty(e1) || isEmpty(e2) || isEmpty(e3)) break;
 			assert !(e1.equals(e2) || e1.equals(e3) || e2.equals(e3)) : "Can't use same edge multiple times.";
-			Point3f p1 = lookup(e1, n);
-			Point3f p2 = lookup(e2, n);
-			Point3f p3 = lookup(e3, n);
+			int p1 = lookup(e1, n);
+			int p2 = lookup(e2, n);
+			int p3 = lookup(e3, n);
+			this.result.faces.add(asArray(p1, p2, p3));
 		}
 	}
 	
-	Map<Long, Point3f> cache = new HashMap<>();
+	Map<Long, Integer> cache = new HashMap<>();
 	
 	private static long key(int x, int y) {
 		assert Long.SIZE >= 2*Integer.SIZE;
 		return x << Integer.SIZE | y;
 	}
 	
-	private Point3f lookup(Point2i edge, MarchableCube n) {
+	private int lookup(Point2i edge, MarchableCube n) {
 		MarchableCube m1 = n.getCornerElement(edge.x, tree);
 		MarchableCube m2 = n.getCornerElement(edge.y, tree);
+		int i1 = m1.getIndex(), i2 = m2.getIndex();
 		
-		long theoretical_cache_key = key(m1.getIndex(), m2.getIndex());
+		long theoretical_cache_key = key(i1, i2);
 		
 		if (cache.containsKey(theoretical_cache_key)) {
 			return cache.get(theoretical_cache_key);
 		}
-		float v1 = val.get(m1.getIndex());
-		float v2 = val.get(m1.getIndex());
+		float v1 = val.get(i1);
+		float v2 = val.get(i2);
 		assert (v1 <= 0 && v2 >= 0) || (v1 >= 0 && v2 <= 0);
 		
 		// add positions weighted by value
@@ -116,8 +121,12 @@ public class MarchingCubes {
 		Point3f p2 = m2.getPosition();
 		float w = v1/(v2-v1);
 		Point3f ret = V.scaled_add(p1, 1.0f - w, p2, w);
-		cache.put(theoretical_cache_key, ret);
-		return ret;
+		
+		int new_index = result.vertices.size();
+		
+		cache.put(theoretical_cache_key, new_index);
+		result.vertices.add(ret);
+		return new_index;
 	}
 	
 	private boolean isEmpty(Point2i p) {
