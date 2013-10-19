@@ -1,8 +1,10 @@
 package algorithms.marchable;
 
 import helpers.FloatBuffer;
+import helpers.V;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.vecmath.Point3f;
@@ -82,15 +84,40 @@ public class MarchingCubes {
 			Point2i e2 = triags[i+1];
 			Point2i e3 = triags[i+2];
 			if (isEmpty(e1) || isEmpty(e2) || isEmpty(e3)) break;
-			if (e1.equals(e2) || e1.equals(e3) || e2.equals(e3)) {
-				throw new AssertionError("Can't use same edge multiple times.");
-			}
+			assert !(e1.equals(e2) || e1.equals(e3) || e2.equals(e3)) : "Can't use same edge multiple times.";
 			Point3f p1 = lookup(e1, n);
+			Point3f p2 = lookup(e2, n);
+			Point3f p3 = lookup(e3, n);
 		}
 	}
 	
+	Map<Long, Point3f> cache = new HashMap<>();
+	
+	private static long key(int x, int y) {
+		assert Long.SIZE >= 2*Integer.SIZE;
+		return x << Integer.SIZE | y;
+	}
+	
 	private Point3f lookup(Point2i edge, MarchableCube n) {
+		MarchableCube m1 = n.getCornerElement(edge.x, tree);
+		MarchableCube m2 = n.getCornerElement(edge.y, tree);
 		
+		long theoretical_cache_key = key(m1.getIndex(), m2.getIndex());
+		
+		if (cache.containsKey(theoretical_cache_key)) {
+			return cache.get(theoretical_cache_key);
+		}
+		float v1 = val.get(m1.getIndex());
+		float v2 = val.get(m1.getIndex());
+		assert (v1 <= 0 && v2 >= 0) || (v1 >= 0 && v2 <= 0);
+		
+		// add positions weighted by value
+		Point3f p1 = m1.getPosition();
+		Point3f p2 = m2.getPosition();
+		float w = v1/(v2-v1);
+		Point3f ret = V.scaled_add(p1, 1.0f - w, p2, w);
+		cache.put(theoretical_cache_key, ret);
+		return ret;
 	}
 	
 	private boolean isEmpty(Point2i p) {
