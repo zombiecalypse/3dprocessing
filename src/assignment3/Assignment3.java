@@ -1,5 +1,6 @@
 package assignment3;
 
+import glWrapper.GLHalfEdgeStructure;
 import glWrapper.GLHashtree;
 import glWrapper.GLHashtree_Vertices;
 import glWrapper.GLWireframeMesh;
@@ -15,20 +16,23 @@ import javax.vecmath.Vector3f;
 import algorithms.marchable.MarchableCube;
 import algorithms.marchable.MarchingCubes;
 import meshes.PointCloud;
+import meshes.exception.DanglingTriangleException;
+import meshes.exception.MeshNotOrientedException;
 import openGL.MyDisplay;
+import datastructure.halfedge.HalfEdgeStructure;
 import datastructure.octree.HashOctree;
 import datastructure.octree.HashOctreeCell;
 import datastructure.octree.HashOctreeVertex;
 
 public class Assignment3 {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, MeshNotOrientedException, DanglingTriangleException {
 
 		marchingCubesDemo();
 
 	}
 
-	public static void marchingCubesDemo() {
+	public static void marchingCubesDemo() throws MeshNotOrientedException, DanglingTriangleException {
 
 		// Test Data: create an octree
 		HashOctree tree = new HashOctree(nonUniformPointCloud(15), 6, 7, 1.2f);
@@ -43,6 +47,7 @@ public class Assignment3 {
 
 		// And show off...
 		MyDisplay d = new MyDisplay();
+//		GLHalfEdgeStructure gl_mesh = new GLHalfEdgeStructure(new HalfEdgeStructure(mc.getResult()));
 		GLWireframeMesh gl_mesh = new GLWireframeMesh(mc.getResult());
 		gl_mesh.setTitle("Reconstruction");
 		gl_mesh.configurePreferredShader("shaders/trimesh_flat.vert", "shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");

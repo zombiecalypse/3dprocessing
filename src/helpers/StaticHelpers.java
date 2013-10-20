@@ -34,7 +34,7 @@ public final class StaticHelpers {
 	}
 
 	public static float cot(float x) {
-		return (float) (1 / (1e-7 + Math.tan(x)));
+		return (float) (1 / (1e-12 + Math.tan(x)));
 	}
 
 	public static <B, A extends Comparable<A>> A maximize(Function<B, A> f,

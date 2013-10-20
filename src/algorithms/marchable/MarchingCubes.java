@@ -81,12 +81,12 @@ public class MarchingCubes {
 	private void pushCube(final MarchableCube n) {
 		fb.clear();
 		for (int i = 0; i < 8; i++) {
-			fb.add(evaluateFunction(n.getCornerElement(i, tree).getIndex()));
+			fb.add(evaluateFunction(n.getCornerElement(i, tree)));
 		}
 		
 		MCTable.resolve(fb.render(), triags);
 
-		for (int i = 0; i < 15/3; i++) {
+		for (int i = 0; i < triags.length/3; i++) {
 			Point2i e1 = triags[i+0];
 			Point2i e2 = triags[i+1];
 			Point2i e3 = triags[i+2];
@@ -95,6 +95,7 @@ public class MarchingCubes {
 			int p1 = lookup(e1, n);
 			int p2 = lookup(e2, n);
 			int p3 = lookup(e3, n);
+			assert p1 != p2 && p2 != p3 && p1 != p3;
 			this.result.faces.add(asArray(p1, p2, p3));
 		}
 	}
@@ -132,8 +133,8 @@ public class MarchingCubes {
 		return p.x == -1 && p.y == -1;
 	}
 
-	private float evaluateFunction(final int i) {
-		return val.get(i);
+	private float evaluateFunction(MarchableCube marchableCube) {
+		return val.get(marchableCube.getIndex());
 	}
 
 	/**
