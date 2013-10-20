@@ -17,8 +17,14 @@ public final class V {
 	
 	public static Point3f scaled_add(Point3f v1, float w1, Point3f v2, float w2) {
 		Point3f p = new Point3f();
-		p.scaleAdd(w1, v1);
-		p.scaleAdd(w2, v2);
+		Point3f vec1 = (Point3f) v1.clone();
+		Point3f vec2 = (Point3f) v2.clone();
+		// You'd think scaleAdd would do this. And you would be wrong. And ask yourself
+		// why your ball is so spiky. And cry a little.
+		vec1.scale(w1);
+		vec2.scale(w2);
+		p.add(vec1);
+		p.add(vec2);
 		return p;
 	}
 }
