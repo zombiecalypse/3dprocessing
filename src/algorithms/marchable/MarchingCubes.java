@@ -1,6 +1,7 @@
 package algorithms.marchable;
 
 import helpers.FloatBuffer;
+import helpers.IntBuffer;
 import helpers.V;
 
 import java.util.ArrayList;
@@ -86,21 +87,19 @@ public class MarchingCubes {
 		
 		MCTable.resolve(fb.render(), triags);
 
-		for (int i = 0; i < triags.length/3; i++) {
-			Point2i e1 = triags[i+0];
-			Point2i e2 = triags[i+1];
-			Point2i e3 = triags[i+2];
-			if (isEmpty(e1) || isEmpty(e2) || isEmpty(e3)) break;
-			assert !(e1.equals(e2) || e1.equals(e3) || e2.equals(e3)) : "Can't use same edge multiple times.";
-			int p1 = lookup(e1, n);
-			int p2 = lookup(e2, n);
-			int p3 = lookup(e3, n);
-			assert p1 != p2 && p2 != p3 && p1 != p3;
-			this.result.faces.add(asArray(p1, p2, p3));
+		for (Point2i e : triags) {
+			if (isEmpty(e)) break;
+			int p = lookup(e, n);
+			faceConstructionSide.add(p);
+			if (faceConstructionSide.size() == 3) {
+				this.result.faces.add(faceConstructionSide.render());
+				faceConstructionSide.clear();
+			}
 		}
 	}
 	
 	Map<Point2i, Integer> cache = new HashMap<>();
+	IntBuffer faceConstructionSide = new IntBuffer();
 		
 	private int lookup(Point2i edge, MarchableCube n) {
 		Point2i theoretical_cache_key = key(n, edge);
