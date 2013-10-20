@@ -56,7 +56,7 @@ public class MarchingCubes {
 		this.val = x;
 		this.result = new WireframeMesh();
 
-		for (HashOctreeCell c : tree.getCells()) {
+		for (HashOctreeCell c : tree.getLeafs()) {
 			pushCube(c);
 		}
 	}
@@ -118,7 +118,7 @@ public class MarchingCubes {
 		// add positions weighted by value
 		Point3f p1 = m1.getPosition();
 		Point3f p2 = m2.getPosition();
-		float w = v1/(v2-v1);
+		float w = v1/(v1-v2);
 		Point3f ret = V.scaled_add(p1, 1.0f - w, p2, w);
 		
 		int new_index = result.vertices.size();
