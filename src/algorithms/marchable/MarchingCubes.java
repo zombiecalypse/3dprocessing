@@ -65,9 +65,22 @@ public class MarchingCubes {
 	/**
 	 * Perform dual marchingCubes on the tree
 	 */
-	public void dualMC(Map<Long, Float> byVertex) {
-
-		// TODO
+	public void dualMC(List<Float> byVertex) {
+		float[] byCell = new float[byVertex.size()];
+		for (HashOctreeCell c : tree.getLeafs()) {
+			for (int i = 0; i < 8; i++) {
+				HashOctreeVertex v = tree.getNbr_c2v(c, i);
+				byCell[c.getIndex()] += byVertex.get(v.getIndex());
+			}
+			byCell[c.getIndex()] /= 8;
+		}
+		this.val = list(byCell);
+		this.result = new WireframeMesh();
+		for (HashOctreeVertex v : tree.getVertices()) {
+			if (!tree.isOnBoundary(v)) {
+				pushCube(v);
+			}
+		}
 	}
 	
 	private final FloatBuffer fb = new FloatBuffer();

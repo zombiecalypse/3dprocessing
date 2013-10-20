@@ -42,16 +42,25 @@ public class Assignment3 {
 		// Do your magic here...
 
 		MarchingCubes mc = new MarchingCubes(tree);
-
-		mc.primaryMC(x);
+		MarchingCubes dual_mc = new MarchingCubes(tree);
 
 		// And show off...
 		MyDisplay d = new MyDisplay();
 //		GLHalfEdgeStructure gl_mesh = new GLHalfEdgeStructure(new HalfEdgeStructure(mc.getResult()));
+
+		mc.primaryMC(x);
 		GLWireframeMesh gl_mesh = new GLWireframeMesh(mc.getResult());
 		gl_mesh.setTitle("Reconstruction");
 		gl_mesh.configurePreferredShader("shaders/trimesh_flat.vert", "shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
 		d.addToDisplay(gl_mesh);
+
+		dual_mc.dualMC(x);
+		GLWireframeMesh gl_dual_mesh = new GLWireframeMesh(dual_mc.getResult());
+		gl_dual_mesh.setTitle("Dual Reconstruction");
+		gl_dual_mesh.configurePreferredShader("shaders/trimesh_flat.vert", "shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
+		d.addToDisplay(gl_dual_mesh);
+		
+		
 
 		// visualization of the per vertex values (blue = negative,
 		// red = positive, green = 0);

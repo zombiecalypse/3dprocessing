@@ -145,6 +145,14 @@ public final class StaticHelpers {
 	public static <A> List<A> list(Iterator<A> x) {
 		return list(iter(x));
 	}
+	
+
+	public static List<Float> list(float[] x) {
+		ArrayList<Float> l = new ArrayList<Float>();
+		for (float a : x)
+			l.add(a);
+		return l;
+	}
 
 	public static <A> Set<A> set(Iterable<A> x) {
 		HashSet<A> l = new HashSet<A>();
