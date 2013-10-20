@@ -72,12 +72,4 @@ public class GLHashtree_Vertices extends GLDisplayable {
 		// TODO Auto-generated method stub
 		
 	}
-
-	public void setName(String string) {
-		this.name = string;
-	}
-	
-	public String toString() {
-		return name;
-	}
 }

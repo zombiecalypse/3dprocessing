@@ -158,19 +158,13 @@ public class HashOctreeCell implements MarchableCube {
 		return this.center;
 	}
 
-
 	@Override
 	public MarchableCube getCornerElement(int Obxyz, HashOctree tree) {
-		return tree.getNbr_c2c(this, Obxyz);
+		return tree.getNbr_c2v(this, Obxyz);
 	}
-
 
 	@Override
 	public int getIndex() {
 		return this.leafIndex;
 	}
-
-
-	
-	
 }

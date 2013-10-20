@@ -74,6 +74,8 @@ public abstract class GLDisplayable {
 	private String vert_shader_file;
 	private String frag_shader_file;
 	private String geom_shader_file;
+
+	private String title;
 	
 
 	/**
@@ -267,6 +269,18 @@ public abstract class GLDisplayable {
 	 */
 	public enum Semantic {
 		POSITION, USERSPECIFIED
+	}
+	
+	public void setTitle(String t) {
+		this.title = t;
+	}
+	
+	public String getTitle() {
+		return title;
+	}
+	
+	public String toString() {
+		return title == null ? super.toString() : title;
 	}
 	
 

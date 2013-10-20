@@ -39,7 +39,7 @@ public class Template {
 		glOct.configurePreferredShader("shaders/octree.vert", "shaders/octree.frag", "shaders/octree.geom");
 		
 		GLHashtree_Vertices glVerts = new GLHashtree_Vertices(oct);
-		glVerts.setName(name + " Verts");
+		glVerts.setTitle(name + " Verts");
 
 		return Arrays.asList(glPointCloud, glOct, glVerts, parenthood, neighbors, vneighbors, vertex_to_cell);
 	}

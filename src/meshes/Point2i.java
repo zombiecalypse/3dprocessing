@@ -1,6 +1,11 @@
 package meshes;
 
 public class Point2i {
+	@Override
+	public String toString() {
+		return "(" + x + ", " + y + ")";
+	}
+
 	public int x;
 	public int y;
 

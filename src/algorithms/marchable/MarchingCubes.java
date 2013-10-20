@@ -45,7 +45,7 @@ public class MarchingCubes {
 	public MarchingCubes(HashOctree tree) {
 		this.tree = tree;
 		for (int i = 0; i < 15; i++) {
-			this.triags[i] = new Point2i(0,0);
+			this.triags[i] = new Point2i(-1,-1);
 		}
 	}
 
@@ -56,7 +56,6 @@ public class MarchingCubes {
 		this.val = x;
 		this.result = new WireframeMesh();
 
-		// TODO
 		for (HashOctreeCell c : tree.getCells()) {
 			pushCube(c);
 		}
@@ -100,23 +99,18 @@ public class MarchingCubes {
 		}
 	}
 	
-	Map<Long, Integer> cache = new HashMap<>();
-	
-	private static long key(int x, int y) {
-		assert Long.SIZE >= 2*Integer.SIZE;
-		return x << Integer.SIZE | y;
-	}
-	
-	private int lookup(Point2i edge, MarchableCube n) {
-		MarchableCube m1 = n.getCornerElement(edge.x, tree);
-		MarchableCube m2 = n.getCornerElement(edge.y, tree);
-		int i1 = m1.getIndex(), i2 = m2.getIndex();
+	Map<Point2i, Integer> cache = new HashMap<>();
 		
-		long theoretical_cache_key = key(i1, i2);
+	private int lookup(Point2i edge, MarchableCube n) {
+		Point2i theoretical_cache_key = key(n, edge);
 		
 		if (cache.containsKey(theoretical_cache_key)) {
 			return cache.get(theoretical_cache_key);
 		}
+		MarchableCube m1 = n.getCornerElement(edge.x, tree);
+		MarchableCube m2 = n.getCornerElement(edge.y, tree);
+		int i1 = m1.getIndex(), i2 = m2.getIndex();
+		
 		float v1 = val.get(i1);
 		float v2 = val.get(i2);
 		assert (v1 <= 0 && v2 >= 0) || (v1 >= 0 && v2 <= 0);
