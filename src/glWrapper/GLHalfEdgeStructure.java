@@ -149,7 +149,7 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 	}
 
 	public String toString() {
-		return structure.toString();
+		return title == null ? structure.toString() : title;
 	}
 
 }

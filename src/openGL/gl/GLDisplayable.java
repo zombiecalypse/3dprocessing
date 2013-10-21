@@ -75,7 +75,7 @@ public abstract class GLDisplayable {
 	private String frag_shader_file;
 	private String geom_shader_file;
 
-	private String title;
+	protected String title;
 	
 
 	/**

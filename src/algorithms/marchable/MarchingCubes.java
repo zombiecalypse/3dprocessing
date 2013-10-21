@@ -46,7 +46,7 @@ public class MarchingCubes {
 	public MarchingCubes(HashOctree tree) {
 		this.tree = tree;
 		for (int i = 0; i < 15; i++) {
-			this.triags[i] = new Point2i(-1,-1);
+			this.triags[i] = new Point2i(-1, -1);
 		}
 	}
 
@@ -82,7 +82,7 @@ public class MarchingCubes {
 			}
 		}
 	}
-	
+
 	private final FloatBuffer fb = new FloatBuffer();
 	private final Point2i[] triags = new Point2i[15];
 
@@ -97,50 +97,55 @@ public class MarchingCubes {
 		for (int i = 0; i < 8; i++) {
 			fb.add(evaluateFunction(n.getCornerElement(i, tree)));
 		}
-		
+
 		MCTable.resolve(fb.render(), triags);
 
 		for (Point2i e : triags) {
-			if (isEmpty(e)) break;
+			if (isEmpty(e))
+				break;
 			int p = lookup(e, n);
 			faceConstructionSide.add(p);
 			if (faceConstructionSide.size() == 3) {
-				this.result.faces.add(faceConstructionSide.render());
+				int[] rendered = faceConstructionSide.render();
 				faceConstructionSide.clear();
+				if (rendered[0] == rendered[1] || 
+						rendered[0] == rendered[2] || 
+						rendered[1] == rendered[2]) continue;
+				this.result.faces.add(rendered);
 			}
 		}
 	}
-	
+
 	Map<Point2i, Integer> cache = new HashMap<>();
 	IntBuffer faceConstructionSide = new IntBuffer();
-		
+
 	private int lookup(Point2i edge, MarchableCube n) {
 		Point2i theoretical_cache_key = key(n, edge);
-		
+
 		if (cache.containsKey(theoretical_cache_key)) {
 			return cache.get(theoretical_cache_key);
 		}
 		MarchableCube m1 = n.getCornerElement(edge.x, tree);
 		MarchableCube m2 = n.getCornerElement(edge.y, tree);
 		int i1 = m1.getIndex(), i2 = m2.getIndex();
-		
+
 		float v1 = val.get(i1);
 		float v2 = val.get(i2);
 		assert (v1 <= 0 && v2 >= 0) || (v1 >= 0 && v2 <= 0);
-		
+
 		// add positions weighted by value
 		Point3f p1 = m1.getPosition();
 		Point3f p2 = m2.getPosition();
-		float w = v1/(v1-v2);
+		float w = v1 / (v1 - v2);
 		Point3f ret = V.scaled_add(p1, 1.0f - w, p2, w);
-		
+
 		int new_index = result.vertices.size();
-		
+
 		cache.put(theoretical_cache_key, new_index);
 		result.vertices.add(ret);
 		return new_index;
 	}
-	
+
 	private boolean isEmpty(Point2i p) {
 		return p.x == -1 && p.y == -1;
 	}

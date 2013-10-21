@@ -19,6 +19,7 @@ import meshes.PointCloud;
 import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;
 import openGL.MyDisplay;
+import transformers.TrivialSmoother;
 import datastructure.halfedge.HalfEdgeStructure;
 import datastructure.octree.HashOctree;
 import datastructure.octree.HashOctreeCell;
@@ -46,19 +47,26 @@ public class Assignment3 {
 
 		// And show off...
 		MyDisplay d = new MyDisplay();
-//		GLHalfEdgeStructure gl_mesh = new GLHalfEdgeStructure(new HalfEdgeStructure(mc.getResult()));
-
+		
 		mc.primaryMC(x);
-		GLWireframeMesh gl_mesh = new GLWireframeMesh(mc.getResult());
-		gl_mesh.setTitle("Reconstruction");
+		HalfEdgeStructure hs = new HalfEdgeStructure(mc.getResult());
+		hs.setTitle("Reconstruction");
+		GLHalfEdgeStructure gl_mesh = new GLHalfEdgeStructure(hs);
 		gl_mesh.configurePreferredShader("shaders/trimesh_flat.vert", "shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
 		d.addToDisplay(gl_mesh);
 
 		dual_mc.dualMC(x);
-		GLWireframeMesh gl_dual_mesh = new GLWireframeMesh(dual_mc.getResult());
-		gl_dual_mesh.setTitle("Dual Reconstruction");
+		HalfEdgeStructure dual_hs = new HalfEdgeStructure(dual_mc.getResult());
+		dual_hs.setTitle("Dual Reconstruction");
+		GLHalfEdgeStructure gl_dual_mesh = new GLHalfEdgeStructure(dual_hs);
 		gl_dual_mesh.configurePreferredShader("shaders/trimesh_flat.vert", "shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
 		d.addToDisplay(gl_dual_mesh);
+		
+		HalfEdgeStructure dual_hs_smoothed = new TrivialSmoother().call(dual_hs);
+		dual_hs_smoothed.setTitle("Smoothed Dual");
+		GLHalfEdgeStructure gl_dual_smoothed = new GLHalfEdgeStructure(dual_hs_smoothed);
+		gl_dual_smoothed.configurePreferredShader("shaders/trimesh_flat.vert", "shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
+		d.addToDisplay(gl_dual_smoothed);
 		
 		
 

@@ -19,7 +19,7 @@ public class SSDMatrices {
 	public static CSRMatrix eye(int nRows, int nCols){
 		CSRMatrix eye = new CSRMatrix(0, nCols);
 		
-		//initialize the identiti matrix part
+		//initialize the identity matrix part
 		for(int i = 0; i< Math.min(nRows, nCols); i++){
 			eye.addRow();
 			eye.lastRow().add(
@@ -109,7 +109,7 @@ public class SSDMatrices {
 			float lambda1,
 			float lambda2){
 		
-				
+		// TODO
 		LinearSystem system = new LinearSystem();
 		system.mat = null;
 		system.b = null;
