@@ -109,6 +109,15 @@ public final class StaticHelpers {
 		};
 
 	}
+	
+	public static <A> Iterable<Indexed<A>> withIndex(Iterable<A> l) {
+		ArrayList<Indexed<A>> x = new ArrayList<>();
+		int i = 0;
+		for (A a: l) {
+			x.add(new Indexed<A>(i++, a));
+		}
+		return x;
+	}
 
 	public static <A> Iterable<A> iter(Iterable<A> x) {
 		return x;
@@ -204,6 +213,14 @@ public final class StaticHelpers {
 			this.a = a;
 			this.b = b;
 		}
+	}
+	
+	public static class Indexed<A> extends Pair<Integer, A> {
+		public Indexed(Integer a, A b) {
+			super(a, b);
+		}
+		public int index() { return a; }
+		public A value() { return b; }
 	}
 
 	public static float[] concat(float[] x, float[] y) {

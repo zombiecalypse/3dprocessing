@@ -1,12 +1,17 @@
 package assignment3;
 
+import javax.vecmath.Point3f;
+
 import meshes.PointCloud;
 import sparse.CSRMatrix;
 import sparse.CSRMatrix.col_val;
 import sparse.LinearSystem;
 import datastructure.octree.HashOctree;
+import datastructure.octree.HashOctreeCell;
 import datastructure.octree.HashOctreeVertex;
 import helpers.MortonCodes;
+import helpers.StaticHelpers.Indexed;
+import static helpers.StaticHelpers.*;
 
 public class SSDMatrices {
 
@@ -58,7 +63,15 @@ public class SSDMatrices {
 	public static CSRMatrix D0Term(HashOctree tree, PointCloud cloud) {
 		CSRMatrix m = new CSRMatrix(cloud.points.size(),
 				tree.numberOfVertices());
-		// TODO
+		// foreach point
+		for (Indexed<Point3f> ip : withIndex(cloud.points)) {
+			// find the vertices surrounding it
+			HashOctreeCell ps_cell = tree.getCell(ip.value());
+			for (int i = 0; i < 8; i++) {
+				// and put to their coordinates in the matrix the value that would make the trilinear interpolation 0.
+				// m.put(row, col, val);
+			}
+		}
 
 		return m;
 	}
@@ -74,16 +87,22 @@ public class SSDMatrices {
 
 		CSRMatrix m = new CSRMatrix(3 * cloud.points.size(),
 				tree.numberOfVertices());
+		// foreach point
+		// find the vertices surrounding it
+		// and set their coordinates in the matrix the value that would make the difference of normals 0.
 		// TODO
 
 		return m;
 	}
 
-	/** Smoothness energy: norm of hessian. Should get close to 0, has n_vertices * 9 entries. */
+	/** Smoothness energy: norm of Hessian. Should get close to 0, has n_vertices * 9 entries. */
 	public static CSRMatrix RTerm(HashOctree tree) {
 
 		CSRMatrix m = new CSRMatrix(tree.numberOfVertices(), 9);
 
+		// foreach cell
+		// find its neighbor cells
+		// 
 		// TODO:
 		return m;
 	}
