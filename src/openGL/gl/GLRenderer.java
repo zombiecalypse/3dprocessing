@@ -124,7 +124,7 @@ public class GLRenderer {
 		
 		renderItem.getShape().loadPreferredShader(this);
 
-		GLDisplayable vertexData = (GLDisplayable) renderItem.getShape()
+		GLDisplayable vertexData = renderItem.getShape()
 				.getVertexData();
 
 		// In the first pass the object has to be given to the buffer (on the

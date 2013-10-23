@@ -3,17 +3,11 @@ package assignment3;
 import glWrapper.GLHalfEdgeStructure;
 import glWrapper.GLHashtree;
 import glWrapper.GLHashtree_Vertices;
-import glWrapper.GLWireframeMesh;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
-import algorithms.marchable.MarchableCube;
 import algorithms.marchable.MarchingCubes;
 import meshes.PointCloud;
 import meshes.exception.DanglingTriangleException;
@@ -22,7 +16,6 @@ import openGL.MyDisplay;
 import transformers.TrivialSmoother;
 import datastructure.halfedge.HalfEdgeStructure;
 import datastructure.octree.HashOctree;
-import datastructure.octree.HashOctreeCell;
 import datastructure.octree.HashOctreeVertex;
 
 public class Assignment3 {
@@ -107,7 +100,7 @@ public class Assignment3 {
 		// compute the implicit function
 		Point3f c = new Point3f(0.f, 0.f, 0.f);
 		for (HashOctreeVertex v : tree.getVertices()) {
-			primaryValues.set(v.index, (float) v.position.distance(c) - 1f);
+			primaryValues.set(v.index, v.position.distance(c) - 1f);
 		}
 		return primaryValues;
 	}

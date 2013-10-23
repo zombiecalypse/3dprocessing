@@ -3,8 +3,6 @@ package glWrapper;
 import static helpers.StaticHelpers.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
 import helpers.Function;
 import helpers.IndexBuffer;
 
@@ -14,7 +12,6 @@ import javax.vecmath.Point3f;
 import datastructure.octree.HashOctree;
 import datastructure.octree.HashOctreeCell;
 import openGL.gl.GLRenderer;
-import openGL.gl.GLDisplayable.Semantic;
 import openGL.objects.Transformation;
 
 public class GlOctreeParenthood extends GLVertexDisplayer {

@@ -4,8 +4,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
-
 import static helpers.StaticHelpers.*;
 
 /**
@@ -65,6 +63,7 @@ public class Vertex extends HEElement implements Cloneable {
 		return new IteratorVF();
 	}
 
+	@Override
 	public String toString() {
 		return "" + index;
 	}

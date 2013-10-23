@@ -279,6 +279,7 @@ public abstract class GLDisplayable {
 		return title;
 	}
 	
+	@Override
 	public String toString() {
 		return title == null ? super.toString() : title;
 	}

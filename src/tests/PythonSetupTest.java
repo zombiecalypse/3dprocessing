@@ -1,8 +1,5 @@
 package tests;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.Matchers.*;
 import java.io.IOException;
 import java.util.ArrayList;
 

@@ -1,16 +1,10 @@
 package assignment1;
 
 import glWrapper.GLHalfEdgeStructure;
-import glWrapper.GLWireframeMesh;
-import helpers.Function;
 import helpers.Functions;
 import static helpers.StaticHelpers.*;
 
 import java.io.IOException;
-
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
-import javax.vecmath.Vector3f;
 
 import datastructure.halfedge.HalfEdgeStructure;
 import datastructure.halfedge.Vertex;

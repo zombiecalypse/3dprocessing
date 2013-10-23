@@ -3,8 +3,6 @@ package glWrapper;
 import static helpers.StaticHelpers.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-
 import helpers.FloatBuffer;
 import helpers.Function;
 import helpers.IndexBuffer;

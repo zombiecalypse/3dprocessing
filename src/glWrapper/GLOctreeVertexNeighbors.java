@@ -14,7 +14,6 @@ import javax.vecmath.Vector3f;
 import openGL.gl.GLRenderer;
 import openGL.objects.Transformation;
 import datastructure.octree.HashOctree;
-import datastructure.octree.HashOctreeCell;
 import datastructure.octree.HashOctreeVertex;
 
 public class GLOctreeVertexNeighbors extends GLVertexDisplayer {

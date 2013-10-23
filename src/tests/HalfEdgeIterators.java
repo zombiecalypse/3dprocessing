@@ -1,6 +1,5 @@
 package tests;
 
-import static org.junit.Assert.*;
 import static helpers.StaticHelpers.*;
 
 import java.io.IOException;
@@ -14,7 +13,6 @@ import meshes.exception.MeshNotOrientedException;
 import meshes.reader.ObjReader;
 
 import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +39,7 @@ public class HalfEdgeIterators extends TestCase {
 		nVertices = d;
 	}
 
+	@Override
 	@Before
 	public void setUp() throws IOException, MeshNotOrientedException,
 			DanglingTriangleException {

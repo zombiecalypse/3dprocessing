@@ -7,7 +7,6 @@ import javax.vecmath.Tuple3f;
 
 import openGL.gl.GLDisplayable;
 import openGL.gl.GLRenderer;
-import openGL.gl.GLDisplayable.Semantic;
 import openGL.objects.Transformation;
 import meshes.PointCloud;
 
@@ -74,6 +73,7 @@ public class GLPointCloud extends GLDisplayable {
 		this.name = string;
 	}
 	
+	@Override
 	public String toString() {
 		return name == null ? super.toString() : name;
 	}

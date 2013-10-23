@@ -4,14 +4,11 @@ import helpers.FloatBuffer;
 import helpers.IntBuffer;
 import helpers.V;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.vecmath.Point3f;
-
-import com.google.common.collect.Range;
 
 import meshes.Point2i;
 import meshes.WireframeMesh;

@@ -53,6 +53,7 @@ public class Face extends HEElement {
 		return new IteratorFE(anEdge);
 	}
 	
+	@Override
 	public String toString(){
 		if(anEdge == null){
 			return "f: not initialized";

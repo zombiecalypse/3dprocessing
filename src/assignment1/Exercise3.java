@@ -1,15 +1,8 @@
 package assignment1;
 
-import static helpers.StaticHelpers.iter;
-import static helpers.StaticHelpers.len;
-
 import java.io.IOException;
 
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
-
 import datastructure.halfedge.HalfEdgeStructure;
-import datastructure.halfedge.Vertex;
 import meshes.WireframeMesh;
 import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;
@@ -18,7 +11,6 @@ import openGL.MyDisplay;
 import transformers.TrivialSmoother;
 import transformers.Transformer;
 import glWrapper.GLHalfEdgeStructure;
-import helpers.Function;
 
 public class Exercise3 {
 

@@ -1,35 +1,19 @@
 package assignment3;
 
 import glWrapper.GLHalfEdgeStructure;
-import glWrapper.GLHashtree;
-import glWrapper.GLHashtree_Vertices;
-import glWrapper.GLWireframeMesh;
-import helpers.StaticHelpers.Pair;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
-
-import algorithms.marchable.MarchableCube;
 import algorithms.marchable.MarchingCubes;
 import meshes.PointCloud;
 import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;
-import meshes.reader.ObjReader;
 import meshes.reader.PlyReader;
 import openGL.MyDisplay;
-import sparse.CSRMatrix;
 import sparse.LinearSystem;
 import sparse.SCIPY;
 import transformers.TrivialSmoother;
 import datastructure.halfedge.HalfEdgeStructure;
 import datastructure.octree.HashOctree;
-import datastructure.octree.HashOctreeCell;
-import datastructure.octree.HashOctreeVertex;
 
 public class Assignment3Angel {
 

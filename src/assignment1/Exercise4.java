@@ -1,21 +1,12 @@
 package assignment1;
 
 import glWrapper.GLHalfEdgeStructure;
-import glWrapper.GLWireframeMesh;
-import helpers.Function;
 import helpers.Functions;
-import static helpers.StaticHelpers.*;
-
 import java.io.IOException;
-import java.util.List;
-
-import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
-import datastructure.halfedge.Face;
 import datastructure.halfedge.HalfEdgeStructure;
-import datastructure.halfedge.Vertex;
 import openGL.MyDisplay;
 import meshes.WireframeMesh;
 import meshes.exception.DanglingTriangleException;

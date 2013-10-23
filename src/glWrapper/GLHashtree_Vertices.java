@@ -9,7 +9,6 @@ import datastructure.octree.HashOctree;
 import datastructure.octree.HashOctreeVertex;
 import openGL.gl.GLDisplayable;
 import openGL.gl.GLRenderer;
-import openGL.gl.GLDisplayable.Semantic;
 import openGL.objects.Transformation;
 
 /**

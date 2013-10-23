@@ -1,18 +1,13 @@
 package helpers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import javax.naming.OperationNotSupportedException;
 import javax.vecmath.Tuple3f;
-
-import sparse.SCIPY;
 
 public final class StaticHelpers {
 	
@@ -238,6 +233,7 @@ class ArrayIterableFloat implements Iterable<Float> {
 		this.as = as;
 	}
 
+	@Override
 	public Iterator<Float> iterator() {
 		return new ArrayIter();
 	}
@@ -269,6 +265,7 @@ class ArrayIterable<A> implements Iterable<A> {
 		this.as = as;
 	}
 
+	@Override
 	public Iterator<A> iterator() {
 		return new ArrayIter();
 	}

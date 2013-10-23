@@ -1,17 +1,10 @@
 package glWrapper;
 
 import helpers.Function;
-import helpers.Functions;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
-
 import javax.media.opengl.GL;
 import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
@@ -148,6 +141,7 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 
 	}
 
+	@Override
 	public String toString() {
 		return title == null ? structure.toString() : title;
 	}

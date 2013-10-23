@@ -67,6 +67,7 @@ public class GLHashtree extends GLDisplayable {
 		this.addElement(vals, Semantic.USERSPECIFIED , 1, "func");
 	}
 
+	@Override
 	public int glRenderFlag() {
 		return GL.GL_POINTS;
 	}
@@ -81,6 +82,7 @@ public class GLHashtree extends GLDisplayable {
 		this.name = string;
 	}
 	
+	@Override
 	public String toString() {
 		return name == null? super.toString() : name;
 	}

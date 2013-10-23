@@ -4,15 +4,11 @@ import helpers.Function;
 import static helpers.StaticHelpers.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.concurrent.Callable;
-
 import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 
@@ -370,6 +366,7 @@ public class HalfEdgeStructure {
 		extractors3d.put(string, function);
 	}
 
+	@Override
 	public String toString() {
 		return title == null ? super.toString() : title;
 	}

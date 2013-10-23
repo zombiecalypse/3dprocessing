@@ -1,7 +1,5 @@
 package algorithms.marchable;
 
-import java.util.ArrayList;
-
 import javax.vecmath.Point3f;
 
 import datastructure.octree.HashOctree;

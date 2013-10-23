@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.WindowConstants;
 
 import meshes.WireframeMesh;
 import openGL.gl.GLDisplayable;
@@ -78,7 +79,7 @@ public class MyDisplay extends JFrame implements ActionListener {
 		this.getContentPane().add(renderPanel.getCanvas(), BorderLayout.CENTER);
 		this.getContentPane().add(new JScrollPane(whatsOnDisplay), BorderLayout.EAST);
 
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.setVisible(true); 
 	}
 

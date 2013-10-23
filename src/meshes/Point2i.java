@@ -15,10 +15,12 @@ public class Point2i {
 		
 	}
 	
+	@Override
 	public int hashCode(){
 		return (x ^ ~y << 16) | (x ^ y) ;
 	}
 	
+	@Override
 	public boolean equals(Object o){
 		return o instanceof Point2i && 
 				((Point2i) o).x == this.x &&

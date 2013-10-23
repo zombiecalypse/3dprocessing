@@ -19,6 +19,7 @@ public abstract class GLVertexDisplayer extends GLDisplayable {
 		this.name = string;
 	}
 
+	@Override
 	public String toString() {
 		return name == null ? super.toString() : name;
 	}

@@ -1,7 +1,5 @@
 package datastructure.octree;
 
-import helpers.MortonCodes;
-
 import java.util.ArrayList;
 
 import javax.vecmath.Point3f;
