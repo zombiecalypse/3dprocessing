@@ -1,6 +1,8 @@
 package assignment3;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.vecmath.Point3f;
 
@@ -79,13 +81,17 @@ public class SSDMatrices {
 				int col = ps_cell.getCornerElement(i, tree).getIndex();
 				float v = 1;
 				for (int x = 0; x < 3 /*u*/; x++) {
-					v *= (ithBit(x, i) - 0.5) * coord(pt, x);
+					v *= 0.5 * bitAsSign(i, x) * coord(pt, x);
 				}
 				m.put(row, col,  v);
 			}
 		}
 
 		return m;
+	}
+	
+	private static int bitAsSign(int x, int i) {
+		return ithBit(i, x) == 1 ? 1 : -1;
 	}
 
 	/**
@@ -100,23 +106,57 @@ public class SSDMatrices {
 		CSRMatrix m = new CSRMatrix(3 * cloud.points.size(),
 				tree.numberOfVertices());
 		// foreach point
-		// find the vertices surrounding it
-		// and set their coordinates in the matrix the value that would make the difference of normals 0.
-		// TODO
+		for (Indexed<Point3f> ip : withIndex(cloud.points)) {
+			int row = ip.index()*3;
+			HashOctreeCell c = tree.getCell(ip.value());
+			float weight = 1f/(4*c.side);
+
+			// find the vertices surrounding it
+			for (int i = 0; i < 8; i++) {
+				for (int coord = 0; coord < 3; coord++) {
+					// and set their coordinates in the matrix the value that would make the difference of normals 0.
+					m.put(row+coord, c.getCornerElement(i, tree).getIndex(), -bitAsSign(i, coord)*weight);
+				}
+			}
+		}
 
 		return m;
 	}
 
-	/** Smoothness energy: norm of Hessian. Should get close to 0, has n_vertices * 9 entries. */
+	/** Smoothness energy: norm of Hessian. Should get close to 0, has n_vertices². */
 	public static CSRMatrix RTerm(HashOctree tree) {
 
-		CSRMatrix m = new CSRMatrix(tree.numberOfVertices(), 9);
+		CSRMatrix m = new CSRMatrix(tree.numberOfVertices(), tree.numberOfVertices());
 
-		// foreach cell
-		// find its neighbor cells
-		// find 
-		// TODO:
+		float total_weight = 0;
+		// foreach vertex
+		for ( Indexed<HashOctreeVertex> iv : withIndex(tree.getVertices())) {
+			HashOctreeVertex v = iv.value();
+			int row = iv.index();
+			// foreach neighbor pair
+			for (Pair<HashOctreeVertex, HashOctreeVertex> p : vertexNeighborPairs(v, tree)) {
+				float dist_north = v.position.distance(p.b.position);
+				float dist_south = v.position.distance(p.a.position);
+				float dist_traverse = dist_north+dist_south;
+				m.put(row, row, 1);
+				m.put(row, p.b.getIndex(), -dist_north/dist_traverse);
+				m.put(row, p.a.getIndex(), -dist_south/dist_traverse);
+				total_weight += dist_north* dist_south;
+			}
+		}
+		m.scale(1f/total_weight);
 		return m;
+	}
+
+	private static Iterable<Pair<HashOctreeVertex, HashOctreeVertex>> vertexNeighborPairs(final HashOctreeVertex v, HashOctree tree) {
+		List<Pair<HashOctreeVertex, HashOctreeVertex>> neighbors = new ArrayList<>();
+		for (int dir = 0b100; dir > 0; dir >>= 1) {
+			HashOctreeVertex n1 = tree.getNbr_v2v(v, dir);
+			HashOctreeVertex n2 = tree.getNbr_v2vMinus(v, dir);
+			if (n1 == null || n2 == null) continue;
+			neighbors.add(pair(n1, n2));
+		}
+		return neighbors;
 	}
 
 	/**
@@ -134,9 +174,10 @@ public class SSDMatrices {
 	public static LinearSystem ssdSystem(HashOctree tree, PointCloud pc,
 			float lambda0, float lambda1, float lambda2) {
 
-		// TODO
+		int N_vertices = tree.numberOfVertices();
 		LinearSystem system = new LinearSystem();
-		system.mat = null;
+		system.mat = new CSRMatrix(0, N_vertices);
+//		system.mat.append(D0Term(tree, pc), );
 		system.b = null;
 		return system;
 	}

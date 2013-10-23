@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.vecmath.Tuple3f;
 
 public final class StaticHelpers {
+	public static <A,B> Pair<A, B> pair(A a, B b) { return new Pair<A, B>(a, b); }
 	
 	public static float coord(Tuple3f v, int c) {
 		if (c == 0) return v.x;
