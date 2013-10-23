@@ -27,4 +27,10 @@ public final class V {
 		p.add(vec2);
 		return p;
 	}
+
+	public static Point3f sub(Point3f x, Point3f y) {
+		Point3f n = new Point3f(x);
+		n.sub(y);
+		return n;
+	}
 }

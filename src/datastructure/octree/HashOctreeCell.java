@@ -165,4 +165,8 @@ public class HashOctreeCell implements MarchableCube {
 	public int getIndex() {
 		return this.leafIndex;
 	}
+	
+	public HashOctreeVertex getOrigin(HashOctree tree) {
+		return tree.getNbr_c2v(this, 0);
+	}
 }

@@ -1,5 +1,7 @@
 package assignment3;
 
+import java.util.Arrays;
+
 import javax.vecmath.Point3f;
 
 import meshes.PointCloud;
@@ -11,6 +13,7 @@ import datastructure.octree.HashOctreeCell;
 import datastructure.octree.HashOctreeVertex;
 import helpers.MortonCodes;
 import helpers.StaticHelpers.Indexed;
+import helpers.V;
 import static helpers.StaticHelpers.*;
 
 public class SSDMatrices {
@@ -65,11 +68,20 @@ public class SSDMatrices {
 				tree.numberOfVertices());
 		// foreach point
 		for (Indexed<Point3f> ip : withIndex(cloud.points)) {
-			// find the vertices surrounding it
+			int row = ip.index();
 			HashOctreeCell ps_cell = tree.getCell(ip.value());
+			// The center designates (0.5,0.5,0.5) in trilinear interpolation
+			Point3f pt = V.sub(ip.value(), ps_cell.center);
+			pt.scale(1.f/ps_cell.side);
+			// find the vertices surrounding it
 			for (int i = 0; i < 8; i++) {
 				// and put to their coordinates in the matrix the value that would make the trilinear interpolation 0.
-				// m.put(row, col, val);
+				int col = ps_cell.getCornerElement(i, tree).getIndex();
+				float v = 1;
+				for (int x = 0; x < 3 /*u*/; x++) {
+					v *= (ithBit(x, i) - 0.5) * coord(pt, x);
+				}
+				m.put(row, col,  v);
 			}
 		}
 
@@ -102,7 +114,7 @@ public class SSDMatrices {
 
 		// foreach cell
 		// find its neighbor cells
-		// 
+		// find 
 		// TODO:
 		return m;
 	}

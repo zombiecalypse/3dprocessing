@@ -11,6 +11,17 @@ import javax.vecmath.Tuple3f;
 
 public final class StaticHelpers {
 	
+	public static float coord(Tuple3f v, int c) {
+		if (c == 0) return v.x;
+		else if (c == 1) return v.y;
+		else if (c == 2) return v.z;
+		else throw new IllegalArgumentException();
+	}
+	
+	public static int ithBit(int i, long v) {
+		return (int) (1 & (v >> i));
+	}
+	
 	public static int[] asArray(int... is) {
 		return is;
 	}
@@ -87,6 +98,10 @@ public final class StaticHelpers {
 	public static <A, B> Iterable<Pair<A, B>> zip(Iterator<A> a, Iterable<B> b) {
 		return zip(iter(a), iter(b));
 	}
+	
+	public static Iterator<Integer> count() {
+		return count(0);
+	}
 
 	public static Iterator<Integer> count(final int start) {
 		return new Iterator<Integer>() {
@@ -107,7 +122,6 @@ public final class StaticHelpers {
 				throw new UnsupportedOperationException();
 			}
 		};
-
 	}
 	
 	public static <A> Iterable<Indexed<A>> withIndex(Iterable<A> l) {
