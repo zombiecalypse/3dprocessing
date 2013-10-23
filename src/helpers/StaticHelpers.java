@@ -8,8 +8,19 @@ import java.util.List;
 import java.util.Set;
 
 import javax.vecmath.Tuple3f;
+import javax.vecmath.Vector3f;
 
 public final class StaticHelpers {
+	public static Iterable<Float> flatten(Iterable<Vector3f> v) {
+		List<Float> l = new ArrayList<>();
+		for (Tuple3f x : v) {
+			l.add(x.x);
+			l.add(x.y);
+			l.add(x.z);
+		}
+		return l;
+	}
+	
 	public static <A,B> Pair<A, B> pair(A a, B b) { return new Pair<A, B>(a, b); }
 	
 	public static float coord(Tuple3f v, int c) {

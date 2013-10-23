@@ -3,6 +3,7 @@ package sparse;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +24,6 @@ public class CSRMatrix {
 	
 	public int nRows; //rows
 	public int nCols; //columns
-	
 	
 	/**
 	 * Construct an empty rows x cols matrix

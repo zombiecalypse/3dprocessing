@@ -2,9 +2,11 @@ package assignment3;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
 
 import meshes.PointCloud;
 import sparse.CSRMatrix;
@@ -175,10 +177,11 @@ public class SSDMatrices {
 			float lambda0, float lambda1, float lambda2) {
 
 		int N_vertices = tree.numberOfVertices();
-		LinearSystem system = new LinearSystem();
-		system.mat = new CSRMatrix(0, N_vertices);
-//		system.mat.append(D0Term(tree, pc), );
-		system.b = null;
+		LinearSystem system = (new LinearSystem.Builder())
+				.mat(D0Term(tree, pc)).b(0f).weight(Math.sqrt(lambda0/N_vertices))
+				.mat(RTerm(tree)).b(0f).weight(Math.sqrt(lambda2/N_vertices))
+				.mat(D1Term(tree, pc)).weight(Math.sqrt(lambda1/N_vertices)).b(
+						flatten(pc.normals)).render();
 		return system;
 	}
 
