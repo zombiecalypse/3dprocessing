@@ -51,16 +51,16 @@ public class SCIPY {
 	 * @throws IOException
 	 */
 	public static void toPythonFiles(CSRMatrix mat, ArrayList<Float> b, String name) throws IOException{
-		File f_i = new File("./python/temp/" + name + "ifile");
+		File f_i = new File(resourcePath("../python/temp/" + name + "ifile"));
 		if(! f_i.getParentFile().exists()){
 			f_i.getParentFile().mkdir();
 		}
 		BufferedWriter w_i = new BufferedWriter(new FileWriter(f_i));
 		
-		File f_j = new File("./python/temp/" + name + "jfile");
+		File f_j = new File(resourcePath("../python/temp/" + name + "jfile"));
 		BufferedWriter w_j = new BufferedWriter(new FileWriter(f_j));
 		
-		File f_v = new File("./python/temp/" + name + "vfile");
+		File f_v = new File(resourcePath("../python/temp/" + name + "vfile"));
 		BufferedWriter w_v = new BufferedWriter(new FileWriter(f_v));
 		
 		int i = 0;
@@ -81,7 +81,7 @@ public class SCIPY {
 		w_v.close();
 		
 		
-		File f_b = new File("./python/temp/" + name + "bfile");
+		File f_b = new File(resourcePath("../python/temp/" + name + "bfile"));
 		BufferedWriter w_b = new BufferedWriter(new FileWriter(f_b));
 		for(float bval : b){
 			w_b.write(bval + "\n");

@@ -67,7 +67,7 @@ public class Assignment3Angel {
 		float lambda1 = 0.3f;
 		float lambda2 = 0.4f;
 		LinearSystem l = SSDMatrices.ssdSystem(tree, pc, lambda0, lambda1, lambda2);
-		SCIPY.solve(l, "omg_this_is_a_name_conflict", out);
+		SCIPY.solve(l, "", out);
 		return out;
 	}
 }
