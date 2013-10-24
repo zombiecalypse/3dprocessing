@@ -70,7 +70,7 @@ public class Assignment3Angel {
 		ArrayList<Float> out = new ArrayList<>();
 		float lambda0 = 1f;
 		float lambda1 = 0.0001f;
-		float lambda2 = 11f;
+		float lambda2 = 10f;
 		LinearSystem l = SSDMatrices.ssdSystem(tree, pc, lambda0, lambda1, lambda2);
 		SCIPY.solve(l, "", out);
 		return out;
