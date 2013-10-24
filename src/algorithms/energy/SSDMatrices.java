@@ -202,10 +202,9 @@ public class SSDMatrices {
 
 		int N_vertices = tree.numberOfVertices();
 		LinearSystem system = (new LinearSystem.Builder())
-				.mat(D0Term(tree, pc)).b(0f)
-				.weight(Math.sqrt(lambda0 / N_vertices)).mat(D1Term(tree, pc))
-				.weight(Math.sqrt(lambda1 / N_vertices)).b(flatten(pc.normals))
-				.mat(RTerm(tree)).b(0f).weight(Math.sqrt(lambda2 / N_vertices))
+				.mat(D0Term(tree, pc)).b(0f).weight(Math.sqrt(lambda0 / N_vertices))
+				.mat(D1Term(tree, pc)).weight(Math.sqrt(lambda1 / N_vertices)).b(flatten(pc.normals))
+				.mat(RTerm(tree)).b(0f).weight(Math.sqrt(lambda2))
 
 				.render();
 		return system;

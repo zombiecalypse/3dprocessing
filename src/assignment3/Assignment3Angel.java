@@ -10,6 +10,7 @@ import algorithms.marchable.MarchingCubes;
 import meshes.PointCloud;
 import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;
+import meshes.reader.ObjReader;
 import meshes.reader.PlyReader;
 import openGL.MyDisplay;
 import sparse.LinearSystem;
@@ -32,7 +33,7 @@ public class Assignment3Angel {
 
 		PointCloud pc = angel();
 		HashOctree tree = new HashOctree(pc, 7, 1, 1.3f);
-		tree.refineTree(1);
+		tree.refineTree(2);
 		ArrayList<Float> x = values(tree, pc);
 
 		MarchingCubes dual_mc = new MarchingCubes(tree);
@@ -59,7 +60,7 @@ public class Assignment3Angel {
 
 
 	private static PointCloud angel() throws IOException {
-		PointCloud points = PlyReader.readPointCloud("./objs/angel_points.ply",
+		PointCloud points = ObjReader.readAsPointCloud("./objs/teapot.obj",
 				true);
 		points.normalizeNormals();
 		System.out.println(points.points.size());

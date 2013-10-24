@@ -1,6 +1,7 @@
 from scipy.sparse import csr_matrix
 import scipy.sparse.linalg as sp
 import numpy as np
+import numexpr as ne
 
 import sys, getopt
 
@@ -51,7 +52,7 @@ def doLeastSquares(argv):
     #do the work
     ij = [rows,cols]
     mat = csr_matrix((vals,ij))
-    result = sp.lsqr(mat,b)
+    result = ne.evaluate('sp.lsqr(mat,b)')
 
     #write out result
     f = open(file_x_out, 'w')
