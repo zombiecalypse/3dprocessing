@@ -118,15 +118,16 @@ public class SSDMatrices {
 				tree.numberOfVertices());
 		// foreach point
 		for (Indexed<Point3f> ip : withIndex(cloud.points)) {
-			int row = ip.index()*3;
+			int row = ip.index() * 3;
 			HashOctreeCell c = tree.getCell(ip.value());
-			float weight = 1f/(4*c.side);
+			float coeff = 1.f / (4 * c.side);
 
 			// find the vertices surrounding it
 			for (int i = 0; i < 8; i++) {
+				int index = c.getCornerElement(i, tree).getIndex();
 				for (int coord = 0; coord < 3; coord++) {
-					// and set their coordinates in the matrix the value that would make the difference of normals 0.
-					m.put(row+coord, c.getCornerElement(i, tree).getIndex(), -bitAsSign(i, coord)*weight);
+					float grad = bitAsSign(i, 2 - coord) * coeff;
+					m.put(row + coord, index, grad);
 				}
 			}
 		}
@@ -135,41 +136,47 @@ public class SSDMatrices {
 		return m;
 	}
 
-	/** Smoothness energy: norm of Hessian. Should get close to 0, has n_vertices². */
+	/**
+	 * Smoothness energy: norm of Hessian. Should get close to 0, has
+	 * n_vertices².
+	 */
 	public static CSRMatrix RTerm(HashOctree tree) {
 
 		CSRMatrix m = new CSRMatrix(0, tree.numberOfVertices());
 
 		float total_weight = 0;
 		// foreach vertex
-		for ( Indexed<HashOctreeVertex> iv : withIndex(tree.getVertices())) {
+		for (Indexed<HashOctreeVertex> iv : withIndex(tree.getVertices())) {
 			HashOctreeVertex v = iv.value();
 			int row = iv.index();
 			// foreach neighbor pair
 			int i = 0;
-			for (Pair<HashOctreeVertex, HashOctreeVertex> p : vertexNeighborPairs(v, tree)) {
+			for (Pair<HashOctreeVertex, HashOctreeVertex> p : vertexNeighborPairs(
+					v, tree)) {
 				float dist_north = v.position.distance(p.b.position);
 				float dist_south = v.position.distance(p.a.position);
-				float dist_traverse = dist_north+dist_south;
+				float dist_traverse = dist_north + dist_south;
 				ArrayList<col_val> cur = m.addRow();
 				cur.add(new col_val(row, 1));
-				cur.add(new col_val(p.b.getIndex(), -dist_south/dist_traverse));
-				cur.add(new col_val(p.a.getIndex(), -dist_north/dist_traverse));
+				cur.add(new col_val(p.b.getIndex(), -dist_south / dist_traverse));
+				cur.add(new col_val(p.a.getIndex(), -dist_north / dist_traverse));
 				total_weight += dist_north * dist_south;
 				i++;
 			}
 		}
-		m.scale(1f/total_weight);
+		m.scale(1f / total_weight);
 		System.out.println(m);
 		return m;
 	}
 
-	private static Iterable<Pair<HashOctreeVertex, HashOctreeVertex>> vertexNeighborPairs(final HashOctreeVertex v, HashOctree tree) {
+	private static Iterable<Pair<HashOctreeVertex, HashOctreeVertex>> vertexNeighborPairs(
+			final HashOctreeVertex v, HashOctree tree) {
 		List<Pair<HashOctreeVertex, HashOctreeVertex>> neighbors = new ArrayList<>();
 		for (int dir = 0b100; dir > 0; dir >>= 1) {
 			HashOctreeVertex n1 = tree.getNbr_v2v(v, dir);
 			HashOctreeVertex n2 = tree.getNbr_v2vMinus(v, dir);
-			if (n1 == null || n2 == null) continue;
+			if (n1 == null || n2 == null)
+				continue;
 			neighbors.add(pair(n1, n2));
 		}
 		return neighbors;
@@ -192,12 +199,12 @@ public class SSDMatrices {
 
 		int N_vertices = tree.numberOfVertices();
 		LinearSystem system = (new LinearSystem.Builder())
-				.mat(D0Term(tree, pc)).b(0f).weight(Math.sqrt(lambda0/N_vertices))
-				.mat(D1Term(tree, pc)).weight(Math.sqrt(lambda1/N_vertices)).b(
-						flatten(pc.normals))
-				.mat(RTerm(tree)).b(0f).weight(Math.sqrt(lambda2/N_vertices))
-				
-						.render();
+				.mat(D0Term(tree, pc)).b(0f)
+				.weight(Math.sqrt(lambda0 / N_vertices)).mat(D1Term(tree, pc))
+				.weight(Math.sqrt(lambda1 / N_vertices)).b(flatten(pc.normals))
+				.mat(RTerm(tree)).b(0f).weight(Math.sqrt(lambda2 / N_vertices))
+
+				.render();
 		return system;
 	}
 
