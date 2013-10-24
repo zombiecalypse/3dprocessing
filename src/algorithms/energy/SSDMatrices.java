@@ -8,6 +8,7 @@ import java.util.List;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
+import algorithms.marchable.MarchableCube;
 import meshes.PointCloud;
 import sparse.CSRMatrix;
 import sparse.CSRMatrix.col_val;
@@ -76,31 +77,33 @@ public class SSDMatrices {
 			HashOctreeCell ps_cell = tree.getCell(ip.value());
 			// The center designates (0.5,0.5,0.5) in trilinear interpolation
 			Point3f pt = V.sub(ip.value(), ps_cell.center);
-			pt.scale(1.f/ps_cell.side);
+			pt.scale(1.f / ps_cell.side);
 			// pt in [-0.5,0.5]³
 			assert (pt.x >= -0.5 && pt.y >= -0.5 && pt.z >= -0.5);
 			assert (pt.x <= 0.5 && pt.y <= 0.5 && pt.z <= 0.5);
 			// find the vertices surrounding it
 			float total_weights = 0;
 			for (int i = 0; i < 8; i++) {
-				// and put to their coordinates in the matrix the value that would make the trilinear interpolation 0.
+				// and put to their coordinates in the matrix the value that
+				// would make the trilinear interpolation 0.
 				int col = ps_cell.getCornerElement(i, tree).getIndex();
 				float v = 1;
-				for (int coord = 0; coord < 3 /*u*/; coord++) {
-					float multiplier = (float) (0.5 + 0.5 * bitAsSign(i, coord) * coord(pt, coord));
+				for (int coord = 0; coord < 3 /* u */; coord++) {
+					float multiplier = (float) (0.5 + 0.5 * bitAsSign(i, 2-coord)
+							* coord(pt, coord));
 					assert multiplier >= 0 && multiplier <= 1 : multiplier;
 					v *= multiplier;
 				}
-				m.put(row, col,  v);
+				m.put(row, col, v);
 				total_weights += v;
 			}
-			assert Math.abs(total_weights-1) < 1e-4;
+			assert Math.abs(total_weights - 1) < 1e-4;
 		}
 
 		System.out.println(m);
 		return m;
 	}
-	
+
 	private static int bitAsSign(int x, int i) {
 		return ithBit(i, x) == 1 ? 1 : -1;
 	}
