@@ -6,6 +6,7 @@ import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 
 import algorithms.marchable.MarchableCube;
+import jogamp.graph.font.typecast.ot.table.CffTable.Index;
 
 /**
  * Implementation of a hashoctree cell. A cell stores its Morton code
@@ -139,34 +140,33 @@ public class HashOctreeCell implements MarchableCube {
 		target.y += ((Obxyz & 0b010) == 0       ? -side/2: side/2);
 		target.z += ((Obxyz & 0b001) == 0       ? -side/2: side/2);
 	}
-	
-	public Point3f computeVertexPos(int Obxyz) {
-		Point3f target = new Point3f();
-		computeVertexPos(Obxyz, target);
-		return target;
-	}
-	
+
+
 	public boolean isLeaf() {
 		return points != null;
+	}
+
+	public String toString() {
+		return Long.toBinaryString(code) + " lvl: " + lvl + " index: " + leafIndex;
 	}
 
 
 	@Override
 	public Point3f getPosition() {
-		return this.center;
+		return center;
 	}
+
 
 	@Override
 	public MarchableCube getCornerElement(int Obxyz, HashOctree tree) {
 		return tree.getNbr_c2v(this, Obxyz);
 	}
 
+
 	@Override
 	public int getIndex() {
-		return this.leafIndex;
+		return leafIndex;
 	}
 	
-	public HashOctreeVertex getOrigin(HashOctree tree) {
-		return tree.getNbr_c2v(this, 0);
-	}
+	
 }

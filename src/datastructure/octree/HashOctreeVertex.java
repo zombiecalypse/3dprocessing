@@ -1,8 +1,11 @@
 package datastructure.octree;
 
+import java.util.ArrayList;
+
 import javax.vecmath.Point3f;
 
 import algorithms.marchable.MarchableCube;
+
 
 
 /**
@@ -36,7 +39,6 @@ public class HashOctreeVertex implements MarchableCube {
 		position = new Point3f();
 	}
 	
-	@Override
 	public boolean equals(Object o){
 		assert(code >= 0);
 		if(o instanceof HashOctreeVertex){
@@ -45,14 +47,13 @@ public class HashOctreeVertex implements MarchableCube {
 		return false;
 	}
 	
-	@Override
 	public String toString() {
-		return Long.toBinaryString(code);
+		return Long.toBinaryString(code) + " minlvl: " + minLvl + " maxlvl: " + maxLvl;
 	}
 
 	@Override
 	public Point3f getPosition() {
-		return position;
+		return this.position;
 	}
 
 	@Override

@@ -51,16 +51,16 @@ public class SCIPY {
 	 * @throws IOException
 	 */
 	public static void toPythonFiles(CSRMatrix mat, ArrayList<Float> b, String name) throws IOException{
-		File f_i = new File(resourcePath("../python/temp/" + name + "ifile"));
+		File f_i = new File(tempPath(name + "ifile"));
 		if(! f_i.getParentFile().exists()){
 			f_i.getParentFile().mkdir();
 		}
 		BufferedWriter w_i = new BufferedWriter(new FileWriter(f_i));
 		
-		File f_j = new File(resourcePath("../python/temp/" + name + "jfile"));
+		File f_j = new File(tempPath(name + "jfile"));
 		BufferedWriter w_j = new BufferedWriter(new FileWriter(f_j));
 		
-		File f_v = new File(resourcePath("../python/temp/" + name + "vfile"));
+		File f_v = new File(tempPath(name + "vfile"));
 		BufferedWriter w_v = new BufferedWriter(new FileWriter(f_v));
 		
 		int i = 0;
@@ -81,7 +81,7 @@ public class SCIPY {
 		w_v.close();
 		
 		
-		File f_b = new File(resourcePath("../python/temp/" + name + "bfile"));
+		File f_b = new File(tempPath(name + "bfile"));
 		BufferedWriter w_b = new BufferedWriter(new FileWriter(f_b));
 		for(float bval : b){
 			w_b.write(bval + "\n");
@@ -95,10 +95,10 @@ public class SCIPY {
 		
 		/*execute the script*/
 		String python = resourcePath("../python/doLeastSqr.py");
-		String ifile = resourcePath("../python/temp/" + matrix_name + "ifile");
-		String jfile = resourcePath("../python/temp/" + matrix_name + "jfile");
-		String bfile = resourcePath("../python/temp/" + matrix_name + "bfile");
-		String vfile = resourcePath("../python/temp/" + matrix_name + "vfile");
+		String ifile = tempPath(matrix_name + "ifile");
+		String jfile = tempPath(matrix_name + "jfile");
+		String bfile = tempPath(matrix_name + "bfile");
+		String vfile = tempPath(matrix_name + "vfile");
 		Runtime rt = Runtime.getRuntime();
 		String exec = String.format("python %s -i %s -j %s -b %s -v %s -x /tmp/%sxout", python, ifile, jfile, bfile, vfile, matrix_name);
 		System.out.format("Executing: %s\n", exec);

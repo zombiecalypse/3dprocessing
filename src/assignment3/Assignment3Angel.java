@@ -1,8 +1,11 @@
 package assignment3;
 
 import glWrapper.GLHalfEdgeStructure;
+
 import java.io.IOException;
 import java.util.ArrayList;
+
+import algorithms.energy.SSDMatrices;
 import algorithms.marchable.MarchingCubes;
 import meshes.PointCloud;
 import meshes.exception.DanglingTriangleException;
@@ -28,7 +31,8 @@ public class Assignment3Angel {
 			DanglingTriangleException, IOException {
 
 		PointCloud pc = angel();
-		HashOctree tree = new HashOctree(pc, 6, 10, 1.2f);
+		HashOctree tree = new HashOctree(pc, 7, 1, 1.3f);
+		tree.refineTree(2);
 		ArrayList<Float> x = values(tree, pc);
 
 		MarchingCubes dual_mc = new MarchingCubes(tree);
@@ -58,14 +62,15 @@ public class Assignment3Angel {
 		PointCloud points = PlyReader.readPointCloud("./objs/angel_points.ply",
 				true);
 		points.normalizeNormals();
+		System.out.println(points.points.size());
 		return points;
 	}
 
 	private static ArrayList<Float> values(HashOctree tree, PointCloud pc) throws IOException {
 		ArrayList<Float> out = new ArrayList<>();
-		float lambda0 = 0.3f;
-		float lambda1 = 0.3f;
-		float lambda2 = 0.4f;
+		float lambda0 = 1f;
+		float lambda1 = 0.0001f;
+		float lambda2 = 11f;
 		LinearSystem l = SSDMatrices.ssdSystem(tree, pc, lambda0, lambda1, lambda2);
 		SCIPY.solve(l, "", out);
 		return out;

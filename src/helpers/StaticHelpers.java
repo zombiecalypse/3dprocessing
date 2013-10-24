@@ -38,9 +38,12 @@ public final class StaticHelpers {
 	public static int[] asArray(int... is) {
 		return is;
 	}
-	
+
 	public static String resourcePath(String path) {
 		return StaticHelpers.class.getResource(path).getFile();
+	}
+	public static String tempPath(String path) {
+		return "/tmp/"+path;
 	}
 	
 	/** All directions (including diagonals) in the 0bXYZ format */
