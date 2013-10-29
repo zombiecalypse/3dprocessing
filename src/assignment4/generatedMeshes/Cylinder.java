@@ -10,7 +10,7 @@ import javax.vecmath.Matrix4f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
-import meshes.HalfEdgeStructure;
+import datastructure.halfedge.HalfEdgeStructure;
 import meshes.PointCloud;
 import meshes.WireframeMesh;
 import meshes.exception.DanglingTriangleException;

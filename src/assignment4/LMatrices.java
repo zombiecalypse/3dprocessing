@@ -6,9 +6,8 @@ import java.util.Iterator;
 
 import javax.vecmath.Vector3f;
 
-import meshes.HalfEdge;
-import meshes.HalfEdgeStructure;
-import meshes.Vertex;
+import datastructure.halfedge.HalfEdgeStructure;
+import datastructure.halfedge.Vertex;
 import sparse.CSRMatrix;
 import sparse.CSRMatrix.col_val;
 

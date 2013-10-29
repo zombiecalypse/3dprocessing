@@ -1,16 +1,12 @@
 package assignment4;
 
-import glWrapper.GLHalfedgeStructure;
 
 import java.util.Collections;
 import java.util.Iterator;
 
 import javax.vecmath.Vector3f;
 
-import meshes.HEData1d;
-import meshes.HEData3d;
-import meshes.HalfEdgeStructure;
-import meshes.Vertex;
+import datastructure.halfedge.HalfEdgeStructure;
 import meshes.WireframeMesh;
 import openGL.MyDisplay;
 import sparse.CSRMatrix;

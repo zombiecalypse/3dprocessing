@@ -2,11 +2,12 @@ package assignment4;
 
 
 import static org.junit.Assert.fail;
-import meshes.HalfEdgeStructure;
 import meshes.WireframeMesh;
 import meshes.reader.ObjReader;
 
 import org.junit.Before;
+
+import datastructure.halfedge.HalfEdgeStructure;
 
 public class Assignment4_1_Tests {
 	

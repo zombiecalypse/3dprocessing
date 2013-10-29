@@ -4,7 +4,7 @@ import glWrapper.GLWireframeMesh;
 
 import java.io.IOException;
 
-import meshes.HalfEdgeStructure;
+import datastructure.halfedge.HalfEdgeStructure;
 import meshes.WireframeMesh;
 import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;

@@ -1,12 +1,11 @@
 package assignment4.generatedMeshes;
 
-import glWrapper.GLHalfedgeStructure;
+import glWrapper.GLHalfEdgeStructure;
 import glWrapper.GLWireframeMesh;
 
 import javax.vecmath.Point3f;
 
-import meshes.HEData3d;
-import meshes.HalfEdgeStructure;
+import datastructure.halfedge.HalfEdgeStructure;
 import meshes.WireframeMesh;
 import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;
@@ -78,7 +77,7 @@ public class Bock {
 		
 		//HEData3d colors = FixedBoundarySmoothing.binaryColorMap(b.boundary, hs);
 		HEData3d colors = Assignment4_3_minimalSurfaces.binaryColorMap(Assignment4_3_minimalSurfaces.collectBoundary(hs, 1), hs);
-		GLHalfedgeStructure glHE = new GLHalfedgeStructure(hs);
+		GLHalfEdgeStructure glHE = new GLHalfEdgeStructure(hs);
 		glHE.configurePreferredShader("shaders/trimesh_flatColor3f.vert", 
 				"shaders/trimesh_flatColor3f.frag", 
 				"shaders/trimesh_flatColor3f.geom");
