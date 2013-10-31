@@ -1,4 +1,4 @@
-package assignment4;
+package tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -15,6 +15,7 @@ import meshes.reader.ObjReader;
 import org.junit.Before;
 import org.junit.Test;
 
+import assignment4.LMatrices;
 import sparse.CSRMatrix;
 import sparse.CSRMatrix.col_val;
 import datastructure.halfedge.HalfEdgeStructure;
