@@ -1,32 +1,32 @@
 package assignment4;
 
+import static helpers.StaticHelpers.cot;
+import static helpers.StaticHelpers.iter;
+import static helpers.StaticHelpers.list;
+
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.vecmath.Vector3f;
 
+import sparse.CSRMatrix;
+import sparse.SparseDictMatrix;
 import datastructure.halfedge.Face;
 import datastructure.halfedge.HalfEdge;
 import datastructure.halfedge.HalfEdgeStructure;
 import datastructure.halfedge.Vertex;
-import sparse.CSRMatrix;
-import sparse.CSRMatrix.col_val;
-import sparse.SparseDictMatrix;
-import static helpers.StaticHelpers.*;
 
 /**
  * Methods to create different flavours of the cotangent and uniform laplacian.
- * 
+ *
  * @author Alf
- * 
+ *
  */
 public class LMatrices {
 
 	/**
 	 * The uniform Laplacian
-	 * 
+	 *
 	 * @param hs
 	 * @return
 	 */
@@ -47,30 +47,26 @@ public class LMatrices {
 
 	/**
 	 * The cotangent Laplacian
-	 * 
+	 *
 	 * @param hs
 	 * @return
 	 */
 	public static CSRMatrix mixedCotanLaplacian(HalfEdgeStructure hs) {
 		SparseDictMatrix m = new SparseDictMatrix();
 		for (Vertex v : hs.getVertices()) {
-			Vector3f sum = new Vector3f();
+		  // In each vertex...
+		  float a_mixed4 = 4 * Math.abs(aMixed(v));
 			for (HalfEdge e1 : iter(v.iteratorVE())) {
+			  // take every edge weighted by cotangens of the adjacent angles
 				HalfEdge e2 = e1.getOpposite();
-				float alpha = e1.opposingAngle();
-				float beta = e2.opposingAngle();
-				Vector3f sub = e1.asVector();
-				sub.scale(cot(alpha) + cot(beta));
-				sum.add(sub);
+				float alpha = (float) Math.max(e1.opposingAngle(), 1e-2);
+				float beta = (float) Math.max(e2.opposingAngle(), 1e-2);
+				float weight = cot(alpha) + cot(beta);
+				m.putOnce(v.index, e1.incident_v.index, -1.f/weight/a_mixed4);
+				m.add(v.index, v.index, 1.f/weight/a_mixed4);
 			}
-			assert !Float.isNaN(sum.length());
-			assert !Float.isInfinite(sum.length());
-			float ret = sum.length() / (4 * Math.abs(aMixed(v)));
-			assert !Float.isInfinite(ret);
-			assert !Float.isNaN(ret);
-			assert ret >= 0;
 		}
-		return null;
+		return m.toCsr();
 	}
 
 	private static float aMixed(Vertex a) {
@@ -101,7 +97,7 @@ public class LMatrices {
 
 	/**
 	 * A symmetric cotangent Laplacian, cf Assignment 4, exercise 4.
-	 * 
+	 *
 	 * @param hs
 	 * @return
 	 */
@@ -112,7 +108,7 @@ public class LMatrices {
 	/**
 	 * helper method to multiply x,y and z coordinates of the halfedge structure
 	 * at once
-	 * 
+	 *
 	 * @param m
 	 * @param s
 	 * @param res

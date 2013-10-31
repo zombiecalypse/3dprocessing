@@ -1,6 +1,8 @@
 package assignment4;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -16,7 +18,6 @@ import org.junit.Test;
 import sparse.CSRMatrix;
 import sparse.CSRMatrix.col_val;
 import datastructure.halfedge.HalfEdgeStructure;
-import static helpers.StaticHelpers.*;
 
 public class Assignment4_1_Tests {
 
@@ -35,29 +36,40 @@ public class Assignment4_1_Tests {
 		hs2 = new HalfEdgeStructure(m);
 
 	}
-	
-	public static void laplacianCheck(HalfEdgeStructure hs) {
-		CSRMatrix l = LMatrices.uniformLaplacian(hs);
+
+	public static void laplacianCheck(HalfEdgeStructure hs, CSRMatrix l) {
 		assertNotNull(l);
 		assertEquals(l.nRows, l.nCols);
 		assertEquals(hs.getVertices().size(), l.nCols);
 		for (int row = 0; row < l.nRows; row++) {
 			List<col_val> t = l.rows.get(row);
 			boolean anyNotZero = false;
+			float sum = 0;
 			for (col_val c : t) {
-				anyNotZero |= c.val > 0.001; 
+				anyNotZero |= c.val > 0.001;
+				sum += c.val;
 			}
 			assertTrue(anyNotZero);
+			assertEquals(0, sum, 1e-2);
 		}
 	}
 
 	@Test
 	public void uniformLaplacianOnSphereRuns() {
-		laplacianCheck(hs);
+		laplacianCheck(hs, LMatrices.uniformLaplacian(hs));
 	}
 
-	@Test
-	public void uniformLaplacianOnUglySphereRuns() {
-		laplacianCheck(hs2);
-	}
+  @Test
+  public void uniformLaplacianOnUglySphereRuns() {
+    laplacianCheck(hs2, LMatrices.uniformLaplacian(hs2));
+  }
+
+  @Test
+  public void cotanLaplacianOnUglySphereRuns() {
+    laplacianCheck(hs2, LMatrices.mixedCotanLaplacian(hs2));
+  }
+  @Test
+  public void cotanLaplacianOnSphereRuns() {
+    laplacianCheck(hs, LMatrices.mixedCotanLaplacian(hs));
+  }
 }
