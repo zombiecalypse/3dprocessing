@@ -37,7 +37,7 @@ public class Assignment4_1_Tests {
 
 	}
 
-	public static void laplacianCheck(HalfEdgeStructure hs, CSRMatrix l) {
+	public static void laplacianCheck(HalfEdgeStructure hs, CSRMatrix l, float expectedError) {
 		assertNotNull(l);
 		assertEquals(l.nRows, l.nCols);
 		assertEquals(hs.getVertices().size(), l.nCols);
@@ -50,26 +50,26 @@ public class Assignment4_1_Tests {
 				sum += c.val;
 			}
 			assertTrue(anyNotZero);
-			assertEquals(0, sum, 1e-2);
+			assertEquals(0, sum, expectedError);
 		}
 	}
 
 	@Test
 	public void uniformLaplacianOnSphereRuns() {
-		laplacianCheck(hs, LMatrices.uniformLaplacian(hs));
+		laplacianCheck(hs, LMatrices.uniformLaplacian(hs), 1e-6f);
 	}
 
   @Test
   public void uniformLaplacianOnUglySphereRuns() {
-    laplacianCheck(hs2, LMatrices.uniformLaplacian(hs2));
+    laplacianCheck(hs2, LMatrices.uniformLaplacian(hs2), 1e-6f);
   }
 
   @Test
   public void cotanLaplacianOnUglySphereRuns() {
-    laplacianCheck(hs2, LMatrices.mixedCotanLaplacian(hs2));
+    laplacianCheck(hs2, LMatrices.mixedCotanLaplacian(hs2), 1e-2f); // quite messy
   }
   @Test
   public void cotanLaplacianOnSphereRuns() {
-    laplacianCheck(hs, LMatrices.mixedCotanLaplacian(hs));
+    laplacianCheck(hs, LMatrices.mixedCotanLaplacian(hs), 1e-5f); // many float computations
   }
 }
