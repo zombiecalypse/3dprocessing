@@ -47,7 +47,7 @@ public class CSRMatrix {
 		ArrayList<col_val> r = rows.get(row);
 		r.add(new col_val(col, val));
 		this.nRows = rows.size();
-		this.nCols = Math.max(nCols, col);
+		this.nCols = Math.max(nCols, col+1);
 	}
 	
 	/**

@@ -1,6 +1,8 @@
 package assignment4;
 
 
+import glWrapper.GLHalfEdgeStructure;
+
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -46,7 +48,7 @@ public class Assignment4_3_minimalSurfaces {
 		MyDisplay disp = new MyDisplay();
 		HEData3d colors = binaryColorMap(boundary, hs);
 		
-		GLHalfedgeStructure glHE = new GLHalfedgeStructure(hs);
+		GLHalfEdgeStructure glHE = new GLHalfEdgeStructure(hs);
 		glHE.add(colors, "color");
 		glHE.configurePreferredShader("shaders/trimesh_flatColor3f.vert", 
 				"shaders/trimesh_flatColor3f.frag", 

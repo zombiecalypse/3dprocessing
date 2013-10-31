@@ -28,11 +28,14 @@ public class LMatrices {
 	 */
 	public static CSRMatrix uniformLaplacian(HalfEdgeStructure hs){
 		SparseDictMatrix m = new SparseDictMatrix();
-		for (Pair<Integer, Vertex> p : withIndex(hs.getVertices())) {
-			m.put(p.a, p.b.index, 1);
-			List<Vertex> neighbors = list(p.b.iteratorVV());
+		int nVertices = hs.getVertices().size();
+		for (Vertex v : hs.getVertices()) {
+			m.put(v.index, v.index, 1);
+			assert v.index < nVertices;
+			List<Vertex> neighbors = list(v.iteratorVV());
 			for (Vertex n : neighbors) {
-				m.put(p.a, n.index, -1f/neighbors.size());
+				assert n.index < nVertices;
+				m.put(v.index, n.index, -1f/neighbors.size());
 			}
 		}
 		return m.toCsr();
