@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class CSRMatrix {
 	
-	// row[i] will be the compresse representation of the ith row of the matrix.
+	// row[i] will be the compressed representation of the ith row of the matrix.
 	// Each row is represented by a list of column/value pairs.
 	public ArrayList<ArrayList<col_val>> rows;
 	

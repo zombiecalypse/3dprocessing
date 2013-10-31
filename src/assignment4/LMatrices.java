@@ -3,6 +3,7 @@ package assignment4;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.vecmath.Vector3f;
 
@@ -10,6 +11,8 @@ import datastructure.halfedge.HalfEdgeStructure;
 import datastructure.halfedge.Vertex;
 import sparse.CSRMatrix;
 import sparse.CSRMatrix.col_val;
+import sparse.SparseDictMatrix;
+import static helpers.StaticHelpers.*;
 
 /**
  * Methods to create different flavours of the cotangent and uniform laplacian.
@@ -24,7 +27,15 @@ public class LMatrices {
 	 * @return
 	 */
 	public static CSRMatrix uniformLaplacian(HalfEdgeStructure hs){
-		return null;
+		SparseDictMatrix m = new SparseDictMatrix();
+		for (Pair<Integer, Vertex> p : withIndex(hs.getVertices())) {
+			m.put(p.a, p.b.index, 1);
+			List<Vertex> neighbors = list(p.b.iteratorVV());
+			for (Vertex n : neighbors) {
+				m.put(p.a, n.index, -1f/neighbors.size());
+			}
+		}
+		return m.toCsr();
 	}
 	
 	/**
