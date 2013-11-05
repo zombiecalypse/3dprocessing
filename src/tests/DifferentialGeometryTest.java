@@ -4,8 +4,7 @@ import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static helpers.StaticHelpers.*;
-import helpers.Function;
-import helpers.Functions;
+import helpers.MyFunctions;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,6 +19,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+
+import com.google.common.base.Function;
 
 import datastructure.halfedge.Face;
 import datastructure.halfedge.HalfEdge;
@@ -61,9 +62,9 @@ public class DifferentialGeometryTest {
 	
 	@Test
 	public void testCurvatureSanity() {
-		Function<Vertex, Float> laplacian = Functions.laplacian();
+		Function<Vertex, Float> laplacian = MyFunctions.laplacian();
 		for (Vertex v: mesh.getVertices()) {
-			assertThat(0f, is(lessThanOrEqualTo(laplacian.call(v))));
+			assertThat(0f, is(lessThanOrEqualTo(laplacian.apply(v))));
 		}
 	}
 
@@ -71,10 +72,10 @@ public class DifferentialGeometryTest {
 	@Ignore("We don't have the gaussian curvature yet")
 	@Test
 	public void testCurvatureIntegral() {
-		Function<Vertex, Float> curvature = Functions.laplacian();
+		Function<Vertex, Float> curvature = MyFunctions.laplacian();
 		float sum = 0;
 		for (Vertex v: mesh.getVertices()) {
-			sum += curvature.call(v);
+			sum += curvature.apply(v);
 		}
 		assertEquals(2*Math.PI, sum, 0.001);
 	}

@@ -1,4 +1,4 @@
-package assignment4;
+package helpers;
 
 import static helpers.StaticHelpers.cot;
 import static helpers.StaticHelpers.iter;
@@ -59,11 +59,15 @@ public class LMatrices {
 			for (HalfEdge e1 : iter(v.iteratorVE())) {
 			  // take every edge weighted by cotangens of the adjacent angles
 				HalfEdge e2 = e1.getOpposite();
+				if (e1.getFace() == null || e2.getFace() == null) continue;
 				float alpha = (float) Math.max(e1.opposingAngle(), 1e-2);
 				float beta = (float) Math.max(e2.opposingAngle(), 1e-2);
 				float weight = cot(alpha) + cot(beta);
-				m.putOnce(v.index, e1.incident_v.index, -1.f/weight/a_mixed4);
-				m.add(v.index, v.index, 1.f/weight/a_mixed4);
+				float val = 1.f/weight/a_mixed4;
+				if (Math.abs(val) > 1e-2) { 
+					m.putOnce(v.index, e1.incident_v.index, -val);
+					m.add(v.index, v.index, val);
+				}
 			}
 		}
 		return m.toCsr();

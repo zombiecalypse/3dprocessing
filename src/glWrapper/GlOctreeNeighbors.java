@@ -3,7 +3,7 @@ package glWrapper;
 import static helpers.StaticHelpers.*;
 
 import java.util.ArrayList;
-import helpers.Function;
+import com.google.common.base.Function;
 import helpers.IndexBuffer;
 
 import javax.media.opengl.GL;
@@ -17,7 +17,7 @@ import openGL.objects.Transformation;
 public class GlOctreeNeighbors extends GLVertexDisplayer {
 	private static Function<HashOctreeCell, Point3f> cellCenter = new Function<HashOctreeCell, Point3f>() {
 		@Override
-		public Point3f call(HashOctreeCell a) {
+		public Point3f apply(HashOctreeCell a) {
 			return a.center;
 		}
 	};

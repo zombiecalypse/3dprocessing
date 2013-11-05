@@ -3,6 +3,7 @@ package tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import helpers.LMatrices;
 
 import java.io.IOException;
 import java.util.List;
@@ -15,7 +16,6 @@ import meshes.reader.ObjReader;
 import org.junit.Before;
 import org.junit.Test;
 
-import assignment4.LMatrices;
 import sparse.CSRMatrix;
 import sparse.CSRMatrix.col_val;
 import datastructure.halfedge.HalfEdgeStructure;

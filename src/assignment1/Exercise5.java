@@ -1,8 +1,8 @@
 package assignment1;
 
 import glWrapper.GLHalfEdgeStructure;
-import helpers.Function;
-import helpers.Functions;
+import com.google.common.base.Function;
+import helpers.MyFunctions;
 import static helpers.StaticHelpers.*;
 
 import java.io.IOException;
@@ -39,9 +39,9 @@ public class Exercise5 {
 			return;
 		}
 
-		Function<Vertex, Float> f = comp(Functions.logNormalize(10), Functions.laplacian());
+		Function<Vertex, Float> f = comp(MyFunctions.logNormalize(10), MyFunctions.laplacian());
 		
-		hs.putExtractor3d("color", Functions.asColor(f));
+		hs.putExtractor3d("color", MyFunctions.asColor(MyFunctions.pure(f)));
 
 		GLHalfEdgeStructure glpot = new GLHalfEdgeStructure(hs);
 		// choose the shader for the data

@@ -2,7 +2,7 @@ package glWrapper;
 
 import static helpers.StaticHelpers.*;
 import helpers.FloatBuffer;
-import helpers.Function;
+import com.google.common.base.Function;
 import helpers.IndexBuffer;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import datastructure.octree.HashOctreeVertex;
 public class GLOctreeVertexNeighbors extends GLVertexDisplayer {
 	private static Function<HashOctreeVertex, Point3f> position = new Function<HashOctreeVertex, Point3f>() {
 		@Override
-		public Point3f call(HashOctreeVertex a) {
+		public Point3f apply(HashOctreeVertex a) {
 			return a.position;
 		}
 	};

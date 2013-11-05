@@ -3,9 +3,10 @@ package sparse.solver;
 import java.util.ArrayList;
 
 
+import java.util.logging.Logger;
+
 import sparse.CSRMatrix;
 import sparse.SparseTools;
-
 import no.uib.cipr.matrix.DenseVector;
 import no.uib.cipr.matrix.sparse.BiCGstab;
 import no.uib.cipr.matrix.sparse.CG;
@@ -26,12 +27,13 @@ import no.uib.cipr.matrix.sparse.Preconditioner;
  *
  */
 public class JMTSolver extends Solver{
+	private Logger log = Logger.getLogger("JMTSolver");
 	
-	final int cg = 0, bcstab = 1;  
+	static final int cg = 0, bcstab = 1;  
 	int type;
 	
 	public JMTSolver(){
-		this.type = bcstab;
+		this(bcstab);
 	}
 	
 	public JMTSolver(int type){
@@ -44,7 +46,8 @@ public class JMTSolver extends Solver{
 	 * @param x
 	 */
 	public void solve(CSRMatrix m, ArrayList<Float> b, ArrayList<Float> x){
-		System.out.println("Starting the solver...");
+		
+		log.info("Starting the solver...");
 		DenseVector b_ = SparseTools.denseVector(b);
 		DenseVector x_ = b_.copy();
 		
@@ -65,7 +68,7 @@ public class JMTSolver extends Solver{
 		try {
 			solver.solve(mat, b_, x_);
 		} catch (IterativeSolverNotConvergedException e) {
-			System.err.println("Iterative Solver did not converge");
+			log.severe("Iterative Solver did not converge");
 		}
 		
 		//copy the result back

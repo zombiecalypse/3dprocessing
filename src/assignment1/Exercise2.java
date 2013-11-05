@@ -1,8 +1,9 @@
 package assignment1;
 
 import glWrapper.GLHalfEdgeStructure;
-import helpers.Functions;
+import com.google.common.base.Function;
 import static helpers.StaticHelpers.*;
+import helpers.MyFunctions;
 
 import java.io.IOException;
 
@@ -50,7 +51,7 @@ public class Exercise2 {
 		final float max_valence = max_valence_;
 		final float min_valence = min_valence_;
 		
-		hs.putExtractor3d("color", Functions.asColor(comp(Functions.spread(min_valence, max_valence), Functions.valence())));
+		hs.putExtractor3d("color", MyFunctions.asColor(MyFunctions.pure(comp(MyFunctions.spread(min_valence, max_valence), MyFunctions.valence()))));
 
 		GLHalfEdgeStructure glpot = new GLHalfEdgeStructure(hs);
 		// choose the shader for the data

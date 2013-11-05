@@ -4,7 +4,7 @@ import static helpers.StaticHelpers.*;
 
 import java.util.ArrayList;
 import helpers.FloatBuffer;
-import helpers.Function;
+import com.google.common.base.Function;
 import helpers.IndexBuffer;
 
 import javax.media.opengl.GL;
@@ -19,13 +19,13 @@ import openGL.objects.Transformation;
 public class GlOctreeVertexToCell extends GLVertexDisplayer {
 	private static Function<HashOctreeVertex, Point3f> vertexPosition = new Function<HashOctreeVertex, Point3f>() {
 		@Override
-		public Point3f call(HashOctreeVertex a) {
+		public Point3f apply(HashOctreeVertex a) {
 			return a.position;
 		}
 	};
 	private static Function<HashOctreeCell, Point3f> cellCenter = new Function<HashOctreeCell, Point3f>() {
 		@Override
-		public Point3f call(HashOctreeCell a) {
+		public Point3f apply(HashOctreeCell a) {
 			return a.center;
 		}
 	};

@@ -1,7 +1,8 @@
 package assignment1;
 
 import glWrapper.GLHalfEdgeStructure;
-import helpers.Functions;
+import com.google.common.base.Function;
+import helpers.MyFunctions;
 import java.io.IOException;
 import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
@@ -27,7 +28,7 @@ public class Exercise4 {
 		HalfEdgeStructure hs = new HalfEdgeStructure();
 		hs.setTitle("Normals");
 		final Tuple3f normalizer = new Vector3f(0.5f, 0.5f, 0.5f);
-		hs.putExtractor3d("color", Functions.centered_normals());
+		hs.putExtractor3dPure("color", MyFunctions.centered_normals());
 
 		MyDisplay disp = new MyDisplay();
 

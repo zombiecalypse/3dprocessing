@@ -1,7 +1,11 @@
 package datastructure.halfedge;
 
-import helpers.Function;
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
+
 import static helpers.StaticHelpers.*;
+import helpers.MyFunctions;
+import helpers.StaticHelpers.Indexed;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +13,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+
 import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 
@@ -40,8 +45,8 @@ public class HalfEdgeStructure {
 	ArrayList<HalfEdge> edges;
 	ArrayList<Face> faces;
 	ArrayList<Vertex> vertices;
-	HashMap<String, Function<Vertex, Float>> extractors1d;
-	private HashMap<String, Function<Vertex, Tuple3f>> extractors3d;
+	HashMap<String, Function<Indexed<Vertex>, Float>> extractors1d;
+	private HashMap<String, Function<Indexed<Vertex>, Tuple3f>> extractors3d;
 	String title;
 
 	public String getTitle() {
@@ -52,20 +57,20 @@ public class HalfEdgeStructure {
 		this.title = title;
 	}
 
-	public HashMap<String, Function<Vertex, Float>> getExtractors1d() {
+	public HashMap<String, Function<Indexed<Vertex>, Float>> getExtractors1d() {
 		return extractors1d;
 	}
 
-	public void putExtractor(String name, Function<Vertex, Float> f) {
-		extractors1d.put(name, f);
+	public void putExtractorPure(String name, Function<Vertex, Float> f) {
+		extractors1d.put(name, Functions.compose(f, MyFunctions.<Vertex>value()));
 	}
 
 	public HalfEdgeStructure() {
 		faces = new ArrayList<Face>();
 		edges = new ArrayList<HalfEdge>();
 		vertices = new ArrayList<Vertex>();
-		extractors1d = new HashMap<String, Function<Vertex, Float>>();
-		extractors3d = new HashMap<String, Function<Vertex, Tuple3f>>();
+		extractors1d = new HashMap<String, Function<Indexed<Vertex>, Float>>();
+		extractors3d = new HashMap<String, Function<Indexed<Vertex>, Tuple3f>>();
 	}
 
 	public ArrayList<Vertex> getVertices() {
@@ -358,12 +363,21 @@ public class HalfEdgeStructure {
 		});
 	}
 
-	public HashMap<String, Function<Vertex, Tuple3f>> getExtractors3d() {
+	public HashMap<String, Function<Indexed<Vertex>, Tuple3f>> getExtractors3d() {
 		return extractors3d;
 	}
 
-	public void putExtractor3d(String string, Function<Vertex, Tuple3f> function) {
+	public void putExtractor3dPure(String string, Function<Vertex, Tuple3f> function) {
+		extractors3d.put(string, Functions.compose(function, MyFunctions.<Vertex>value()));
+	}
+	
+	public void putExtractor3d(String string, Function<Indexed<Vertex>, Tuple3f> function) {
 		extractors3d.put(string, function);
+	}
+	
+
+	public void putExtractor(String string, Function<Indexed<Vertex>, Float> function) {
+		extractors1d.put(string, function);
 	}
 
 	@Override

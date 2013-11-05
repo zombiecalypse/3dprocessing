@@ -19,7 +19,7 @@ public class Assignment4_2_uMasking {
 	}
 
 	private static void headDemo() throws IOException {
-		WireframeMesh m = ObjReader.read("./objs/head.obj", true);//*/
+		WireframeMesh m = ObjReader.read("./objs/head.obj", true);
 		
 		MyDisplay disp = new MyDisplay();
 		GLWireframeMesh glwf = new GLWireframeMesh(m);

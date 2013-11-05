@@ -1,6 +1,6 @@
 package sparse;
 
-import helpers.Function;
+import com.google.common.base.Function;
 import helpers.StaticHelpers.Pair;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import static helpers.StaticHelpers.*;
 public class LinearSystem{
 	private static Function<Pair<Float, CSRMatrix>, Integer> ncols = new Function<Pair<Float, CSRMatrix>, Integer>() {
 		@Override
-		public Integer call(Pair<Float, CSRMatrix> a) {
+		public Integer apply(Pair<Float, CSRMatrix> a) {
 			return a.b.nCols;
 		}
 	};

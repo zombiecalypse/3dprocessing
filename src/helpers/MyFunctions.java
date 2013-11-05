@@ -2,6 +2,11 @@ package helpers;
 
 import static helpers.StaticHelpers.*;
 
+import com.google.common.base.Function;
+
+import helpers.StaticHelpers.Indexed;
+import helpers.StaticHelpers.Pair;
+
 import java.util.List;
 
 import javax.vecmath.Tuple3f;
@@ -11,14 +16,25 @@ import datastructure.halfedge.Face;
 import datastructure.halfedge.HalfEdge;
 import datastructure.halfedge.Vertex;
 
-public final class Functions {
+public final class MyFunctions {
 	private static final Vector3f grey = new Vector3f(0.5f, 0.5f, 0.5f);
+	public static final Function<Float, Float> abs = new Function<Float, Float>() {
+		@Override
+		public Float apply(Float input) {
+			return Math.abs(input);
+		}
+	};
 
-	public static <A> Function<A, A> id() {
-		return new Function<A, A>() {
+	public static Function<Tuple3f, Tuple3f> toVec(
+			final Function<Float, Float> f) {
+		return new Function<Tuple3f, Tuple3f>() {
 			@Override
-			public A call(A a) {
-				return a;
+			public Tuple3f apply(Tuple3f input) {
+				Tuple3f n = new Vector3f();
+				n.x = f.apply(input.x);
+				n.y = f.apply(input.y);
+				n.z = f.apply(input.z);
+				return n;
 			}
 		};
 	}
@@ -26,7 +42,7 @@ public final class Functions {
 	public static Function<Tuple3f, Tuple3f> add(final Tuple3f x) {
 		return new Function<Tuple3f, Tuple3f>() {
 			@Override
-			public Tuple3f call(Tuple3f a) {
+			public Tuple3f apply(Tuple3f a) {
 				Vector3f n = new Vector3f(x);
 				n.add(a);
 				return n;
@@ -38,7 +54,7 @@ public final class Functions {
 		return new Function<Vertex, Tuple3f>() {
 
 			@Override
-			public Tuple3f call(Vertex v) {
+			public Tuple3f apply(Vertex v) {
 				List<Face> faces = list(v.iteratorVF());
 				Tuple3f normal = new Vector3f();
 				for (Face f : faces) {
@@ -55,7 +71,7 @@ public final class Functions {
 	public static Function<Vertex, Float> valence() {
 		return new Function<Vertex, Float>() {
 			@Override
-			public Float call(Vertex a) {
+			public Float apply(Vertex a) {
 				return (float) len(a.iteratorVE());
 			}
 		};
@@ -64,18 +80,18 @@ public final class Functions {
 	public static Function<Float, Float> spread(final float min, final float max) {
 		return new Function<Float, Float>() {
 			@Override
-			public Float call(Float a) {
+			public Float apply(Float a) {
 				return (a - min) / (max - min);
 			}
 		};
 	}
 
-	public static Function<Vertex, Tuple3f> asColor(
-			final Function<Vertex, Float> f) {
-		return new Function<Vertex, Tuple3f>() {
+	public static Function<Indexed<Vertex>, Tuple3f> asColor(
+			final Function<Indexed<Vertex>, Float> function) {
+		return new Function<Indexed<Vertex>, Tuple3f>() {
 			@Override
-			public Tuple3f call(Vertex a) {
-				float v = f.call(a);
+			public Tuple3f apply(Indexed<Vertex> a) {
+				float v = function.apply(a);
 				return new Vector3f(v, 1 - v, 1 - v);
 			}
 		};
@@ -84,7 +100,7 @@ public final class Functions {
 	public static Function<Tuple3f, Float> x() {
 		return new Function<Tuple3f, Float>() {
 			@Override
-			public Float call(Tuple3f a) {
+			public Float apply(Tuple3f a) {
 				return a.x;
 			}
 		};
@@ -93,7 +109,7 @@ public final class Functions {
 	public static Function<Tuple3f, Float> y() {
 		return new Function<Tuple3f, Float>() {
 			@Override
-			public Float call(Tuple3f a) {
+			public Float apply(Tuple3f a) {
 				return a.y;
 			}
 		};
@@ -102,7 +118,7 @@ public final class Functions {
 	public static Function<Tuple3f, Float> z() {
 		return new Function<Tuple3f, Float>() {
 			@Override
-			public Float call(Tuple3f a) {
+			public Float apply(Tuple3f a) {
 				return a.z;
 			}
 		};
@@ -115,10 +131,10 @@ public final class Functions {
 	public static Function<Vertex, Float> laplacian() {
 		return new Function<Vertex, Float>() {
 			@Override
-			public Float call(Vertex a) {
+			public Float apply(Vertex a) {
 
 				Vector3f sum = new Vector3f();
-				for (HalfEdge e1: iter(a.iteratorVE())) {
+				for (HalfEdge e1 : iter(a.iteratorVE())) {
 					HalfEdge e2 = e1.getOpposite();
 					float alpha = e1.opposingAngle();
 					float beta = e2.opposingAngle();
@@ -166,8 +182,28 @@ public final class Functions {
 	public static Function<Float, Float> logNormalize(final float C) {
 		return new Function<Float, Float>() {
 			@Override
-			public Float call(Float a) {
+			public Float apply(Float a) {
 				return (float) Math.log(1 + a / C);
+			}
+		};
+	}
+
+	public static <B> Function<Indexed<B>, B> value() {
+		return new Function<Indexed<B>, B>() {
+			@Override
+			public B apply(Indexed<B> input) {
+				return input.b;
+			}
+			
+		};
+	}
+
+	public static Function<Indexed<Vertex>, Float> pure(
+			final Function<Vertex, Float> f) {
+		return new Function<Indexed<Vertex>, Float>() {
+			@Override
+			public Float apply(Indexed<Vertex> input) {
+				return f.apply(input.value());
 			}
 		};
 	}

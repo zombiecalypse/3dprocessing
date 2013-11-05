@@ -11,6 +11,8 @@ import java.util.Set;
 import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
+import com.google.common.base.Function;
+
 public final class StaticHelpers {
 	public static Iterable<Float> flatten(Iterable<Vector3f> v) {
 		List<Float> l = new ArrayList<>();
@@ -60,19 +62,27 @@ public final class StaticHelpers {
 	}
 
 	public static <B, A extends Comparable<A>> A maximize(Function<B, A> f,
-			List<B> l) {
+			Iterable<B> l) {
 		return Collections.max(map(f, l));
 	}
 
 	public static <B, A extends Comparable<A>> A minimize(Function<B, A> f,
-			List<B> l) {
+			Iterable<B> l) {
 		return Collections.min(map(f, l));
+	}
+	
+	public static <A extends Comparable<A>> A percentile(float p, Iterable<A> l) {
+		List<A> xs = list(l);
+		Collections.sort(xs);
+		int indx = Math.round(p*xs.size());
+		return xs.get(indx);
+		
 	}
 
 	public static <A, B> List<A> map(Function<B, A> f, Iterable<B> m) {
 		List<A> l = new ArrayList<A>();
 		for (B b : m) {
-			l.add(f.call(b));
+			l.add(f.apply(b));
 		}
 		return l;
 	}
@@ -81,8 +91,8 @@ public final class StaticHelpers {
 			final Function<A, B> f) {
 		return new Function<A, C>() {
 			@Override
-			public C call(A a) {
-				return g.call(f.call(a));
+			public C apply(A a) {
+				return g.apply(f.apply(a));
 			}
 		};
 	}

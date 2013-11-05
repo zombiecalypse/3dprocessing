@@ -1,10 +1,14 @@
 package glWrapper;
 
-import helpers.Function;
+import com.google.common.base.Function;
+
+import helpers.StaticHelpers.Indexed;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.media.opengl.GL;
 import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
@@ -39,14 +43,14 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 	}
 
 	private void addExtracted3d(HalfEdgeStructure s) {
-		HashMap<String, Function<Vertex, Tuple3f>> extractors3d = s
+		HashMap<String, Function<Indexed<Vertex>, Tuple3f>> extractors3d = s
 				.getExtractors3d();
 		for (String name : extractors3d.keySet()) {
 			System.out.print(name + " ");
-			Function<Vertex, Tuple3f> f = extractors3d.get(name);
+			Function<Indexed<Vertex>, Tuple3f> f = extractors3d.get(name);
 			float[] values = new float[s.getVertices().size() * 3];
 			int index = 0;
-			List<Tuple3f> tuples = map(f, s.getVertices());
+			List<Tuple3f> tuples = map(f, withIndex(s.getVertices()));
 
 			for (Tuple3f p : tuples) {
 				values[index++] = p.x;
@@ -62,15 +66,14 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 	}
 
 	private void addExtracted1d(HalfEdgeStructure s) {
-		HashMap<String, Function<Vertex, Float>> extractors = s
+		HashMap<String, Function<Indexed<Vertex>, Float>> extractors = s
 				.getExtractors1d();
 		for (String name : extractors.keySet()) {
 			System.out.print(name + " ");
-			Function<Vertex, Float> f = extractors.get(name);
+			Function<Indexed<Vertex>, Float> f = extractors.get(name);
 			float[] values = new float[s.getVertices().size()];
-			int index = 0;
-			for (Vertex v : s.getVertices()) {
-				values[index++] = f.call(v);
+			for (Indexed<Vertex> v : withIndex(s.getVertices())) {
+				values[v.index()] = f.apply(v);
 			}
 			this.addElement(values, Semantic.USERSPECIFIED, 1, name);
 
