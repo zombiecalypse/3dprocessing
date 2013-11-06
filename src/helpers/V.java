@@ -3,6 +3,9 @@ package helpers;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
+import sparse.CSRMatrix;
+import sparse.CSRMatrix.col_val;
+
 /**
  * Class that makes vector arithmetic functional.
  * @author aaron
@@ -32,5 +35,13 @@ public final class V {
 		Point3f n = new Point3f(x);
 		n.sub(y);
 		return n;
+	}
+
+	public static CSRMatrix I(int nRows) {
+		CSRMatrix i = new CSRMatrix(nRows, nRows);
+		for (int j = 0; j < nRows; j++) {
+			i.addRow().add(new col_val(j, 1));
+		}
+		return i;
 	}
 }

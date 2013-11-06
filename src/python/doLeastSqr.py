@@ -52,7 +52,7 @@ def doLeastSquares(argv):
     #do the work
     ij = [rows,cols]
     mat = csr_matrix((vals,ij))
-    result = ne.evaluate('sp.lsqr(mat,b)')
+    result = sp.lsqr(mat,b)
 
     #write out result
     f = open(file_x_out, 'w')

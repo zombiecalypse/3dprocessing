@@ -97,32 +97,33 @@ public final class MyFunctions {
 		};
 	}
 
-	public static Function<Tuple3f, Float> x() {
-		return new Function<Tuple3f, Float>() {
-			@Override
-			public Float apply(Tuple3f a) {
-				return a.x;
-			}
-		};
-	}
+	public static final Function<Vertex, Tuple3f> pos = new Function<Vertex, Tuple3f>() {
+		@Override
+		public Tuple3f apply(Vertex input) {
+			return input.pos;
+		}
+	};
 
-	public static Function<Tuple3f, Float> y() {
-		return new Function<Tuple3f, Float>() {
-			@Override
-			public Float apply(Tuple3f a) {
-				return a.y;
-			}
-		};
-	}
+	public final static Function<Tuple3f, Float> x = new Function<Tuple3f, Float>() {
+		@Override
+		public Float apply(Tuple3f a) {
+			return a.x;
+		}
+	};
 
-	public static Function<Tuple3f, Float> z() {
-		return new Function<Tuple3f, Float>() {
-			@Override
-			public Float apply(Tuple3f a) {
-				return a.z;
-			}
-		};
-	}
+	public final static Function<Tuple3f, Float> y = new Function<Tuple3f, Float>() {
+		@Override
+		public Float apply(Tuple3f a) {
+			return a.y;
+		}
+	};
+
+	public final static Function<Tuple3f, Float> z = new Function<Tuple3f, Float>() {
+		@Override
+		public Float apply(Tuple3f a) {
+			return a.z;
+		}
+	};
 
 	public static Function<Vertex, Tuple3f> centered_normals() {
 		return comp(add(grey), normals());
@@ -194,7 +195,7 @@ public final class MyFunctions {
 			public B apply(Indexed<B> input) {
 				return input.b;
 			}
-			
+
 		};
 	}
 

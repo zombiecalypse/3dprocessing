@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 
 import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
+import javax.vecmath.Vector3f;
 
 import meshes.Point2i;
 import meshes.WireframeMesh;
@@ -384,4 +385,18 @@ public class HalfEdgeStructure {
 	public String toString() {
 		return title == null ? super.toString() : title;
 	}
+	
+	public float getVolume() {
+        float sum = 0;
+        for (Face f: getFaces()) {
+                Iterator<Vertex> iter = f.iteratorFV();
+                Vector3f p1 = new Vector3f(iter.next().getPos());
+                Vector3f p2 = new Vector3f(iter.next().getPos());
+                Vector3f p3 = new Vector3f(iter.next().getPos());
+                Vector3f cross = new Vector3f();
+                cross.cross(p2, p3);
+                sum += p1.dot(cross);
+        }
+        return sum/6;
+}
 }

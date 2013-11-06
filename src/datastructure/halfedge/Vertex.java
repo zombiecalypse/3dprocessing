@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import javax.vecmath.Point3f;
+
 import static helpers.StaticHelpers.*;
 
 /**
@@ -34,6 +35,14 @@ public class Vertex extends HEElement implements Cloneable {
 
 	public HalfEdge getHalfEdge() {
 		return anEdge;
+	}
+	
+	public float aMixed() {
+		float aMixed = 0;
+		for(Face f : iter(iteratorVF())) {
+			aMixed += f.getMixedVoronoiCellArea(this);
+		}
+		return aMixed;
 	}
 
 	/**
@@ -168,10 +177,20 @@ public class Vertex extends HEElement implements Cloneable {
 	}
 
 	public HalfEdge edgeBetween(Vertex a) {
-		for (HalfEdge e: iter(this.iteratorVE())){
-			if ((e.start() == a && e.end() == this) || (e.start() == this && e.end() == a))
+		for (HalfEdge e : iter(this.iteratorVE())) {
+			if ((e.start() == a && e.end() == this)
+					|| (e.start() == this && e.end() == a))
 				return e;
 		}
-		throw new AssertionError(String.format("No edge between %s and %s", this, a));
+		throw new AssertionError(String.format("No edge between %s and %s",
+				this, a));
+	}
+
+	public boolean isOnBoundary() {
+		for (HalfEdge e : iter(iteratorVE())) {
+			if (e.isOnBorder())
+				return true;
+		}
+		return false;
 	}
 }

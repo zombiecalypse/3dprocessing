@@ -15,6 +15,45 @@ import javax.vecmath.Vector3f;
  *
  */
 public class Face extends HEElement {
+	
+	/**
+	 * @throws NoSuchElementException if v is not a vertex of this face.
+	 * @param v, a Vertex, as in sketch
+	 * @return
+	 */
+	public float getMixedVoronoiCellArea(Vertex p) {
+		
+		HalfEdge toP = edgePointingTo(p);
+		float voronoiCellArea;
+		if (!obtuse()) { // non-obtuse
+			HalfEdge PR = toP.getOpposite();
+			HalfEdge PQ = toP.getNext();
+			float areaPR = PR.asVector().lengthSquared()*cot(toP.opposingAngle());
+			float areaPQ = PQ.asVector().lengthSquared() * cot(toP.getOpposite().opposingAngle());
+			voronoiCellArea = 1/8f * ( areaPR + areaPQ ); 
+		} else if (angleIn(p) > Math.PI/2) { // obtuse at P
+			voronoiCellArea = getArea()/2;
+		} else {
+			voronoiCellArea = getArea()/4;
+		}
+		return voronoiCellArea;
+	}
+	
+	private HalfEdge edgePointingTo(Vertex v) {
+		for (HalfEdge e : iter(iteratorFE())) {
+			if (e.incident_v == v) return e;
+		}
+		throw new AssertionError(String.format("Vertex %s not on face %s", v, this));
+	}
+
+	/**
+	 * Only works for triangles as faces
+	 */
+	public float getArea() {
+		Vector3f cross = new Vector3f();
+		cross.cross(anEdge.asVector(), anEdge.next.asVector());
+		return cross.length()/2;
+	}
 
 	//an adjacent edge, which is positively oriented with respect to the face.
 	private HalfEdge anEdge;

@@ -5,11 +5,14 @@ import static helpers.StaticHelpers.iter;
 import static helpers.StaticHelpers.list;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.vecmath.Vector3f;
 
 import sparse.CSRMatrix;
+import sparse.CSRMatrix.col_val;
 import sparse.SparseDictMatrix;
 import datastructure.halfedge.Face;
 import datastructure.halfedge.HalfEdge;
@@ -18,15 +21,15 @@ import datastructure.halfedge.Vertex;
 
 /**
  * Methods to create different flavours of the cotangent and uniform laplacian.
- *
+ * 
  * @author Alf
- *
+ * 
  */
 public class LMatrices {
 
 	/**
 	 * The uniform Laplacian
-	 *
+	 * 
 	 * @param hs
 	 * @return
 	 */
@@ -34,12 +37,12 @@ public class LMatrices {
 		SparseDictMatrix m = new SparseDictMatrix();
 		int nVertices = hs.getVertices().size();
 		for (Vertex v : hs.getVertices()) {
-			m.putOnce(v.index, v.index, 1);
+			m.putOnce(v.index, v.index, -1);
 			assert v.index < nVertices;
 			List<Vertex> neighbors = list(v.iteratorVV());
 			for (Vertex n : neighbors) {
 				assert n.index < nVertices;
-				m.putOnce(v.index, n.index, -1f / neighbors.size());
+				m.putOnce(v.index, n.index, 1f / neighbors.size());
 			}
 		}
 		return m.toCsr();
@@ -47,61 +50,41 @@ public class LMatrices {
 
 	/**
 	 * The cotangent Laplacian
-	 *
+	 * 
 	 * @param hs
 	 * @return
 	 */
 	public static CSRMatrix mixedCotanLaplacian(HalfEdgeStructure hs) {
+		// doesn't seem to be wrong.
 		SparseDictMatrix m = new SparseDictMatrix();
 		for (Vertex v : hs.getVertices()) {
-		  // In each vertex...
-		  float a_mixed4 = 4 * Math.abs(aMixed(v));
-			for (HalfEdge e1 : iter(v.iteratorVE())) {
-			  // take every edge weighted by cotangens of the adjacent angles
-				HalfEdge e2 = e1.getOpposite();
-				if (e1.getFace() == null || e2.getFace() == null) continue;
-				float alpha = (float) Math.max(e1.opposingAngle(), 1e-2);
-				float beta = (float) Math.max(e2.opposingAngle(), 1e-2);
-				float weight = cot(alpha) + cot(beta);
-				float val = 1.f/weight/a_mixed4;
-				if (Math.abs(val) > 1e-2) { 
-					m.putOnce(v.index, e1.incident_v.index, -val);
-					m.add(v.index, v.index, val);
+			// In each vertex...
+			if (!v.isOnBoundary()) {
+				float a_mixed4 = 4 * v.aMixed();
+				for (HalfEdge e1 : iter(v.iteratorVE())) {
+					// take every edge weighted by cotangens of the adjacent
+					// angles
+					HalfEdge e2 = e1.getOpposite();
+					float alpha = (float) e1.opposingAngle();
+					float beta = (float) e2.opposingAngle();
+					float weight = cot(alpha) + cot(beta);
+					float val = weight / a_mixed4;
+					// cut off if too small
+					if (Math.abs(val) > 1e-2) {
+						m.putOnce(v.index, e2.start().index, -val);
+						m.add(v.index, v.index, val);
+						continue;
+					}
 				}
+			} else {
+				m.add(v.index, v.index, 0);
 			}
 		}
 		return m.toCsr();
 	}
-
-	private static float aMixed(Vertex a) {
-		float A_mixed = 0f;
-		for (Face f : iter(a.iteratorVF())) {
-			if (!f.obtuse()) {
-				float mini_triags = 0;
-				for (HalfEdge e : iter(f.iteratorFE())) {
-					if (e.getFace() != f)
-						e = e.getOpposite();
-					assert e.getFace() == f;
-					if (a == e.incident_v)
-						continue;
-					float n = e.asVector().lengthSquared();
-					mini_triags += n / Math.tan(e.opposingAngle());
-				}
-				A_mixed += mini_triags / 8;
-			} else if (f.angleIn(a) > Math.PI / 2) {
-				A_mixed += f.area() / 2;
-			} else {
-
-				A_mixed += f.area() / 4;
-			}
-		}
-		assert !Float.isNaN(A_mixed);
-		return A_mixed;
-	}
-
 	/**
 	 * A symmetric cotangent Laplacian, cf Assignment 4, exercise 4.
-	 *
+	 * 
 	 * @param hs
 	 * @return
 	 */
@@ -112,7 +95,7 @@ public class LMatrices {
 	/**
 	 * helper method to multiply x,y and z coordinates of the halfedge structure
 	 * at once
-	 *
+	 * 
 	 * @param m
 	 * @param s
 	 * @param res

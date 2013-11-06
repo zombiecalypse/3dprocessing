@@ -94,7 +94,7 @@ public class SCIPY {
 		
 		
 		/*execute the script*/
-		String python = resourcePath("../python/doLeastSqr.py");
+		String python = "src/python/doLeastSqr.py";
 		String ifile = tempPath(matrix_name + "ifile");
 		String jfile = tempPath(matrix_name + "jfile");
 		String bfile = tempPath(matrix_name + "bfile");

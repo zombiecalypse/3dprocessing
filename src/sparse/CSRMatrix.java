@@ -8,6 +8,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.collect.Ordering;
+
+import static helpers.StaticHelpers.*;
 
 /**
  * A sparse matrix container in CSR format, to allow Solver Library independent
@@ -45,7 +48,9 @@ public class CSRMatrix {
 			rows.add(row, new ArrayList<col_val>());
 		}
 		ArrayList<col_val> r = rows.get(row);
-		r.add(new col_val(col, val));
+		col_val e = new col_val(col, val);
+		r.add(-Collections.binarySearch(r, e)-1, e);
+		assert Ordering.natural().isOrdered(r);
 		this.nRows = rows.size();
 		this.nCols = Math.max(nCols, col+1);
 	}
@@ -244,15 +249,17 @@ public class CSRMatrix {
 				this.col == o.col ? 0 :
 					1;
 		}
-		
-		@Override
-		public String toString(){
-			return "("+ this.col + "," + this.val + ") ";
-		}
 	}
 	
 	public String toString() {
-		return String.format("CSRMatrix(%d, %d)", nRows, nCols);
+		StringBuilder sb = new StringBuilder();
+		for (ArrayList<col_val> v : rows) {
+			for (col_val t : v) {
+				sb.append(String.format("(%d, %.3f)", t.col, t.val));
+			}
+			sb.append("\n");
+		}
+		return sb.toString();
 	}
 
 /* ********************************************************************************/

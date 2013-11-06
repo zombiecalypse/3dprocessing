@@ -2,6 +2,7 @@ package helpers;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -14,6 +15,13 @@ import javax.vecmath.Vector3f;
 import com.google.common.base.Function;
 
 public final class StaticHelpers {
+	
+	public static <A extends Comparable<A>> List<A> sorted(Collection<A> l) {
+		List<A> ll = new ArrayList<>(l);
+		Collections.sort(ll);
+		return ll;
+	}
+	
 	public static Iterable<Float> flatten(Iterable<Vector3f> v) {
 		List<Float> l = new ArrayList<>();
 		for (Tuple3f x : v) {
@@ -22,6 +30,10 @@ public final class StaticHelpers {
 			l.add(x.z);
 		}
 		return l;
+	}
+	
+	public static float sum(Vector3f v) {
+		return v.x + v.y + v.z;
 	}
 	
 	public static <A,B> Pair<A, B> pair(A a, B b) { return new Pair<A, B>(a, b); }
@@ -58,7 +70,7 @@ public final class StaticHelpers {
 	}
 
 	public static float cot(float x) {
-		return (float) (1 / (1e-12 + Math.tan(x)));
+		return (float) (1 / Math.tan(x));
 	}
 
 	public static <B, A extends Comparable<A>> A maximize(Function<B, A> f,
@@ -209,7 +221,7 @@ public final class StaticHelpers {
 		return set(iter(x));
 	}
 
-	public static class Pair<A, B> {
+	public static class Pair<A, B> implements Comparable<Pair<A, B>>{
 		@Override
 		public String toString() {
 			return "(" + a + ", " + b + ")";
@@ -245,13 +257,29 @@ public final class StaticHelpers {
 				return false;
 			return true;
 		}
-
+		
 		public A a;
 		public B b;
 
 		public Pair(A a, B b) {
 			this.a = a;
 			this.b = b;
+		}
+
+		@Override
+		@SuppressWarnings("unchecked")
+		public int compareTo(Pair<A, B> o) {
+			if (a instanceof Comparable<?>) {
+				Comparable<A> ca = (Comparable<A>) a;
+				int r = ca.compareTo(o.a);
+				if (r != 0) return r;
+			}
+			if (b instanceof Comparable<?>) {
+				Comparable<B> cb = (Comparable<B>) b;
+				int r = cb.compareTo(o.b);
+				if (r != 0) return r;
+			}
+			return 0;
 		}
 	}
 	

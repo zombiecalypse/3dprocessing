@@ -1,6 +1,7 @@
 package sparse;
 
 import com.google.common.base.Function;
+
 import helpers.StaticHelpers.Pair;
 
 import java.util.ArrayList;
@@ -11,6 +12,14 @@ import sparse.LinearSystem.Builder;
 import static helpers.StaticHelpers.*;
 
 public class LinearSystem{
+	public LinearSystem(CSRMatrix m, List<Float> b) {
+		this.mat = m;
+		this.b = new ArrayList<>(b);
+	}
+	
+	public LinearSystem() {
+	}
+
 	private static Function<Pair<Float, CSRMatrix>, Integer> ncols = new Function<Pair<Float, CSRMatrix>, Integer>() {
 		@Override
 		public Integer apply(Pair<Float, CSRMatrix> a) {
