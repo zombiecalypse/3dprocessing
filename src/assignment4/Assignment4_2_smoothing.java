@@ -41,7 +41,6 @@ public class Assignment4_2_smoothing {
 	private static void headDemoSmoothing() throws IOException {
 		WireframeMesh m = ObjReader.read("./objs/head.obj", true);
 		
-				
 		final HalfEdgeStructure hs = new HalfEdgeStructure();
 		try {
 			hs.init(m);
@@ -49,10 +48,11 @@ public class Assignment4_2_smoothing {
 			e.printStackTrace();
 			return;
 		}
-		
 		//do your smoothing thing...
-		
-		HalfEdgeStructure hs2 = (new ImplicitSmoother(0.01f)).apply(hs);
+
+		HalfEdgeStructure hs2 = ImplicitSmoother.mixed(0.01f, hs);
+		HalfEdgeStructure hs3 = ImplicitSmoother.mixed(0.1f, hs);
+		HalfEdgeStructure hs4 = ImplicitSmoother.mixed(1, hs);
 		
 
 		MyDisplay disp = new MyDisplay();
@@ -62,8 +62,13 @@ public class Assignment4_2_smoothing {
 				"shaders/trimesh_flat.frag", 
 				"shaders/trimesh_flat.geom");
 		disp.addToDisplay(glwf);
-		GLHalfEdgeStructure glwf2 = new GLHalfEdgeStructure(hs2);
-		glwf2.setTitle("Smoothed");
+		show(hs2, disp, 0.01f);
+		show(hs3, disp, 0.1f);
+	}
+
+	private static void show(HalfEdgeStructure hs, MyDisplay disp, float l) {
+		GLHalfEdgeStructure glwf2 = new GLHalfEdgeStructure(hs);
+		glwf2.setTitle(String.format("Smoothed λ=%.3f", l));
 		glwf2.configurePreferredShader("shaders/trimesh_flat.vert", 
 				"shaders/trimesh_flat.frag", 
 				"shaders/trimesh_flat.geom");

@@ -1,6 +1,5 @@
 package datastructure.halfedge;
 
-
 import static helpers.StaticHelpers.*;
 
 import java.util.ArrayList;
@@ -12,38 +11,45 @@ import javax.vecmath.Vector3f;
 
 /**
  * Implementation of a face for the {@link HalfEdgeStructure}
- *
+ * 
  */
 public class Face extends HEElement {
-	
+
 	/**
-	 * @throws NoSuchElementException if v is not a vertex of this face.
-	 * @param v, a Vertex, as in sketch
+	 * @throws NoSuchElementException
+	 *             if v is not a vertex of this face.
+	 * @param v
+	 *            , a Vertex, as in sketch
 	 * @return
 	 */
-	public float getMixedVoronoiCellArea(Vertex p) {
-		
+	public float mixedVoronoiCellArea(Vertex p) {
+
 		HalfEdge toP = edgePointingTo(p);
+		float angleAtP = toP.incidentAngle();
 		float voronoiCellArea;
 		if (!obtuse()) { // non-obtuse
 			HalfEdge PR = toP.getOpposite();
 			HalfEdge PQ = toP.getNext();
-			float areaPR = PR.asVector().lengthSquared()*cot(toP.opposingAngle());
-			float areaPQ = PQ.asVector().lengthSquared() * cot(toP.getOpposite().opposingAngle());
-			voronoiCellArea = 1/8f * ( areaPR + areaPQ ); 
-		} else if (angleIn(p) > Math.PI/2) { // obtuse at P
-			voronoiCellArea = getArea()/2;
+			float areaPR = PR.asVector().lengthSquared()
+					* cot(PQ.incidentAngle());
+			float areaPQ = PQ.asVector().lengthSquared()
+					* cot(PQ.next.incidentAngle());
+			voronoiCellArea = (areaPR + areaPQ) / 8f;
+		} else if (angleAtP > Math.PI / 2) { // obtuse at P
+			voronoiCellArea = getArea() / 2;
 		} else {
-			voronoiCellArea = getArea()/4;
+			voronoiCellArea = getArea() / 4;
 		}
 		return voronoiCellArea;
 	}
-	
+
 	private HalfEdge edgePointingTo(Vertex v) {
 		for (HalfEdge e : iter(iteratorFE())) {
-			if (e.incident_v == v) return e;
+			if (e.end() == v)
+				return e;
 		}
-		throw new AssertionError(String.format("Vertex %s not on face %s", v, this));
+		throw new AssertionError(String.format("Vertex %s not on face %s", v,
+				this));
 	}
 
 	/**
@@ -52,17 +58,17 @@ public class Face extends HEElement {
 	public float getArea() {
 		Vector3f cross = new Vector3f();
 		cross.cross(anEdge.asVector(), anEdge.next.asVector());
-		return cross.length()/2;
+		return cross.length() / 2;
 	}
 
-	//an adjacent edge, which is positively oriented with respect to the face.
+	// an adjacent edge, which is positively oriented with respect to the face.
 	private HalfEdge anEdge;
 	int index;
-	
-	public Face(){
+
+	public Face() {
 		anEdge = null;
 	}
-	
+
 	public Face(HalfEdge he) {
 		anEdge = he;
 	}
@@ -74,49 +80,48 @@ public class Face extends HEElement {
 	public HalfEdge getHalfEdge() {
 		return anEdge;
 	}
-	
-	
+
 	/**
 	 * Iterate over the vertices on the face.
+	 * 
 	 * @return
 	 */
-	public Iterator<Vertex> iteratorFV(){
+	public Iterator<Vertex> iteratorFV() {
 		return new IteratorFV(anEdge);
 	}
-	
+
 	/**
 	 * Iterate over the adjacent edges
+	 * 
 	 * @return
 	 */
-	public Iterator<HalfEdge> iteratorFE(){
+	public Iterator<HalfEdge> iteratorFE() {
 		return new IteratorFE(anEdge);
 	}
-	
+
 	@Override
-	public String toString(){
-		if(anEdge == null){
+	public String toString() {
+		if (anEdge == null) {
 			return "f: not initialized";
 		}
 		String s = "f: [";
 		Iterator<Vertex> it = this.iteratorFV();
-		while(it.hasNext()){
+		while (it.hasNext()) {
 			s += it.next().toString() + " , ";
 		}
-		s+= "]";
+		s += "]";
 		return s;
-		
+
 	}
-	
-	
 
 	/**
 	 * Iterator to iterate over the edges on a face
+	 * 
 	 * @author Aaron
-	 *
+	 * 
 	 */
 	public final class IteratorFE implements Iterator<HalfEdge> {
-		
-		
+
 		private HalfEdge first, actual;
 
 		public IteratorFE(HalfEdge anEdge) {
@@ -132,39 +137,38 @@ public class Face extends HEElement {
 
 		@Override
 		public HalfEdge next() {
-			//make sure eternam iteration is impossible
-			if(!hasNext()){
+			// make sure eternam iteration is impossible
+			if (!hasNext()) {
 				throw new NoSuchElementException();
 			}
 
-			//update what edge was returned last
-			actual = (actual == null?
-						first:
-						actual.next);
+			// update what edge was returned last
+			actual = (actual == null ? first : actual.next);
 			assert actual != null;
 			return actual;
 		}
 
-		
 		@Override
 		public void remove() {
-			//we don't support removing through the iterator.
+			// we don't support removing through the iterator.
 			throw new UnsupportedOperationException();
 		}
 
 		/**
 		 * return the face this iterator iterates around
+		 * 
 		 * @return
 		 */
 		public Face face() {
 			return first.incident_f;
 		}
 	}
-	
+
 	/**
 	 * Iterator to iterate over the vertices on a face
+	 * 
 	 * @author Aaron
-	 *
+	 * 
 	 */
 	public final class IteratorFV implements Iterator<Vertex> {
 		private IteratorFE iterator;
@@ -203,7 +207,7 @@ public class Face extends HEElement {
 
 	public float angleIn(Vertex v) {
 		List<Vector3f> adj_edges = new ArrayList<Vector3f>();
-		for (HalfEdge e: iter(iteratorFE())) {
+		for (HalfEdge e : iter(iteratorFE())) {
 			if (e.end() == v || e.start() == v) {
 				adj_edges.add(e.asVector());
 			}
@@ -215,9 +219,9 @@ public class Face extends HEElement {
 	}
 
 	public boolean obtuse() {
-		for (Vertex v: iter(this.iteratorFV())) {
-			float angle = angleIn(v);
-			if (angle > Math.PI/2 && angle < Math.PI)
+		for (HalfEdge v : iter(this.iteratorFE())) {
+			float angle = v.incidentAngle();
+			if (angle > Math.PI / 2 && angle < Math.PI)
 				return true;
 		}
 		return false;
@@ -229,7 +233,7 @@ public class Face extends HEElement {
 		Vector3f e2 = adj_edges.next().asVector();
 		Vector3f normal = new Vector3f();
 		normal.cross(e1, e2);
-		return norm(normal)/2;
+		return norm(normal) / 2;
 	}
 
 }

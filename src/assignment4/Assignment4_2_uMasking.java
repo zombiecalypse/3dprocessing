@@ -1,5 +1,6 @@
 package assignment4;
 
+import glWrapper.GLHalfEdgeStructure;
 import glWrapper.GLWireframeMesh;
 
 import java.io.IOException;
@@ -10,6 +11,8 @@ import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;
 import meshes.reader.ObjReader;
 import openGL.MyDisplay;
+import transformers.ImplicitSmoother;
+import transformers.UnsharpMasker;
 
 public class Assignment4_2_uMasking {
 
@@ -19,17 +22,10 @@ public class Assignment4_2_uMasking {
 	}
 
 	private static void headDemo() throws IOException {
-		WireframeMesh m = ObjReader.read("./objs/head.obj", true);
+WireframeMesh m = ObjReader.read("./objs/head.obj", true);
 		
-		MyDisplay disp = new MyDisplay();
-		GLWireframeMesh glwf = new GLWireframeMesh(m);
-		glwf.configurePreferredShader("shaders/trimesh_flat.vert", 
-				"shaders/trimesh_flat.frag", 
-				"shaders/trimesh_flat.geom");
-		disp.addToDisplay(glwf);
-		
-		HalfEdgeStructure hs = new HalfEdgeStructure();
-			try {
+		final HalfEdgeStructure hs = new HalfEdgeStructure();
+		try {
 			hs.init(m);
 		} catch (MeshNotOrientedException | DanglingTriangleException e) {
 			e.printStackTrace();
@@ -37,6 +33,31 @@ public class Assignment4_2_uMasking {
 		}
 		
 		//do your unsharp masking thing...
+
+		HalfEdgeStructure hs2 = UnsharpMasker.unsharp(0.1f, .1f, hs);
+		HalfEdgeStructure hs3 = UnsharpMasker.unsharp(0.1f, 1f, hs);
+		HalfEdgeStructure hs4 = UnsharpMasker.unsharp(0.1f, 2f, hs);
+		
+
+		MyDisplay disp = new MyDisplay();
+		GLHalfEdgeStructure glwf = new GLHalfEdgeStructure(hs);
+		glwf.setTitle("Unsmoothed");
+		glwf.configurePreferredShader("shaders/trimesh_flat.vert", 
+				"shaders/trimesh_flat.frag", 
+				"shaders/trimesh_flat.geom");
+		disp.addToDisplay(glwf);
+		show(hs2, disp, .1f);
+		show(hs3, disp, 1);
+		show(hs4, disp, 2f);
+	}
+
+	private static void show(HalfEdgeStructure hs, MyDisplay disp, float l) {
+		GLHalfEdgeStructure glwf2 = new GLHalfEdgeStructure(hs);
+		glwf2.setTitle(String.format("Unsharp λ=0.1 w=%s", l));
+		glwf2.configurePreferredShader("shaders/trimesh_flat.vert", 
+				"shaders/trimesh_flat.frag", 
+				"shaders/trimesh_flat.geom");
+		disp.addToDisplay(glwf2);
 	}
 
 }

@@ -40,7 +40,8 @@ public class Vertex extends HEElement implements Cloneable {
 	public float aMixed() {
 		float aMixed = 0;
 		for(Face f : iter(iteratorVF())) {
-			aMixed += f.getMixedVoronoiCellArea(this);
+			final float mixedVoronoiCellArea = f.mixedVoronoiCellArea(this);
+			aMixed += mixedVoronoiCellArea;
 		}
 		return aMixed;
 	}

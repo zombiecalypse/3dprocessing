@@ -2,12 +2,14 @@ package sparse.solver;
 
 import java.util.ArrayList;
 
+import static helpers.StaticHelpers.*;
 
 import java.util.logging.Logger;
 
 import sparse.CSRMatrix;
 import sparse.SparseTools;
 import no.uib.cipr.matrix.DenseVector;
+import no.uib.cipr.matrix.VectorEntry;
 import no.uib.cipr.matrix.sparse.BiCGstab;
 import no.uib.cipr.matrix.sparse.CG;
 import no.uib.cipr.matrix.sparse.CompRowMatrix;
@@ -49,7 +51,7 @@ public class JMTSolver extends Solver{
 		
 		log.info("Starting the solver...");
 		DenseVector b_ = SparseTools.denseVector(b);
-		DenseVector x_ = b_.copy();
+		DenseVector x_ = SparseTools.denseVector(b);
 		
 		CompRowMatrix mat = SparseTools.createCRMatrix(m);
 		
@@ -69,11 +71,12 @@ public class JMTSolver extends Solver{
 			solver.solve(mat, b_, x_);
 		} catch (IterativeSolverNotConvergedException e) {
 			log.severe("Iterative Solver did not converge");
+			throw new RuntimeException();
 		}
 		
 		//copy the result back
-		for(int i = 0; i < x_.size(); i++){
-			x.set(i, (float) x_.get(i));
+		for(VectorEntry e : iter(x_)){
+			x.add((float) e.get());
 		}
 	}
 

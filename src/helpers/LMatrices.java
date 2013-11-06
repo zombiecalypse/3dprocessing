@@ -60,28 +60,27 @@ public class LMatrices {
 		for (Vertex v : hs.getVertices()) {
 			// In each vertex...
 			if (!v.isOnBoundary()) {
-				float a_mixed4 = 4 * v.aMixed();
+				float a_mixed2 = 2 * v.aMixed();
 				for (HalfEdge e1 : iter(v.iteratorVE())) {
 					// take every edge weighted by cotangens of the adjacent
 					// angles
 					HalfEdge e2 = e1.getOpposite();
-					float alpha = (float) e1.opposingAngle();
-					float beta = (float) e2.opposingAngle();
+					float alpha = (float) Math.max(0.2, e1.opposingAngle());
+					float beta = (float) Math.max(0.2, e2.opposingAngle());
 					float weight = cot(alpha) + cot(beta);
-					float val = weight / a_mixed4;
+					float val = weight / a_mixed2;
 					// cut off if too small
-					if (Math.abs(val) > 1e-2) {
-						m.putOnce(v.index, e2.start().index, -val);
-						m.add(v.index, v.index, val);
-						continue;
-					}
+					m.putOnce(v.index, e2.start().index, -val);
+					m.add(v.index, v.index, val);
 				}
 			} else {
 				m.add(v.index, v.index, 0);
 			}
 		}
-		return m.toCsr();
+		final CSRMatrix csr = m.toCsr();
+		return csr;
 	}
+
 	/**
 	 * A symmetric cotangent Laplacian, cf Assignment 4, exercise 4.
 	 * 

@@ -140,5 +140,8 @@ public class HalfEdge extends HEElement{
 		if (this.incident_f == null) throw new AssertionError("No face to opposing angle");
 		return next.asVector().angle(next.next.asVector());
 	}
-
+	
+	public float incidentAngle() {
+		return opposite.asVector().angle(next.asVector());
+	}
 }

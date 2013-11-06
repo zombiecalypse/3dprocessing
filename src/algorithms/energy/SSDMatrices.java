@@ -34,10 +34,10 @@ public class SSDMatrices {
 		for (int i = 0; i < Math.min(nRows, nCols); i++) {
 			eye.addRow();
 			eye.lastRow().add(
-			// column i, vlue 1
+			// column i, value 1
 					new col_val(i, 1));
 		}
-		// fill up the matrix with empt rows.
+		// fill up the matrix with empty rows.
 		for (int i = Math.min(nRows, nCols); i < nRows; i++) {
 			eye.addRow();
 		}

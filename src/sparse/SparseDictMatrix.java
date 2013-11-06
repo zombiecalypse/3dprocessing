@@ -48,4 +48,8 @@ public class SparseDictMatrix {
 		}
 		return m;
 	}
+	
+	public String toString() {
+		return this.values.toString();
+	}
 }
