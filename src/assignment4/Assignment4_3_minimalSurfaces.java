@@ -1,14 +1,24 @@
 package assignment4;
 
-
+import static helpers.StaticHelpers.*;
 import glWrapper.GLHalfEdgeStructure;
+import helpers.StaticHelpers.Indexed;
+import helpers.StaticHelpers.Pair;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Stack;
 
 import javax.vecmath.Vector3f;
 
+import com.google.common.base.Function;
+
 import datastructure.halfedge.HalfEdgeStructure;
+import datastructure.halfedge.Vertex;
 import meshes.WireframeMesh;
 import openGL.MyDisplay;
 import sparse.CSRMatrix;
@@ -18,7 +28,7 @@ import assignment4.generatedMeshes.Cylinder;
 public class Assignment4_3_minimalSurfaces {
 	
 	
-	public static void main(String[] args) throws Exception{
+	public static void main(String[] args) throws Exception {
 		
 		//generate example meshes
 		//WireframeMesh m = new Bock(1.3f,1.f,1.f).result;
@@ -26,12 +36,10 @@ public class Assignment4_3_minimalSurfaces {
 		
 		
 		//generate he struture
-		HalfEdgeStructure hs = new HalfEdgeStructure();
-		hs.init(m);
+		HalfEdgeStructure hs = new HalfEdgeStructure(m);
 	
 		//collect and display the boundary
-		HEData1d boundary = collectBoundary(hs, 1);
-		display(hs, boundary);
+		display(hs);
 		
 		//implement the surface minimalization...
 		
@@ -44,12 +52,18 @@ public class Assignment4_3_minimalSurfaces {
 	 * @param hs
 	 * @param boundary
 	 */
-	public static void display(HalfEdgeStructure hs, HEData1d boundary) {
+	public static void display(final HalfEdgeStructure hs) {
 		MyDisplay disp = new MyDisplay();
-		HEData3d colors = binaryColorMap(boundary, hs);
+		hs.putExtractor("color", new Function<Indexed<Vertex>, Float>() {
+			final int[] border = collectBoundary(hs, 1);
+
+			@Override
+			public Float apply(Indexed<Vertex> input) {
+				return (float) border[input.index()];
+			}
+		});
 		
 		GLHalfEdgeStructure glHE = new GLHalfEdgeStructure(hs);
-		glHE.add(colors, "color");
 		glHE.configurePreferredShader("shaders/trimesh_flatColor3f.vert", 
 				"shaders/trimesh_flatColor3f.frag", 
 				"shaders/trimesh_flatColor3f.geom");
@@ -65,58 +79,26 @@ public class Assignment4_3_minimalSurfaces {
 	 * @param dist
 	 * @return
 	 */
-	public static HEData1d collectBoundary(HalfEdgeStructure hs, int dist) {
+	public static int[] collectBoundary(HalfEdgeStructure hs, int dist) {
 		
-		HEData1d has_jm1_dist = new HEData1d(hs);
+		int[] has_jm1_dist = new int[hs.getVertices().size()];
+		Stack<Pair<Vertex, Integer>> toMark = new Stack<>();
 		for(Vertex v : hs.getVertices()){
-			if(isOnBoundary(v)){
-				has_jm1_dist.put(v, new Integer(1));
+			if(v.isOnBoundary()) {
+				toMark.add(pair(v, 0));
 			}
 		}
 		
-		Vertex temp;
-		HEData1d has_j_dist = new HEData1d(hs);
-		for(int j = 0; j <dist; j++){
-			for(Vertex v : hs.getVertices()){
-				Iterator<Vertex> it = v.iteratorVV();
-				while(it.hasNext()){
-					temp = it.next();
-					if(has_jm1_dist.get(temp) != null){
-						has_j_dist.put(v, new Integer(1));
-					}
+		while (!toMark.empty()) {
+			Pair<Vertex, Integer> p = toMark.pop();
+			if (p.b < dist) {
+				for (Vertex vv : iter(p.a.iteratorVV())) {
+					toMark.add(pair(vv, p.b+1));
 				}
 			}
-			
-			HEData1d tmp = has_jm1_dist;
-			has_jm1_dist = has_j_dist;
-			has_j_dist = tmp;
-			
+			has_jm1_dist[p.a.index] = 1;
 		}
 		
 		return has_jm1_dist;
-	}
-
-	private static boolean isOnBoundary(Vertex v) {
-		Iterator<HalfEdge> it = v.iteratorVE();
-		while(it.hasNext()){
-			if(it.next().isOnBorder()){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public static HEData3d binaryColorMap(HEData1d boundary, HalfEdgeStructure hs) {
-		HEData3d result = new HEData3d(hs);
-		for(Vertex v: hs.getVertices()){
-			if(boundary.get(v) != null){
-				result.put(v, new Vector3f(0.9f,0.2f,0.2f));
-			}
-			else{
-				result.put(v, new Vector3f(0.4f,0.4f,0.9f));
-			}
-		}
-		
-		return result;
 	}
 }
