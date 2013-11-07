@@ -63,26 +63,5 @@ public class Bock {
 		}
 		
 	}
-	
-	public static void main(String[] arg) throws MeshNotOrientedException, DanglingTriangleException{
-		Bock b = new Bock(0.5f,0.5f,0.5f);
-		MyDisplay d = new MyDisplay();
-		GLWireframeMesh w = new GLWireframeMesh(b.result);
-		d.addToDisplay(w);
-		
-		
-		
-		HalfEdgeStructure hs = new HalfEdgeStructure();
-		hs.init(b.result);
-		
-		//HEData3d colors = FixedBoundarySmoothing.binaryColorMap(b.boundary, hs);
-		HEData3d colors = Assignment4_3_minimalSurfaces.binaryColorMap(Assignment4_3_minimalSurfaces.collectBoundary(hs, 1), hs);
-		GLHalfEdgeStructure glHE = new GLHalfEdgeStructure(hs);
-		glHE.configurePreferredShader("shaders/trimesh_flatColor3f.vert", 
-				"shaders/trimesh_flatColor3f.frag", 
-				"shaders/trimesh_flatColor3f.geom");
-		glHE.add(colors, "color");
-		d.addToDisplay(glHE);
-	}
 
 }

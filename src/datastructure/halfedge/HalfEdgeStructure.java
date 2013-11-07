@@ -419,4 +419,12 @@ public class HalfEdgeStructure {
 			}
 		});
 	}
+
+	public float surfaceArea() {
+		float sum = 0;
+		for (Face f : getFaces()) {
+			sum += f.getArea();
+		}
+		return sum;
+	}
 }

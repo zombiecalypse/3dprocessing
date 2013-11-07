@@ -55,7 +55,7 @@ public class LMatrices {
 	 * @param hs
 	 * @return
 	 */
-	public static CSRMatrix mixedCotanLaplacian(HalfEdgeStructure hs) {
+	public static SparseDictMatrix mixedCotanLaplacianBare(HalfEdgeStructure hs) {
 		// doesn't seem to be wrong.
 		SparseDictMatrix m = new SparseDictMatrix();
 		for (Vertex v : hs.getVertices()) {
@@ -78,7 +78,11 @@ public class LMatrices {
 				m.add(v.index, v.index, 0);
 			}
 		}
-		return m.toCsr();
+		return m;
+	}
+	
+	public static CSRMatrix mixedCotanLaplacian(HalfEdgeStructure hs) {
+		return mixedCotanLaplacianBare(hs).toCsr();
 	}
 
 	/**
