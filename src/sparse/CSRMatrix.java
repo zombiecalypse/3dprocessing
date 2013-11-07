@@ -13,6 +13,9 @@ import java.util.concurrent.TimeUnit;
 import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
+import no.uib.cipr.matrix.Matrix;
+import no.uib.cipr.matrix.sparse.CompRowMatrix;
+
 import com.google.common.base.Functions;
 import com.google.common.collect.Ordering;
 

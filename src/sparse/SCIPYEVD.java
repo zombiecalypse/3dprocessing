@@ -1,5 +1,7 @@
 package sparse;
 
+import static helpers.StaticHelpers.*;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -50,24 +52,26 @@ public class SCIPYEVD {
 			ArrayList<Float> eigs,
 			ArrayList<ArrayList<Float>> vecs) throws IOException {
 		
-		readVector("./python/temp/" + prefix + "out_vals", eigs);
+		readVector(tempPath(prefix + "out_vals"), eigs);
 		while(eigs.size() > k){
 			eigs.remove(eigs.size()-1);
 		}
 		
-		readVectors("./python/temp/" + prefix + "out_vecs", vecs, Math.min(eigs.size(), k));
+		readVectors(tempPath(prefix + "out_vecs"), vecs, Math.min(eigs.size(), k));
 		
 	}
 
 	private static void runSVDScript(String matrix_name, int k) throws IOException {
 		/*execute the script*/
 		Runtime rt = Runtime.getRuntime();
-		Process pr = rt.exec("python ./python/doSparseEig.py " +
-				"-i ./python/temp/" + matrix_name + "ifile " +
-				"-j ./python/temp/" + matrix_name + "jfile " +
-				"-v ./python/temp/" + matrix_name + "vfile " +
-				"-o ./python/temp/" + matrix_name + "out " +
-				"-k " + k);
+		final String command = "python src/python/doSparseEig.py " +
+				"-i " + tempPath(matrix_name + "ifile") + " " +
+				"-j " + tempPath(matrix_name + "jfile") + " " +
+				"-v " + tempPath(matrix_name + "vfile") + " " +
+				"-o " + tempPath(matrix_name + "out") + " " +
+				"-k " + k;
+		System.out.println(command);
+		Process pr = rt.exec(command);
 		
 	    
 		try {

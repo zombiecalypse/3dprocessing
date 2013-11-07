@@ -50,6 +50,6 @@ public class SparseDictMatrix {
 	}
 	
 	public String toString() {
-		return this.values.toString();
+		return this.toCsr().toString();
 	}
 }

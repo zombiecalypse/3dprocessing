@@ -92,7 +92,29 @@ public class LMatrices {
 	 * @return
 	 */
 	public static CSRMatrix symmetricCotanLaplacian(HalfEdgeStructure hs) {
-		return null;
+		SparseDictMatrix m = new SparseDictMatrix();
+		for (Vertex v : hs.getVertices()) {
+			// In each vertex...
+			if (!v.isOnBoundary()) {
+				float a_mixed = v.aMixed();
+				for (HalfEdge e1 : iter(v.iteratorVE())) {
+					// take every edge weighted by cotangens of the adjacent
+					// angles
+					HalfEdge e2 = e1.getOpposite();
+					float alpha = (float) Math.max(0.2, e1.opposingAngle());
+					float beta = (float) Math.max(0.2, e2.opposingAngle());
+					float weight = cot(alpha) + cot(beta);
+					float a_mixed_other = e1.end().aMixed();
+					float val = (float) (weight / (2* Math.sqrt(a_mixed * a_mixed_other)));
+					// cut off if too small
+					m.putOnce(v.index, e2.start().index, -val);
+					m.add(v.index, v.index, val);
+				}
+			} else {
+				m.add(v.index, v.index, 0);
+			}
+		}
+		return m.toCsr();
 	}
 
 	/**
