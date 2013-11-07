@@ -85,6 +85,17 @@ public final class MyFunctions {
 			}
 		};
 	}
+	public static Function<Tuple3f, Tuple3f> spread3d(final float min, final float max) {
+		return new Function<Tuple3f, Tuple3f>() {
+			@Override
+			public Tuple3f apply(Tuple3f a) {
+				return new Vector3f(
+						(a.x - min) / (max - min),
+						(a.y - min) / (max - min),
+						(a.z - min) / (max - min));
+			}
+		};
+	}
 
 	public static Function<Indexed<Vertex>, Tuple3f> asColor(
 			final Function<Indexed<Vertex>, Float> function) {
@@ -124,6 +135,12 @@ public final class MyFunctions {
 			return a.z;
 		}
 	};
+	public static final Function<Tuple3f, Float> length = new Function<Tuple3f, Float>() {
+		@Override
+		public Float apply(Tuple3f a) {
+			return new Vector3f(a).length();
+		}
+	};;
 
 	public static Function<Vertex, Tuple3f> centered_normals() {
 		return comp(add(grey), normals());

@@ -1,12 +1,17 @@
 package tests;
 
+import static helpers.StaticHelpers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import helpers.LMatrices;
+import helpers.MyFunctions;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.vecmath.Tuple3f;
 
 import meshes.WireframeMesh;
 import meshes.exception.DanglingTriangleException;
@@ -29,7 +34,8 @@ public class Assignment4_1_Tests {
 	private HalfEdgeStructure hs2;
 
 	@Before
-	public void setUp() throws IOException, MeshNotOrientedException, DanglingTriangleException {
+	public void setUp() throws IOException, MeshNotOrientedException,
+			DanglingTriangleException {
 		WireframeMesh m = ObjReader.read("objs/sphere.obj", false);
 		hs = new HalfEdgeStructure(m);
 
@@ -38,7 +44,8 @@ public class Assignment4_1_Tests {
 
 	}
 
-	public static void laplacianCheck(HalfEdgeStructure hs, CSRMatrix l, float expectedError) {
+	public static void laplacianCheck(HalfEdgeStructure hs, CSRMatrix l,
+			float expectedError) {
 		assertNotNull(l);
 		assertEquals(l.nRows, l.nCols);
 		assertEquals(hs.getVertices().size(), l.nCols);
@@ -60,17 +67,28 @@ public class Assignment4_1_Tests {
 		laplacianCheck(hs, LMatrices.uniformLaplacian(hs), 1e-6f);
 	}
 
-  @Test
-  public void uniformLaplacianOnUglySphereRuns() {
-    laplacianCheck(hs2, LMatrices.uniformLaplacian(hs2), 1e-6f);
-  }
+	@Test
+	public void uniformLaplacianOnUglySphereRuns() {
+		laplacianCheck(hs2, LMatrices.uniformLaplacian(hs2), 1e-6f);
+	}
 
-  @Test
-  public void cotanLaplacianOnUglySphereRuns() {
-    laplacianCheck(hs2, LMatrices.mixedCotanLaplacian(hs2), 1e-2f); // quite messy
-  }
-  @Test
-  public void cotanLaplacianOnSphereRuns() {
-    laplacianCheck(hs, LMatrices.mixedCotanLaplacian(hs), 1e-5f); // many float computations
-  }
+	@Test
+	public void cotanLaplacianOnUglySphereRuns() { // quite messy
+		laplacianCheck(hs2, LMatrices.mixedCotanLaplacian(hs2), 1e-2f);
+	}
+
+	@Test
+	public void cotanLaplacianOnSphereRuns() { // many float computations
+		laplacianCheck(hs, LMatrices.mixedCotanLaplacian(hs), 1e-5f); 
+	}
+
+	@Test
+	public void cotanLaplacianOnSphereGivesCurvature() {
+		CSRMatrix m = LMatrices.mixedCotanLaplacian(hs);
+		List<Tuple3f> l = m.multComponentwise(new ArrayList<>(map(
+				MyFunctions.pos, hs.getVertices())));
+		for (Float f : map(MyFunctions.length, l)) {
+			assertEquals(1.0f, f, 1e-4); // curvature * 2
+		}
+	}
 }

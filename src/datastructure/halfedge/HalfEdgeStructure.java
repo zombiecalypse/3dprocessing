@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
@@ -380,6 +381,15 @@ public class HalfEdgeStructure {
 	public void putExtractor(String string, Function<Indexed<Vertex>, Float> function) {
 		extractors1d.put(string, function);
 	}
+	
+	public void putExtractorList(String string, final List<Float> function) {
+		extractors1d.put(string, new Function<Indexed<Vertex>, Float>() {
+			@Override
+			public Float apply(Indexed<Vertex> input) {
+				return function.get(input.index());
+			}
+		});
+	}
 
 	@Override
 	public String toString() {
@@ -399,4 +409,14 @@ public class HalfEdgeStructure {
         }
         return sum/6;
 }
+
+	public void putExtractor3dList(String string,
+			final List<Tuple3f> function) {
+		extractors3d.put(string, new Function<Indexed<Vertex>, Tuple3f>() {
+			@Override
+			public Tuple3f apply(Indexed<Vertex> input) {
+				return function.get(input.index());
+			}
+		});
+	}
 }

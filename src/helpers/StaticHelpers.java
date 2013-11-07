@@ -16,6 +16,15 @@ import com.google.common.base.Function;
 
 public final class StaticHelpers {
 	
+	@SafeVarargs
+	public static <A> List<A> chain(List<A>... as) {
+		List<A> l = new ArrayList<>();
+		for (List<A> a : as) {
+			l.addAll(a);
+		}
+		return l;
+	}
+	
 	public static <A extends Comparable<A>> List<A> sorted(Collection<A> l) {
 		List<A> ll = new ArrayList<>(l);
 		Collections.sort(ll);

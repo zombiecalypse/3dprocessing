@@ -1,5 +1,7 @@
 package sparse;
 
+import helpers.MyFunctions;
+
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
@@ -8,6 +10,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import javax.vecmath.Tuple3f;
+import javax.vecmath.Vector3f;
+
+import com.google.common.base.Functions;
 import com.google.common.collect.Ordering;
 
 import static helpers.StaticHelpers.*;
@@ -55,6 +61,24 @@ public class CSRMatrix {
 		assert Ordering.natural().isOrdered(r);
 		this.nRows = rows.size();
 		this.nCols = Math.max(nCols, col + 1);
+	}
+	
+	public List<Tuple3f> multComponentwise(ArrayList<Tuple3f> a) {
+		final ArrayList<Float> nxs = new ArrayList<>();
+		final ArrayList<Float> nys = new ArrayList<>();
+		final ArrayList<Float> nzs = new ArrayList<>();
+		ArrayList<Float> xs = new ArrayList<>(map(MyFunctions.x, a));
+		ArrayList<Float> ys = new ArrayList<>(map(MyFunctions.y, a));
+		ArrayList<Float> zs = new ArrayList<>(map(MyFunctions.z, a));
+		
+		mult(xs, nxs);
+		mult(ys, nys);
+		mult(zs, nzs);
+		ArrayList<Tuple3f> o = new ArrayList<>();
+		for (int i = 0; i < nxs.size(); i++) {
+			o.add(new Vector3f(nxs.get(i), nys.get(i), nzs.get(i)));
+		}
+		return o;
 	}
 
 	/**

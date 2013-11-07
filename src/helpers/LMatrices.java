@@ -45,7 +45,8 @@ public class LMatrices {
 				m.putOnce(v.index, n.index, 1f / neighbors.size());
 			}
 		}
-		return m.toCsr();
+		final CSRMatrix csr = m.toCsr();
+		return csr;
 	}
 
 	/**
@@ -77,8 +78,7 @@ public class LMatrices {
 				m.add(v.index, v.index, 0);
 			}
 		}
-		final CSRMatrix csr = m.toCsr();
-		return csr;
+		return m.toCsr();
 	}
 
 	/**
