@@ -1,11 +1,10 @@
 package datastructure.halfedge;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-
-import static helpers.StaticHelpers.*;
+import static helpers.StaticHelpers.count;
+import static helpers.StaticHelpers.zip;
 import helpers.MyFunctions;
 import helpers.StaticHelpers.Indexed;
+import helpers.StaticHelpers.Pair;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,12 +23,15 @@ import meshes.WireframeMesh;
 import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;
 
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
+
 /**
  * An implementation of a half-edge Structure. This particular implementation
  * can only handle orientable Manifold meshes with or without borders. This
  * structure explicitely stores a list of {@link HalfEdge}s, {@link Face}s and
  * {@link Vertex}s.
- * 
+ *
  * <p>
  * Every half-edge has an opposite, next and prev, but on boundary edges one
  * edge of the half-edge pair will have a null face.
@@ -37,9 +39,9 @@ import meshes.exception.MeshNotOrientedException;
  * <p>
  * Initialize the HalfEdgeStructure with the {@link #init(WireframeMesh)} method
  * </p>
- * 
+ *
  * @author bertholet
- * 
+ *
  */
 
 public class HalfEdgeStructure {
@@ -89,7 +91,7 @@ public class HalfEdgeStructure {
 
 	/**
 	 * Get an Iterator over all Vertices
-	 * 
+	 *
 	 * @return
 	 */
 	public Iterator<Vertex> iteratorV() {
@@ -98,7 +100,7 @@ public class HalfEdgeStructure {
 
 	/**
 	 * Get an Iterator over all Edges
-	 * 
+	 *
 	 * @return
 	 */
 	public Iterator<HalfEdge> iteratorE() {
@@ -107,7 +109,7 @@ public class HalfEdgeStructure {
 
 	/**
 	 * Get an Iterator over all Faces
-	 * 
+	 *
 	 * @return
 	 */
 	public Iterator<Face> iteratorF() {
@@ -196,10 +198,10 @@ public class HalfEdgeStructure {
 	 * Create a Halfedge Structure from a wireframe mesh described by the vertex
 	 * Positions verts and fcs; this method throws a MeshNotOrientedException if
 	 * the input mesh is not oriented consistently.
-	 * 
+	 *
 	 * Runs in O(n*m), where n is the number of faces and m is the average
 	 * number of vertices per face
-	 * 
+	 *
 	 * @param verts
 	 * @param fcs
 	 * @param v_per_face
@@ -331,7 +333,7 @@ public class HalfEdgeStructure {
 	 * Assign consecutive values 0...vertices.size()-1 to the Vertex.index
 	 * fields.
 	 */
-	private void enumerate() {
+	public void enumerate() {
 		for (Pair<Integer, Vertex> p : zip(count(0), vertices)) {
 			p.b.index = p.a;
 		}
@@ -372,16 +374,16 @@ public class HalfEdgeStructure {
 	public void putExtractor3dPure(String string, Function<Vertex, Tuple3f> function) {
 		extractors3d.put(string, Functions.compose(function, MyFunctions.<Vertex>value()));
 	}
-	
+
 	public void putExtractor3d(String string, Function<Indexed<Vertex>, Tuple3f> function) {
 		extractors3d.put(string, function);
 	}
-	
+
 
 	public void putExtractor(String string, Function<Indexed<Vertex>, Float> function) {
 		extractors1d.put(string, function);
 	}
-	
+
 	public void putExtractorList(String string, final List<Float> function) {
 		extractors1d.put(string, new Function<Indexed<Vertex>, Float>() {
 			@Override
@@ -395,7 +397,7 @@ public class HalfEdgeStructure {
 	public String toString() {
 		return title == null ? super.toString() : title;
 	}
-	
+
 	public float getVolume() {
         float sum = 0;
         for (Face f: getFaces()) {
