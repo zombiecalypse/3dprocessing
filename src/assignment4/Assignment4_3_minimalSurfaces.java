@@ -24,6 +24,8 @@ import com.google.common.base.Function;
 import datastructure.halfedge.HalfEdgeStructure;
 import datastructure.halfedge.Vertex;
 import meshes.WireframeMesh;
+import meshes.generated.Bock;
+import meshes.generated.Cylinder;
 import openGL.MyDisplay;
 import sparse.CSRMatrix;
 import sparse.CSRMatrix.col_val;
@@ -31,8 +33,6 @@ import sparse.SparseDictMatrix;
 import sparse.solver.JMTSolver;
 import sparse.solver.SciPySolver;
 import sparse.solver.Solver;
-import assignment4.generatedMeshes.Bock;
-import assignment4.generatedMeshes.Cylinder;
 
 public class Assignment4_3_minimalSurfaces {
 	static Logger log = Logger.getLogger("MinSurface");

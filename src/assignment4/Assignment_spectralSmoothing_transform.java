@@ -29,7 +29,7 @@ import datastructure.halfedge.HalfEdgeStructure;
  * @author Alf
  *
  */
-public class ssignment_spectralSmoothing_transform {
+public class Assignment_spectralSmoothing_transform {
 
 	public static void main(String[] args) throws IOException, MeshNotOrientedException, DanglingTriangleException{
 		WireframeMesh m = ObjReader.read("./objs/bunny.obj", true);

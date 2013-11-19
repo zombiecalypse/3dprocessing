@@ -1,4 +1,4 @@
-package assignment4.generatedMeshes;
+package meshes.generated;
 
 import glWrapper.GLPointCloud;
 import glWrapper.GLWireframeMesh;
