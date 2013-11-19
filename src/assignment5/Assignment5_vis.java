@@ -1,14 +1,24 @@
 package assignment5;
 
+import glWrapper.GLHalfEdgeStructure;
+import helpers.MyFunctions;
+
 import java.util.ArrayList;
 
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
+import com.google.common.base.Function;
+
+import openGL.MyDisplay;
 import meshes.WireframeMesh;
 import meshes.reader.ObjReader;
+import datastructure.halfedge.Face;
 import datastructure.halfedge.HalfEdgeStructure;
+import datastructure.halfedge.Vertex;
+
+import static helpers.StaticHelpers.*;
 
 
 /**
@@ -21,9 +31,21 @@ public class Assignment5_vis {
 
 	public static void main(String[] args) throws Exception{
 		WireframeMesh wf = ObjReader.read("objs/bunny_ear.obj", true);
-		HalfEdgeStructure hs = new HalfEdgeStructure();
-		hs.init(wf);
-
+		HalfEdgeStructure hs = new HalfEdgeStructure(wf);
+		
+		final HalfEdgeCollapse hec = new HalfEdgeCollapse(hs);
+		hec.collapseEdgesRandomly(5);
+		
+		hs.putExtractor3d("color", MyFunctions.asColor(MyFunctions.pure(new Function<Vertex, Float>() {
+			@Override
+			public Float apply(Vertex a) {
+				for (Face f : iter(a.iteratorVF())) {
+					if (hec.isFaceDead(f))
+						return .8f;
+				}
+				return .2f;
+			}
+		})));
 
 		//visualize the isosurfaces of this bunny_ear
 		//to compute the eigenvalues of some 3x3 matrix m:
@@ -35,9 +57,15 @@ public class Assignment5_vis {
 			//has higher dimension than 1. This does not happen on the bunny ear.
 			//Feel free to improve/use a different method :- ) )
 		//eigenVector(m, eigs[i]);
+
+		MyDisplay disp = new MyDisplay();
+		
+		GLHalfEdgeStructure gl = new GLHalfEdgeStructure(hs);
+		gl.configurePreferredShader("shaders/default.vert", 
+				"shaders/default.frag", null);
+		gl.setTitle("Bunny ear");
+		disp.addToDisplay(gl);
 	}
-
-
 
 	/**
 	 * This method is a hack to compute eigenvectors that will often work but will fail

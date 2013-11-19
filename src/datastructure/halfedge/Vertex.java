@@ -10,7 +10,7 @@ import static helpers.StaticHelpers.*;
 /**
  * Implementation of a vertex for the {@link HalfEdgeStructure}
  */
-public class Vertex extends HEElement implements Cloneable {
+public class Vertex extends HEElement implements Cloneable, Comparable<Vertex> {
 
 	/** position */
 	public Point3f pos;
@@ -193,5 +193,10 @@ public class Vertex extends HEElement implements Cloneable {
 				return true;
 		}
 		return false;
+	}
+
+	@Override
+	public int compareTo(Vertex o) {
+		return Integer.compare(index, o.index);
 	}
 }

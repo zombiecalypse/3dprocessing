@@ -1,12 +1,15 @@
 package assignment1;
 
 import glWrapper.GLHalfEdgeStructure;
+
 import com.google.common.base.Function;
+
 import static helpers.StaticHelpers.*;
 import helpers.MyFunctions;
 
 import java.io.IOException;
 
+import datastructure.halfedge.HalfEdge;
 import datastructure.halfedge.HalfEdgeStructure;
 import datastructure.halfedge.Vertex;
 import openGL.MyDisplay;

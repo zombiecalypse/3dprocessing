@@ -1,8 +1,13 @@
 package assignment5;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
@@ -11,6 +16,7 @@ import datastructure.halfedge.Face;
 import datastructure.halfedge.HalfEdge;
 import datastructure.halfedge.HalfEdgeStructure;
 import datastructure.halfedge.Vertex;
+import static helpers.StaticHelpers.*;
 
 
 /**
@@ -81,7 +87,12 @@ public class HalfEdgeCollapse {
 	 * @param hs
 	 */
 	void collapseEdge(HalfEdge e){
-
+		
+	}
+		
+	void collapseEdge(HalfEdge e, Point3f newPos) {
+		assert isEdgeCollapsable(e);
+		assert isCollapseMeshInv(e, newPos);
 
 		//First step:
 		//relink the vertices to safe edges. don't iterate
@@ -90,14 +101,29 @@ public class HalfEdgeCollapse {
 
 
 		//your code goes here....
-
-
+		deadEdges.add(e);
+		deadEdges.add(e.getOpposite());
+		deadVertices.add(e.incident_v);
+		if (e.splitsFaces()) {
+			deadFaces.add(e.getFace());
+			deadFaces.add(e.getOpposite().getFace());
+			// Avoid iterators because we are relinking.
+			deadEdges.add(e.getNext().getNext());
+			deadEdges.add(e.getNext());
+		} 
+		if (e.getOpposite().hasFace()) {
+		}
+		e.getNext().incident_v.pos = newPos;
+		
+		
 
 		//Do a lot of assertions while debugging, either here
 		//or in the calling method... ;-)
 		//If something is wrong in the half-edge structure it is awful
 		//to detect what it is that is wrong...
 
+		assertEdgesOk(hs);
+		assertVerticesOk(hs);
 	}
 
 
@@ -350,4 +376,56 @@ public class HalfEdgeCollapse {
 		}
 	}
 
+	public void collapseEdgesRandomly(int remainding) {
+		Set<Edge> edges = new HashSet<>();
+		for (Vertex v : hs.getVertices()) {
+			for (HalfEdge h : iter(v.iteratorVE())) {
+				edges.add(new Edge(h));
+			}
+		}
+		List<Edge> toDelete = sample(list(edges), edges.size()-remainding);
+		for (Edge e : toDelete) {
+			if (isEdgeCollapsable(e.h1)) {
+				collapseEdge(e.h1);
+			}
+		}
+		finish();
+	}
+	
+	/** Edges are equal if their halfedges as a set are equal */
+	static class Edge {
+		public Edge(HalfEdge h1) {
+			this.h1 = Objects.requireNonNull(h1);
+			this.h2 = Objects.requireNonNull(h1.getOpposite());
+		}
+		
+		HalfEdge h1;
+		HalfEdge h2;
+		
+		@Override
+		public int hashCode() {
+			// Note that it commutes.
+			return h1.hashCode() ^ h2.hashCode();
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Edge other = (Edge) obj;
+			if (!(h1.equals(other.h1) || h1.equals(other.h2))) {
+				return false;
+			} else if (!(h2.equals(other.h2) || h2.equals(other.h1))) {
+				return false;
+			}
+			return true;
+		}
+		@Override
+		public String toString() {
+			return String.format("Edge%s", sorted(Arrays.asList(h1.incident_v, h2.incident_v)));
+		}
+	}
 }

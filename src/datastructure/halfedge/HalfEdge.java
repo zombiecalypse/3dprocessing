@@ -144,4 +144,8 @@ public class HalfEdge extends HEElement{
 	public float incidentAngle() {
 		return opposite.asVector().angle(next.asVector());
 	}
+
+	public boolean splitsFaces() {
+		return hasFace() && opposite.hasFace();
+	}
 }
