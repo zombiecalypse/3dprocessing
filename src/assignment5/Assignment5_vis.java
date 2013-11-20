@@ -30,20 +30,16 @@ import static helpers.StaticHelpers.*;
 public class Assignment5_vis {
 
 	public static void main(String[] args) throws Exception{
-		WireframeMesh wf = ObjReader.read("objs/bunny_ear.obj", true);
+		WireframeMesh wf = ObjReader.read("objs/buddha.obj", true);
 		HalfEdgeStructure hs = new HalfEdgeStructure(wf);
 		
 		final HalfEdgeCollapse hec = new HalfEdgeCollapse(hs);
-		hec.collapseEdgesRandomly(5);
+		hec.collapseEdgesRandomly(100);
 		
 		hs.putExtractor3d("color", MyFunctions.asColor(MyFunctions.pure(new Function<Vertex, Float>() {
 			@Override
 			public Float apply(Vertex a) {
-				for (Face f : iter(a.iteratorVF())) {
-					if (hec.isFaceDead(f))
-						return .8f;
-				}
-				return .2f;
+				return hec.isVertexDead(a) ? .8f : .2f;
 			}
 		})));
 

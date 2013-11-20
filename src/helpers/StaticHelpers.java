@@ -19,6 +19,10 @@ public final class StaticHelpers {
 	static Random r = new Random();
 
 	public static <T> List<T> sample(List<T> input, int subsetSize) {
+		assert input.size() >= subsetSize;
+		if (subsetSize <= 0) {
+			return Collections.emptyList();
+		}
 	    int inputSize = input.size();
 	    for (int i = 0; i < subsetSize; i++)
 	    {

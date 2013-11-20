@@ -15,7 +15,7 @@ public class Vertex extends HEElement implements Cloneable, Comparable<Vertex> {
 	/** position */
 	public Point3f pos;
 	/** adjacent edge: this vertex is startVertex of anEdge */
-	HalfEdge anEdge;
+	public HalfEdge anEdge;
 
 	/** The index of the vertex, mainly used for toString() */
 	public int index;
