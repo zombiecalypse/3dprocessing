@@ -9,6 +9,37 @@ import javax.vecmath.Vector3f;
  *
  */
 public class HalfEdge extends HEElement{
+//	@Override
+//	public int hashCode() {
+//		final int prime = 31;
+//		int result = 1;
+//		result = prime * result + opposite.incident_v.index;
+//		result = prime * result + incident_v.index;
+//		return result;
+//	}
+//
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (this == obj)
+//			return true;
+//		if (obj == null)
+//			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
+//		HalfEdge other = (HalfEdge) obj;
+//		
+//		if (incident_v.index != other.incident_v.index) {
+//			return false;
+//		} 
+//		if (opposite.incident_v.index != other.opposite.incident_v.index) {
+//			return false;
+//		} else {
+//			return true;
+//		}
+//	}
+
+	private static int ids = 0;
+	public final int id = ids++;
 	
 	/** The end vertex of this edge*/
 	public Vertex incident_v;
@@ -126,7 +157,7 @@ public class HalfEdge extends HEElement{
 	
 	@Override
 	public String toString(){
-		return "( " + start().toString() + " --> " + end().toString() + ")";
+		return String.format("[%x](%s --> %s)", id, start(), end());
 	}
 
 	public Vector3f asVector() {
@@ -147,5 +178,9 @@ public class HalfEdge extends HEElement{
 
 	public boolean splitsFaces() {
 		return hasFace() && opposite.hasFace();
+	}
+
+	public void setStart(Vertex v) {
+		opposite.incident_v = v;
 	}
 }

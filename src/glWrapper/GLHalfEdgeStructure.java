@@ -58,7 +58,7 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 				values[index++] = p.z;
 			}
 			this.addElement(values, Semantic.USERSPECIFIED, 3, name);
-			for (int i = 0; i < 100; i++) {
+			for (int i = 0; i < Math.min(values.length, 100); i++) {
 				System.out.format("%.2f ", values[i]);
 			}
 			System.out.println();
@@ -77,7 +77,7 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 			}
 			this.addElement(values, Semantic.USERSPECIFIED, 1, name);
 
-			for (int i = 0; i < 100; i++) {
+			for (int i = 0; i < Math.min(values.length, 100); i++) {
 				System.out.format("%.2f ", values[i]);
 			}
 			System.out.println();

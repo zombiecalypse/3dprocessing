@@ -1,7 +1,10 @@
-package assignment5;
+package algorithms.collapse;
+
+import helpers.V;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -9,6 +12,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
@@ -27,9 +32,11 @@ import static helpers.StaticHelpers.*;
  */
 public class HalfEdgeCollapse {
 
+	public static final Logger log = Logger.getLogger("Collapse");
+
 	// collect the obsolete elements
-	public HashSet<HalfEdge> deadEdges;
-	public HashSet<Vertex> deadVertices;
+	public HashSet<HalfEdge> deadEdges = new HashSet<>();
+	public TreeSet<Vertex> deadVertices = new TreeSet<>();
 	public HashSet<Face> deadFaces;
 
 	// the half-edge structure we work on
@@ -42,6 +49,52 @@ public class HalfEdgeCollapse {
 	// A flip will be detected, if after a collapse oldNormal.dot(newNormal) <
 	// flipConst.
 	private static final float flipConst = 0.1f;// -0.8f;
+	
+	private static interface Executor {
+		public void add(Instruction i);
+		public void run();
+		public void addAll(List<Instruction> removeFace);
+	}
+	
+	private static class Interpreter implements Executor {
+		@Override
+		public void add(Instruction i) {
+			log.fine(String.format("%s", i));
+			i.execute();
+		}
+		
+		@Override
+		public void run() {	}
+
+		@Override
+		public void addAll(List<Instruction> a) {
+			for (Instruction i : a) {
+				add(i);
+			}
+		}
+	}
+	
+	private static class Collector implements Executor {
+		List<Instruction> inst = new ArrayList<>();
+		@Override
+		public void add(Instruction a) {
+			inst.add(a);
+		}
+
+		@Override
+		public void run() {
+			for (Instruction i : inst) {
+				log.finer(String.format("%s", i));
+				i.execute();
+			}
+			inst.clear();
+		}
+
+		@Override
+		public void addAll(List<Instruction> a) {
+			inst.addAll(a);
+		}
+	}
 
 	/**
 	 * 
@@ -51,8 +104,6 @@ public class HalfEdgeCollapse {
 	 */
 	public HalfEdgeCollapse(HalfEdgeStructure hs) {
 		this.hs = hs;
-		this.deadEdges = new HashSet<>();
-		this.deadVertices = new HashSet<>();
 		this.deadFaces = new HashSet<>();
 
 		this.oldFaceNormals = new HashMap<>();
@@ -84,83 +135,58 @@ public class HalfEdgeCollapse {
 	 * @param hs
 	 */
 	void collapseEdge(HalfEdge e) {
-		Point3f newPos = new Point3f(e.incident_v.pos);
-		if (this.isCollapseMeshInv(e, newPos)) {
-			collapseEdge(e, e.incident_v.pos);
+		Point3f newPos = V.scaled_add(e.start().pos, 0.5f, e.end().pos, 0.5f);
+		if (!this.isCollapseMeshInv(e, newPos)) {
+			collapseEdge(e, newPos);
 		}
 	}
 
 	void collapseEdge(HalfEdge e, Point3f newPos) {
+		if (isEdgeDead(e)) return;
+//		log.entering(HalfEdgeCollapse.class.toString(), "collapseEdge", e);
+//		log.finer(String.format("next: %s prev: %s", e.getNext(), e.prev));
 		assert isEdgeCollapsable(e);
-		assert isCollapseMeshInv(e, newPos);
+		assert !isCollapseMeshInv(e, newPos);
 
 		// We will use deferred actions. No changes are executed
 		// until after we constructed all changes. This simplifies
 		// the fiddling with references.
-		List<Instruction> ins = new ArrayList<>();
 
-		// First step:
-		// relink the vertices to safe edges. don't iterate
-		// around e.end() before the collapse is finished.
+		makeV2ERefSafe(e);
+		Executor ins = new Collector();
 
-		// Standard case:
-		if (!e.isOnBorder()) {
-			// e, e.opposite and e.start() are deleted.
-			Vertex deletedVertex = e.incident_v;
-			HalfEdge eo = e.getOpposite();
-			ins.add(delete(e));
-			ins.add(delete(eo));
-			ins.add(delete(deletedVertex));
-			// References to e.start() go to e.end()
-			// References to e and its opposite die.
-			for (HalfEdge influx : iter(deletedVertex.iteratorVE())) {
-				ins.add(updateEdgeVertexReference(influx.getOpposite(),
-						e.start(), deletedVertex));
-			}
-			// e.face, e.opposite.face are deleted.
-			// References to the faces die.
-			ins.add(delete(e.getFace()));
-			ins.add(delete(e.getOpposite().getFace()));
-			// The edge circles around e.face and e.opposite.face die
-			// Only e(.opposite).next and e(.opposite).prev are alive at this
-			// point
+		final Vertex end = e.end();
+		ins.add(updateVertexPosition(end, newPos));
 
-			ins.add(delete(e.prev));
-			ins.add(delete(e.getNext()));
-			// e.next.opposite is stitched to e.prev.opposite
-			ins.add(stitchEdge(e.prev, e.getNext()));
-			// e.next.v references e.prev.opposite now
-			if (e.incident_v.anEdge == e.getNext()) {
-				ins.add(updateVertexEdge(e.incident_v, e.prev.getOpposite(),
-						e.getNext()));
-			}
-			if (e.getNext().incident_v.anEdge == e.prev) {
-				ins.add(updateVertexEdge(e.getNext().incident_v, e.getNext()
-						.getOpposite(), e.prev));
-			}
+		Vertex deletedVertex = e.start();
+		ins.add(delete(deletedVertex));
 
-			ins.add(delete(eo.prev));
-			ins.add(delete(eo.getNext()));
-			// e.next.opposite is stitched to e.prev.opposite
-			ins.add(stitchEdge(eo.prev, eo.getNext()));
-			// e.next.v references e.prev.opposite now
-			if (eo.incident_v.anEdge == eo.getNext()) {
-				ins.add(updateVertexEdge(eo.incident_v, eo.prev.getOpposite(),
-						eo.getNext()));
-			}
-			if (eo.getNext().incident_v.anEdge == e.prev) {
-				ins.add(updateVertexEdge(eo.getNext().incident_v, eo.getNext()
-						.getOpposite(), eo.prev));
-			}
-			ins.add(updateVertexPosition(e.getNext().incident_v, newPos));
-		} else if (e.hasFace()) {
+//		log.finer(String.format("del: %s repl: %s", deletedVertex, end));
+
+		HalfEdge eo = e.getOpposite();
+		assert eo.end() == deletedVertex;
+
+		for (HalfEdge outflux : iter(deletedVertex.iteratorVE())) {
+			assert outflux.start() == deletedVertex;
+			final HalfEdge influx = outflux.getOpposite();
+			assert influx.end() == deletedVertex;
+			if (influx == eo) continue;
+			ins.add(updateEdgeVertexReference(influx, end, deletedVertex));
 		}
-		
-		 makeV2ERefSafe(e);
 
-		for (Instruction i : ins) {
-			i.execute();
+		if (e.hasFace()) {
+			ins.addAll(removeFace(e));
+		} else {
+			ins.addAll(removeFaceAtEdge(e));
 		}
+
+		if (eo.hasFace()) {
+			ins.addAll(removeFace(eo));
+		} else {
+			ins.addAll(removeFaceAtEdge(eo));
+		}
+
+		ins.run();
 
 		// Do a lot of assertions while debugging, either here
 		// or in the calling method... ;-)
@@ -171,42 +197,106 @@ public class HalfEdgeCollapse {
 		assertVerticesOk(hs);
 	}
 
+	private List<Instruction> removeFaceAtEdge(HalfEdge e) {
+		return Arrays.asList(stitchLength(e.getPrev(), e.getNext()), delete(e));
+	}
+
+	class StitchLength implements Instruction {
+		private HalfEdge prev;
+		private HalfEdge next;
+		private HalfEdge prev_o;
+		private HalfEdge next_o;
+
+		public StitchLength(HalfEdge prev, HalfEdge next) {
+			this.prev = prev;
+			this.prev_o = prev.getOpposite();
+			this.next = next;
+			this.next_o = next.getOpposite();
+		}
+
+		@Override
+		public void execute() {
+			prev.setNext(next);
+			next.setPrev(prev);
+			prev_o.setPrev(next_o);
+			next_o.setNext(prev_o);
+//			log.finer(String.format("Stitched: %s %s", prev, next));
+		}
+
+		public String toString() {
+			return String.format("Stitch(%s, %s)", prev, next);
+		}
+	}
+
+	private Instruction stitchLength(final HalfEdge prev, final HalfEdge next) {
+		return new StitchLength(prev, next);
+	}
+
+	private List<Instruction> removeFace(HalfEdge e) {
+		List<Instruction> ret = new ArrayList<>(Arrays.asList(
+				glueEdge(e.getPrev(), e.getNext()), delete(e.getFace())));
+		for (HalfEdge ee : iter(e.getFace().iteratorFE())) {
+			ret.add(delete(ee));
+		}
+		return ret;
+	}
+
+	class UpdatePos implements Instruction {
+		private Vertex v;
+		private Point3f newPos;
+
+		public UpdatePos(Vertex v, Point3f newPos) {
+			this.v = v;
+			this.newPos = newPos;
+		}
+
+		@Override
+		public void execute() {
+			v.pos = newPos;
+		}
+
+		public String toString() {
+			return String.format("Move(%s => %s)", v, newPos);
+		}
+	}
+
 	private Instruction updateVertexPosition(final Vertex v,
 			final Point3f newPos) {
-		return new Instruction() {
-			@Override
-			public void execute() {
-				v.pos = newPos;
-			}
-		};
+		return new UpdatePos(v, newPos);
 	}
 
-	private Instruction updateVertexEdge(final Vertex v, final HalfEdge e,
-			HalfEdge deleted) {
-		assert v.anEdge == deleted : String.format("Expected: %s was %s",
-				deleted, v.anEdge);
-		return new Instruction() {
-			@Override
-			public void execute() {
-				v.anEdge = e;
-			}
-		};
-	}
+	class GlueEdge implements Instruction {
+		private HalfEdge from_o;
+		private HalfEdge to_o;
+		private String from;
+		private String to;
 
-	private Instruction stitchEdge(final HalfEdge from, final HalfEdge to) {
-		if (to.incident_v.anEdge == from) {
-			System.out.println("bla");
+		public GlueEdge(HalfEdge from, HalfEdge to) {
+			assert from.getOpposite() != to;
+			assert to.getOpposite() != from;
+			assert to.start() != from.end() || from.start() != to.end();
+			this.from_o = from.getOpposite();
+			this.to_o = to.getOpposite();
+			this.from = from.toString();
+			this.to = to.toString();
 		}
-		return new Instruction() {
-			HalfEdge from_o = from.getOpposite();
-			HalfEdge to_o = to.getOpposite();
 
-			@Override
-			public void execute() {
-				from_o.setOpposite(to_o);
-				to_o.setOpposite(from_o);
-			}
-		};
+		@Override
+		public void execute() {
+			from_o.setOpposite(to_o);
+			to_o.setOpposite(from_o);
+			assert from_o.start() == to_o.end();
+			assert from_o.end() == to_o.start();
+//			log.finer(String.format("Glued: %s %s", from_o, to_o));
+		}
+
+		public String toString() {
+			return String.format("Glue(%s => %s)", from, to);
+		}
+	}
+
+	private Instruction glueEdge(final HalfEdge from, final HalfEdge to) {
+		return new GlueEdge(from, to);
 	}
 
 	private Instruction delete(final Face face) {
@@ -215,18 +305,41 @@ public class HalfEdgeCollapse {
 			public void execute() {
 				deadFaces.add(face);
 			}
+
+			public String toString() {
+				return String.format("del(%s)", face);
+			}
 		};
+	}
+
+	class UpdateEdgeVertexRef implements Instruction {
+		private HalfEdge e;
+		private Vertex v;
+
+		public UpdateEdgeVertexRef(HalfEdge e, Vertex v) {
+			assert e.start() != v;
+			assert e.end() != v;
+			this.e = e;
+			this.v = v;
+		}
+
+		@Override
+		public void execute() {
+			e.setEnd(v);
+			e.getNext().setStart(v);
+//			log.finer(String.format("Updated edge: %s, next: %s", e, e.getNext()));
+		}
+
+		public String toString() {
+			return String.format("Link(%s => %s)", e, v);
+		}
 	}
 
 	private Instruction updateEdgeVertexReference(final HalfEdge e,
 			final Vertex v, Vertex deletedVertex) {
-		assert e.incident_v == deletedVertex;
-		return new Instruction() {
-			@Override
-			public void execute() {
-				e.incident_v = v;
-			}
-		};
+		assert e.end() == deletedVertex;
+		assert e.start() != v;
+		return new UpdateEdgeVertexRef(e, v);
 
 	}
 
@@ -236,6 +349,10 @@ public class HalfEdgeCollapse {
 			public void execute() {
 				deadVertices.add(v);
 			}
+
+			public String toString() {
+				return String.format("del(%s)", v);
+			}
 		};
 	}
 
@@ -244,6 +361,10 @@ public class HalfEdgeCollapse {
 			@Override
 			public void execute() {
 				deadEdges.add(e);
+			}
+
+			public String toString() {
+				return String.format("del(%s)", e);
 			}
 		};
 	}
@@ -267,8 +388,11 @@ public class HalfEdgeCollapse {
 	void finish() {
 
 		hs.getFaces().removeAll(deadFaces);
+		deadFaces.clear();
 		hs.getVertices().removeAll(deadVertices);
+		deadVertices.clear();
 		hs.getHalfEdges().removeAll(deadEdges);
+		deadEdges.clear();
 		hs.enumerate();
 
 		assertEdgesOk(hs);
@@ -284,37 +408,41 @@ public class HalfEdgeCollapse {
 	 */
 	public static boolean isEdgeCollapsable(HalfEdge e) {
 		// 1-neighborhood(e.start) \cap 1-neighborhood(e.end)
-		int commonNeighbors = 0;
+		log.entering(HalfEdgeCollapse.class.toString(), "isEdgeCollapsable", e);
 
-		Iterator<Vertex> it_a = e.start().iteratorVV();
-		Iterator<Vertex> it_b;
-		while (it_a.hasNext()) {
-			Vertex nb_a = it_a.next();
-			Vertex nb_b;
-			it_b = e.end().iteratorVV();
-			while (it_b.hasNext()) {
-				nb_b = it_b.next();
-				commonNeighbors += (nb_b == nb_a ? 1 : 0);
-			}
-		}
+		HashSet<Vertex> set_a = new HashSet<>(set(e.start().iteratorVV()));
+		HashSet<Vertex> set_b = new HashSet<>(set(e.end().iteratorVV()));
+		set_a.retainAll(set_b);
+		int commonNeighbors = set_a.size();
 
 		// dont produce dangling edges!
 		if (e.start().isOnBoundary() && e.end().isOnBoundary()
 				&& !e.isOnBorder()) {
+			log.finer(String.format(
+					"Can't remove %s, because it'd produce dangling edges.", e));
 			return false;
 		}
 		// don't delete the last triangle
 		if (!e.hasFace() && e.getNext().getNext() == e.getPrev()) {
+			log.finer(String.format(
+					"Can't remove %s, because it's the last triag. 1", e));
 			return false;
 		}
 		if (!e.getOpposite().hasFace()
 				&& e.getOpposite().getNext().getNext() == e.getOpposite()
 						.getPrev()) {
+			log.finer(String.format(
+					"Can't remove %s, because it's the last triag. 2", e));
 			return false;
 		}
 
-		return commonNeighbors == (e.isOnBorder() ? 1 : 2);
+		boolean ret = commonNeighbors == (e.isOnBorder() ? 1 : 2);
+		if (!ret)
+			log.finer(String
+					.format("Can't remove %s, because it has the wrong number of common neighbors: %d",
+							e, commonNeighbors));
 
+		return ret;
 	}
 
 	/**
@@ -337,16 +465,16 @@ public class HalfEdgeCollapse {
 	 * @return
 	 */
 	private boolean isFaceFlipStart(HalfEdge e, Point3f newPos) {
-		Iterator<HalfEdge> it = e.start().iteratorVE();
-		HalfEdge current, next;
-
+		HalfEdge current, next, first;
 		Vector3f e1 = new Vector3f(), e2 = new Vector3f(), n1 = new Vector3f(), n2 = new Vector3f();
 
-		while (it.hasNext()) {
-			current = it.next();
+		first = current = e.start().getHalfEdge();
+		next = null;
+		while (next != first) {
+			// current = it.next();
 			next = current.getPrev().getOpposite();
 			if (next == e || current == e || !current.hasFace()) {
-
+				current = next;
 				continue;
 			}
 			n1.set(oldFaceNormals.get(current.getFace()));
@@ -365,10 +493,10 @@ public class HalfEdgeCollapse {
 					&& n1.dot(n2) / n1.length() / n2.length() < flipConst) {
 				return true;
 			}
-
+			current = next;
 		}
-
 		return false;
+
 	}
 
 	/**
@@ -464,20 +592,22 @@ public class HalfEdgeCollapse {
 	public void assertEdgesOk(HalfEdgeStructure h) {
 		for (HalfEdge e : h.getHalfEdges()) {
 			if (!isEdgeDead(e)) {
-				assert (e.start() != e.end());
-				assert (e.getOpposite().getOpposite() == e);
-				assert (e.getPrev().end() == e.start());
-				assert (e.getNext().start() == e.end());
-				assert (e.getPrev().end() != e.getNext().start());
+				assert (e.start() != e.end()) : e;
+				assert (e.getOpposite().getOpposite() == e) : String.format("(%s <> %s)", e, e.getOpposite());
+				final HalfEdge prev = e.getPrev();
+				assert (prev.end() == e.start()) : String.format("(%s => %s)", prev, e);
+				final HalfEdge next = e.getNext();
+				assert (next.start() == e.end()) : String.format("(%s => %s)", e, next);
+				assert (prev.end() != next.start());
 
-				assert (e == e.getNext().getPrev());
-				assert (e == e.getPrev().getNext());
+				assert (e == next.getPrev());
+				assert (e == prev.getNext());
 
-				assert (e.getFace() == e.getNext().getFace());
-				assert (e.getFace() == e.getPrev().getFace());
+				assert (e.getFace() == next.getFace());
+				assert (e.getFace() == prev.getFace());
 
-				assert (!deadEdges.contains(e.getPrev()));
-				assert (!deadEdges.contains(e.getNext()));
+				assert (!deadEdges.contains(prev));
+				assert (!deadEdges.contains(next));
 				assert (!deadEdges.contains(e.getOpposite()));
 
 				assert (e.getFace() == null || !isFaceDead(e.getFace()));
@@ -502,7 +632,7 @@ public class HalfEdgeCollapse {
 	}
 
 	public void collapseEdgesRandomly(int remainding) {
-		Set<Edge> edges = new HashSet<>();
+		Set<Edge> edges = new TreeSet<>();
 		for (Vertex v : hs.getVertices()) {
 			for (HalfEdge h : iter(v.iteratorVE())) {
 				edges.add(new Edge(h));
@@ -511,15 +641,16 @@ public class HalfEdgeCollapse {
 		int removed = edges.size() - remainding;
 		List<Edge> toDelete = sample(list(edges), removed);
 		for (Edge e : toDelete) {
+			if (isEdgeDead(e.h1) || isEdgeDead(e.h2)) continue;
 			if (isEdgeCollapsable(e.h1)) {
 				collapseEdge(e.h1);
 			}
 		}
-		finish();
+//		finish();
 	}
 
 	/** Edges are equal if their halfedges as a set are equal */
-	static class Edge {
+	static class Edge implements Comparable<Edge> {
 		public Edge(HalfEdge h1) {
 			this.h1 = Objects.requireNonNull(h1);
 			this.h2 = Objects.requireNonNull(h1.getOpposite());
@@ -556,26 +687,19 @@ public class HalfEdgeCollapse {
 			return String.format("Edge%s",
 					sorted(Arrays.asList(h1.incident_v, h2.incident_v)));
 		}
+
+		@Override
+		public int compareTo(Edge o) {
+			int key = Integer.compare(h1.id, o.h1.id);
+			if (key != 0){
+				return key;
+			}
+			return Integer.compare(h2.id,  o.h2.id);
+		}
 	}
 
 	/** Abstract action that changes the topology of the mesh. */
 	static interface Instruction {
 		void execute();
-	}
-
-	static class SetVertexReference implements Instruction {
-		final Vertex v;
-		final HalfEdge goal;
-
-		public SetVertexReference(Vertex v, HalfEdge goal, HalfEdge toBeDeleted) {
-			assert v.anEdge == toBeDeleted;
-			this.v = v;
-			this.goal = goal;
-		}
-
-		@Override
-		public void execute() {
-			v.anEdge = goal;
-		}
 	}
 }

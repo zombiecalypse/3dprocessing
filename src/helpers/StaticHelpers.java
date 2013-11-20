@@ -16,7 +16,7 @@ import javax.vecmath.Vector3f;
 import com.google.common.base.Function;
 
 public final class StaticHelpers {
-	static Random r = new Random();
+	static Random r = new Random(4);
 
 	public static <T> List<T> sample(List<T> input, int subsetSize) {
 		assert input.size() >= subsetSize;

@@ -1,4 +1,4 @@
-package assignment5;
+package algorithms.collapse;
 
 import javax.vecmath.Vector4f;
 
