@@ -24,9 +24,9 @@ import datastructure.halfedge.Vertex;
 /**
  * Some convenience methods for the visualization of epsilon-isosurfaces of
  * quadratic forms.
- *
+ * 
  * @author Alf
- *
+ * 
  */
 public class Assignment5QslimVis {
 	private static Logger log = Logger.getLogger("Main");
@@ -34,7 +34,7 @@ public class Assignment5QslimVis {
 	static final float E = 0.005f;
 
 	static float evToEl(float v) {
-		return (float) (E/Math.sqrt(Math.abs(v)));
+		return (float) (E / Math.sqrt(Math.abs(v)));
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -46,28 +46,31 @@ public class Assignment5QslimVis {
 		List<WireframeMesh> ellipsoids = new ArrayList<>();
 
 		for (Vertex v : hs.getVertices()) {
-      Matrix3f q = new Matrix3f();
+			Matrix3f q = new Matrix3f();
 			qs.q(v).getRotationScale(q);
 			float[] evs = V.eigenValues(q);
 			Vector3f[] evecs = new Vector3f[3];
 			for (int i = 0; i < 3; i++) {
 				evecs[i] = V.eigenVector(q, evs[i]);
 			}
-			ellipsoids.add(Ellipsoid.make(v.pos, evecs[0], evToEl(evs[0]), evecs[1], evToEl(evs[1]), evecs[2], evToEl(evs[2])));
+			ellipsoids.add(Ellipsoid.make(v.pos, evecs[0], evToEl(evs[0]),
+					evecs[1], evToEl(evs[1]), evecs[2], evToEl(evs[2])));
 		}
 
 		MyDisplay disp = new MyDisplay();
 
 		GLHalfEdgeStructure glear = new GLHalfEdgeStructure(hs);
 		glear.configurePreferredShader("shaders/trimesh_flatColor3f.vert",
-				"shaders/trimesh_flatColor3f.frag", "shaders/trimesh_flatColor3f.geom");
+				"shaders/trimesh_flatColor3f.frag",
+				"shaders/trimesh_flatColor3f.geom");
 		glear.setTitle("Bunny ear");
 		disp.addToDisplay(glear);
 
 		for (Indexed<WireframeMesh> e : withIndex(ellipsoids)) {
 			GLWireframeMesh gwf = new GLWireframeMesh(e.value());
 			gwf.configurePreferredShader("shaders/trimesh_flatColor3f.vert",
-				"shaders/trimesh_flatColor3f.frag", "shaders/trimesh_flatColor3f.geom");
+					"shaders/trimesh_flatColor3f.frag",
+					"shaders/trimesh_flatColor3f.geom");
 			gwf.setTitle(String.format("e[%s]", e.index()));
 			disp.addToDisplay(gwf);
 		}

@@ -47,7 +47,7 @@ public class Assignment5_vis {
 		HalfEdgeCollapse.log.setUseParentHandlers(false);
 		HalfEdgeCollapse.log.addHandler(h);
 		final HalfEdgeCollapse hec = new HalfEdgeCollapse(hs);
-		hec.collapseNEdgesRandomly(50);
+		hec.collapseNEdgesRandomly(1500);
 
 		hs2.putExtractorFace("color", MyFunctions.asColor(MyFunctions
 				.pure(new Function<Face, Float>() {
