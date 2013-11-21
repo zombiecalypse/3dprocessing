@@ -1,13 +1,20 @@
 package datastructure.halfedge;
 
 import static helpers.StaticHelpers.*;
+import helpers.V;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Point4f;
+import javax.vecmath.Tuple4f;
 import javax.vecmath.Vector3f;
+import javax.vecmath.Vector4f;
+
+import openGL.objects.Transformation;
 
 /**
  * Implementation of a face for the {@link HalfEdgeStructure}
@@ -257,5 +264,27 @@ public class Face extends HEElement {
 			return false;
 		return true;
 	}
+
+	public Transformation errorQuadric() {
+		Vector3f n = normal();
+		Tuple4f p = new Point4f(n);
+		p.w = -n.dot(new Vector3f(anEdge.end().getPos()));
+
+		Transformation ppt = V.ppT(p);
+		
+		if (checkValid(ppt)){
+			return ppt;
+		} else {
+			return new Transformation();
+		}
+	}
 	
+	private boolean checkValid(Transformation t) {
+		Vector4f v = new Vector4f(1, 1, 1, 1);
+		t.transform(v);
+		return !(Float.isNaN(v.lengthSquared())
+				|| Float.isInfinite(v.lengthSquared()));
+		
+	}
+
 }

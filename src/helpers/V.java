@@ -1,8 +1,11 @@
 package helpers;
 
 import javax.vecmath.Point3f;
+import javax.vecmath.Tuple4f;
 import javax.vecmath.Vector3f;
+import javax.vecmath.Vector4f;
 
+import openGL.objects.Transformation;
 import sparse.CSRMatrix;
 import sparse.CSRMatrix.col_val;
 
@@ -43,5 +46,37 @@ public final class V {
 			i.addRow().add(new col_val(j, 1));
 		}
 		return i;
+	}
+	
+	/**
+	 * helper method that might be useful..
+	 * 
+	 * @param p
+	 * @param ppT
+	 */
+	public static Transformation ppT(Tuple4f p) {
+		assert (p.x * 0 == 0);
+		assert (p.y * 0 == 0);
+		assert (p.z * 0 == 0);
+		assert (p.w * 0 == 0);
+		Transformation ppT = new Transformation();
+		ppT.m00 = p.x * p.x;
+		ppT.m01 = p.x * p.y;
+		ppT.m02 = p.x * p.z;
+		ppT.m03 = p.x * p.w;
+		ppT.m10 = p.y * p.x;
+		ppT.m11 = p.y * p.y;
+		ppT.m12 = p.y * p.z;
+		ppT.m13 = p.y * p.w;
+		ppT.m20 = p.z * p.x;
+		ppT.m21 = p.z * p.y;
+		ppT.m22 = p.z * p.z;
+		ppT.m23 = p.z * p.w;
+		ppT.m30 = p.w * p.x;
+		ppT.m31 = p.w * p.y;
+		ppT.m32 = p.w * p.z;
+		ppT.m33 = p.w * p.w;
+		return ppT;
+
 	}
 }

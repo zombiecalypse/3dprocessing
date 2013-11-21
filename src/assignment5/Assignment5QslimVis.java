@@ -34,20 +34,20 @@ import static helpers.StaticHelpers.*;
  * @author Alf
  * 
  */
-public class Assignment5_vis {
+public class Assignment5QslimVis {
+	private static Logger log = Logger.getLogger("Main");
 
 	public static void main(String[] args) throws Exception {
-		WireframeMesh wf = ObjReader.read("objs/bunny5k.obj", true);
+		// Eliminated:      42132 halfedges      14044 faces       7022 vertices
+		// Takes forever and two days
+		WireframeMesh wf = ObjReader.read("objs/dragon.obj", true);
 		HalfEdgeStructure hs = new HalfEdgeStructure(wf);
 		HalfEdgeStructure hs2 = new HalfEdgeStructure(wf);
 
-		Handler h = new FileHandler("/tmp/collapse.xml");
-		h.setLevel(Level.FINER);
-		HalfEdgeCollapse.log.setLevel(Level.FINER);
-		HalfEdgeCollapse.log.setUseParentHandlers(false);
-		HalfEdgeCollapse.log.addHandler(h);
 		final HalfEdgeCollapse hec = new HalfEdgeCollapse(hs);
-		hec.collapseNEdgesRandomly(50);
+		hec.collapseSmall(0.005f);
+		log.info(String.format("Eliminated: %10s halfedges %10s faces %10s vertices",
+				hec.deadEdges.size(), hec.deadFaces.size(), hec.deadVertices.size()));
 
 		hs2.putExtractorFace("color", MyFunctions.asColor(MyFunctions
 				.pure(new Function<Face, Float>() {

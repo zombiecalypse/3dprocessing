@@ -50,22 +50,25 @@ public class HalfEdgeCollapse {
 	// A flip will be detected, if after a collapse oldNormal.dot(newNormal) <
 	// flipConst.
 	private static final float flipConst = 0.1f;// -0.8f;
-	
+
 	private static interface Executor {
 		public void add(Instruction i);
+
 		public void run();
+
 		public void addAll(List<Instruction> removeFace);
 	}
-	
+
 	private static class Interpreter implements Executor {
 		@Override
 		public void add(Instruction i) {
 			log.fine(String.format("%s", i));
 			i.execute();
 		}
-		
+
 		@Override
-		public void run() {	}
+		public void run() {
+		}
 
 		@Override
 		public void addAll(List<Instruction> a) {
@@ -74,9 +77,10 @@ public class HalfEdgeCollapse {
 			}
 		}
 	}
-	
+
 	private static class Collector implements Executor {
 		List<Instruction> inst = new ArrayList<>();
+
 		@Override
 		public void add(Instruction a) {
 			inst.add(a);
@@ -143,7 +147,8 @@ public class HalfEdgeCollapse {
 	}
 
 	void collapseEdge(HalfEdge e, Point3f newPos) {
-		if (isEdgeDead(e)) return;
+		if (isEdgeDead(e))
+			return;
 		log.entering(HalfEdgeCollapse.class.toString(), "collapseEdge", e);
 		log.finer(String.format("next: %s prev: %s", e.getNext(), e.prev));
 		assert isEdgeCollapsable(e);
@@ -171,7 +176,8 @@ public class HalfEdgeCollapse {
 			assert outflux.start() == deletedVertex;
 			final HalfEdge influx = outflux.getOpposite();
 			assert influx.end() == deletedVertex;
-			if (influx == eo) continue;
+			if (influx == eo)
+				continue;
 			ins.add(updateEdgeVertexReference(influx, end, deletedVertex));
 		}
 
@@ -322,7 +328,8 @@ public class HalfEdgeCollapse {
 		public void execute() {
 			e.setEnd(v);
 			e.getNext().setStart(v);
-			log.finer(String.format("Updated edge: %s, next: %s", e, e.getNext()));
+			log.finer(String.format("Updated edge: %s, next: %s", e,
+					e.getNext()));
 		}
 
 		public String toString() {
@@ -585,18 +592,23 @@ public class HalfEdgeCollapse {
 		for (HalfEdge e : h.getHalfEdges()) {
 			if (!isEdgeDead(e)) {
 				assert (e.start() != e.end()) : e;
-				assert (e.getOpposite().getOpposite() == e) : String.format("(%s <> %s)", e, e.getOpposite());
+				assert (e.getOpposite().getOpposite() == e) : String.format(
+						"(%s <> %s)", e, e.getOpposite());
 				final HalfEdge prev = e.getPrev();
-				assert (prev.end() == e.start()) : String.format("(%s => %s)", prev, e);
+				assert (prev.end() == e.start()) : String.format("(%s => %s)",
+						prev, e);
 				final HalfEdge next = e.getNext();
-				assert (next.start() == e.end()) : String.format("(%s => %s)", e, next);
+				assert (next.start() == e.end()) : String.format("(%s => %s)",
+						e, next);
 				assert (prev.end() != next.start());
-				
+
 				assert (!deadEdges.contains(next.getPrev()));
 				assert (!deadEdges.contains(prev.getNext()));
 
-				assert (e == next.getPrev()) : String.format("e: %s next.prev: %s", e, next.getPrev());
-				assert (e == prev.getNext()) : String.format("e: %s prev.next: %s", e, prev.getNext());
+				assert (e == next.getPrev()) : String.format(
+						"e: %s next.prev: %s", e, next.getPrev());
+				assert (e == prev.getNext()) : String.format(
+						"e: %s prev.next: %s", e, prev.getNext());
 
 				assert (e.getFace() == next.getFace());
 				assert (e.getFace() == prev.getFace());
@@ -625,14 +637,13 @@ public class HalfEdgeCollapse {
 			}
 		}
 	}
-	
 
 	public void collapseEdgesRandomly(int remainding) {
 		Set<Edge> edges = getEdges();
 		int toRemove = edges.size() - remainding;
 		collapseNEdgesRandomly(toRemove);
 	}
-	
+
 	public void collapseNEdgesRandomly(int toRemove) {
 		Set<Edge> edges = getEdges();
 		List<Edge> l = list(edges);
@@ -641,7 +652,8 @@ public class HalfEdgeCollapse {
 		while (toRemove > 0 && it.hasNext()) {
 			Edge e = it.next();
 			it.remove();
-			if (isEdgeDead(e.h1) || isEdgeDead(e.h2)) continue;
+			if (isEdgeDead(e.h1) || isEdgeDead(e.h2))
+				continue;
 			if (isEdgeCollapsable(e.h1)) {
 				collapseEdge(e.h1);
 			}
@@ -707,15 +719,42 @@ public class HalfEdgeCollapse {
 		@Override
 		public int compareTo(Edge o) {
 			int key = Integer.compare(h1.id, o.h1.id);
-			if (key != 0){
+			if (key != 0) {
 				return key;
 			}
-			return Integer.compare(h2.id,  o.h2.id);
+			return Integer.compare(h2.id, o.h2.id);
 		}
 	}
 
 	/** Abstract action that changes the topology of the mesh. */
 	static interface Instruction {
 		void execute();
+	}
+
+	public void collapseSmall(float f) {
+		Set<Edge> edges = getEdges();
+		Iterator<Edge> it = edges.iterator();
+		boolean found = false;
+		int index = 0;
+		System.err.format("Checking %s edges\n", edges.size());
+		while (it.hasNext()) {
+			if (index++ % 1000 == 0) {
+				System.err.print('.');
+			}
+			Edge e = it.next();
+			it.remove();
+			if (isEdgeDead(e.h1) || isEdgeDead(e.h2))
+				continue;
+			if (e.h1.asVector().length() <= f && isEdgeCollapsable(e.h1)) {
+				collapseEdge(e.h1);
+				found = true;
+			}
+//			if (!it.hasNext() && found) {
+//				it = edges.iterator();
+//			}
+		}
+		System.err.println();
+
+		finish();
 	}
 }

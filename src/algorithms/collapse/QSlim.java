@@ -1,82 +1,75 @@
 package algorithms.collapse;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.vecmath.Vector4f;
 
 import openGL.objects.Transformation;
+import datastructure.halfedge.Face;
 import datastructure.halfedge.HalfEdgeStructure;
-
+import datastructure.halfedge.Vertex;
+import static helpers.StaticHelpers.*;
 
 /**
  * Implement the QSlim algorithm here
- *
+ * 
  * @author Alf
- *
+ * 
  */
 public class QSlim {
 
 	HalfEdgeStructure hs;
+	Map<Vertex, Transformation> vertexQs = new HashMap<>();
+	
+	public QSlim(HalfEdgeStructure hs) {
+		this.hs = hs;
+	}
 
 	/********************************************
-	 * Use or discard the skeletton, as you like.
+	 * Use or discard the skeleton, as you like.
 	 ********************************************/
-
 
 	/**
 	 * Compute per vertex matrices
-	 * Compute edge collapse costs,
+	 * Compute edge collapse costs, 
 	 * Fill up the Priority queue/heap or similar
 	 */
-	private void init(){
-
+	private void init() {
+		for (Vertex v : hs.getVertices()) {
+			Transformation t = new Transformation();
+			for (Face f : iter(v.iteratorVF())) {
+				t.add(f.errorQuadric());
+			}
+			this.vertexQs.put(v, t);
+		}
 	}
-
 
 	/**
-	 * The actual QSlim algorithm, collapse edges until
-	 * the target number of vertices is reached.
+	 * The actual QSlim algorithm, collapse edges until the target number of
+	 * vertices is reached.
+	 * 
 	 * @param target
 	 */
-	public void simplify(int target){
+	public void simplify(int target) {
 
 	}
-
 
 	/**
 	 * Collapse the next cheapest eligible edge. ; this method can be called
 	 * until some target number of vertices is reached.
 	 */
-	public void collapsEdge(){
+	public void collapseEdge() {
 
 	}
-
-	/**
-	 * helper method that might be useful..
-	 * @param p
-	 * @param ppT
-	 */
-	private void compute_ppT(Vector4f p, Transformation ppT) {
-		assert(p.x*0==0);
-		assert(p.y*0==0);
-		assert(p.z*0==0);
-		assert(p.w*0==0);
-		ppT.m00 = p.x*p.x; ppT.m01 = p.x*p.y; ppT.m02 = p.x*p.z; ppT.m03 = p.x*p.w;
-		ppT.m10 = p.y*p.x; ppT.m11 = p.y*p.y; ppT.m12 = p.y*p.z; ppT.m13 = p.y*p.w;
-		ppT.m20 = p.z*p.x; ppT.m21 = p.z*p.y; ppT.m22 = p.z*p.z; ppT.m23 = p.z*p.w;
-		ppT.m30 = p.w*p.x; ppT.m31 = p.w*p.y; ppT.m32 = p.w*p.z; ppT.m33 = p.w*p.w;
-
-
-	}
-
-
-
-
 
 	/**
 	 * Represent a potential collapse
+	 * 
 	 * @author Alf
-	 *
+	 * 
 	 */
-	protected class PotentialCollapse implements Comparable<PotentialCollapse>{
+	protected class PotentialCollapse implements Comparable<PotentialCollapse> {
 
 		@Override
 		public int compareTo(PotentialCollapse arg1) {
