@@ -1,5 +1,6 @@
 package assignment5;
 
+import glWrapper.GLHalfEdgeFaces;
 import glWrapper.GLHalfEdgeStructure;
 import helpers.MyFunctions;
 
@@ -21,6 +22,7 @@ import com.google.common.base.Function;
 import openGL.MyDisplay;
 import meshes.WireframeMesh;
 import meshes.reader.ObjReader;
+import datastructure.halfedge.Face;
 import datastructure.halfedge.HalfEdgeStructure;
 import datastructure.halfedge.Vertex;
 import static helpers.StaticHelpers.*;
@@ -35,7 +37,7 @@ import static helpers.StaticHelpers.*;
 public class Assignment5_vis {
 
 	public static void main(String[] args) throws Exception {
-		WireframeMesh wf = ObjReader.read("objs/bunny_ear.obj", true);
+		WireframeMesh wf = ObjReader.read("objs/bunny5k.obj", true);
 		HalfEdgeStructure hs = new HalfEdgeStructure(wf);
 		HalfEdgeStructure hs2 = new HalfEdgeStructure(wf);
 
@@ -45,13 +47,13 @@ public class Assignment5_vis {
 		HalfEdgeCollapse.log.setUseParentHandlers(false);
 		HalfEdgeCollapse.log.addHandler(h);
 		final HalfEdgeCollapse hec = new HalfEdgeCollapse(hs);
-		hec.collapseEdgesRandomly(90);
+		hec.collapseNEdgesRandomly(2);
 
-		hs2.putExtractor3d("color", MyFunctions.asColor(MyFunctions
-				.pure(new Function<Vertex, Float>() {
+		hs2.putExtractorFace("color", MyFunctions.asColor(MyFunctions
+				.pure(new Function<Face, Float>() {
 					@Override
-					public Float apply(Vertex a) {
-						if (hec.isVertexDead(a)) {
+					public Float apply(Face a) {
+						if (hec.isFaceDead(a)) {
 							return 1f;
 						} else {
 							return 0f;
@@ -78,7 +80,7 @@ public class Assignment5_vis {
 		glear.setTitle("Bunny ear");
 		disp.addToDisplay(glear);
 		
-		GLHalfEdgeStructure glear2 = new GLHalfEdgeStructure(hs2);
+		GLHalfEdgeFaces glear2 = new GLHalfEdgeFaces(hs2);
 		glear2.configurePreferredShader("shaders/trimesh_flatColor3f.vert", 
 				"shaders/trimesh_flatColor3f.frag", "shaders/trimesh_flatColor3f.geom");
 		glear2.setTitle("Bunny ear marked");

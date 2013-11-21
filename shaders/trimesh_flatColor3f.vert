@@ -8,10 +8,10 @@ uniform mat4 modelview;
 // Input vertex attributes; passed from main program to shader 
 // via vertex buffer objects
 in vec4 position;
-flat in vec4 color;
+in vec4 color;
 
 out vec4 position_g;
-flat out vec4 color_v;
+out vec4 color_v;
 
 //pass stuff through
 void main()

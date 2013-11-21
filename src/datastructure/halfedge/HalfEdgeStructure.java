@@ -46,11 +46,12 @@ import com.google.common.base.Functions;
 
 public class HalfEdgeStructure {
 
-	ArrayList<HalfEdge> edges;
-	ArrayList<Face> faces;
-	ArrayList<Vertex> vertices;
-	HashMap<String, Function<Indexed<Vertex>, Float>> extractors1d;
-	private HashMap<String, Function<Indexed<Vertex>, Tuple3f>> extractors3d;
+	ArrayList<HalfEdge> edges = new ArrayList<>();
+	ArrayList<Face> faces = new ArrayList<>();
+	ArrayList<Vertex> vertices = new ArrayList<>();
+	HashMap<String, Function<Indexed<Vertex>, Float>> extractors1d = new HashMap<>();
+	HashMap<String, Function<Indexed<Vertex>, Tuple3f>> extractors3d = new HashMap<>();
+	HashMap<String, Function<Indexed<Face>, Tuple3f>> extractorsFace = new HashMap<>();
 	String title;
 
 	public String getTitle() {
@@ -67,14 +68,6 @@ public class HalfEdgeStructure {
 
 	public void putExtractorPure(String name, Function<Vertex, Float> f) {
 		extractors1d.put(name, Functions.compose(f, MyFunctions.<Vertex>value()));
-	}
-
-	public HalfEdgeStructure() {
-		faces = new ArrayList<Face>();
-		edges = new ArrayList<HalfEdge>();
-		vertices = new ArrayList<Vertex>();
-		extractors1d = new HashMap<String, Function<Indexed<Vertex>, Float>>();
-		extractors3d = new HashMap<String, Function<Indexed<Vertex>, Tuple3f>>();
 	}
 
 	public ArrayList<Vertex> getVertices() {
@@ -115,6 +108,8 @@ public class HalfEdgeStructure {
 	public Iterator<Face> iteratorF() {
 		return faces.iterator();
 	}
+	
+	public HalfEdgeStructure() { }
 
 	public HalfEdgeStructure(WireframeMesh m) throws MeshNotOrientedException,
 			DanglingTriangleException {
@@ -420,6 +415,14 @@ public class HalfEdgeStructure {
 				return function.get(input.index());
 			}
 		});
+	}
+	
+	public void putExtractorFace(String name, final Function<Indexed<Face>, Tuple3f> function) {
+		extractorsFace.put(name, function);
+	}
+	
+	public HashMap<String, Function<Indexed<Face>, Tuple3f>> getExtractorFace() {
+		return extractorsFace;
 	}
 
 	public float surfaceArea() {

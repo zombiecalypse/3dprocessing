@@ -144,8 +144,8 @@ public class HalfEdgeCollapse {
 
 	void collapseEdge(HalfEdge e, Point3f newPos) {
 		if (isEdgeDead(e)) return;
-//		log.entering(HalfEdgeCollapse.class.toString(), "collapseEdge", e);
-//		log.finer(String.format("next: %s prev: %s", e.getNext(), e.prev));
+		log.entering(HalfEdgeCollapse.class.toString(), "collapseEdge", e);
+		log.finer(String.format("next: %s prev: %s", e.getNext(), e.prev));
 		assert isEdgeCollapsable(e);
 		assert !isCollapseMeshInv(e, newPos);
 
@@ -162,7 +162,7 @@ public class HalfEdgeCollapse {
 		Vertex deletedVertex = e.start();
 		ins.add(delete(deletedVertex));
 
-//		log.finer(String.format("del: %s repl: %s", deletedVertex, end));
+		log.finer(String.format("del: %s repl: %s", deletedVertex, end));
 
 		HalfEdge eo = e.getOpposite();
 		assert eo.end() == deletedVertex;
@@ -205,23 +205,17 @@ public class HalfEdgeCollapse {
 	class StitchLength implements Instruction {
 		private HalfEdge prev;
 		private HalfEdge next;
-		private HalfEdge prev_o;
-		private HalfEdge next_o;
 
 		public StitchLength(HalfEdge prev, HalfEdge next) {
 			this.prev = prev;
-			this.prev_o = prev.getOpposite();
 			this.next = next;
-			this.next_o = next.getOpposite();
 		}
 
 		@Override
 		public void execute() {
 			prev.setNext(next);
 			next.setPrev(prev);
-			prev_o.setPrev(next_o);
-			next_o.setNext(prev_o);
-//			log.finer(String.format("Stitched: %s %s", prev, next));
+			log.finer(String.format("Stitched: %s %s", prev, next));
 		}
 
 		public String toString() {
@@ -288,7 +282,7 @@ public class HalfEdgeCollapse {
 			to_o.setOpposite(from_o);
 			assert from_o.start() == to_o.end();
 			assert from_o.end() == to_o.start();
-//			log.finer(String.format("Glued: %s %s", from_o, to_o));
+			log.finer(String.format("Glued: %s %s", from_o, to_o));
 		}
 
 		public String toString() {
@@ -328,7 +322,7 @@ public class HalfEdgeCollapse {
 		public void execute() {
 			e.setEnd(v);
 			e.getNext().setStart(v);
-//			log.finer(String.format("Updated edge: %s, next: %s", e, e.getNext()));
+			log.finer(String.format("Updated edge: %s, next: %s", e, e.getNext()));
 		}
 
 		public String toString() {
@@ -597,9 +591,12 @@ public class HalfEdgeCollapse {
 				final HalfEdge next = e.getNext();
 				assert (next.start() == e.end()) : String.format("(%s => %s)", e, next);
 				assert (prev.end() != next.start());
+				
+				assert (!deadEdges.contains(next.getPrev()));
+				assert (!deadEdges.contains(prev.getNext()));
 
-				assert (e == next.getPrev());
-				assert (e == prev.getNext());
+				assert (e == next.getPrev()) : String.format("e: %s next.prev: %s", e, next.getPrev());
+				assert (e == prev.getNext()) : String.format("e: %s prev.next: %s", e, prev.getNext());
 
 				assert (e.getFace() == next.getFace());
 				assert (e.getFace() == prev.getFace());
@@ -628,15 +625,16 @@ public class HalfEdgeCollapse {
 			}
 		}
 	}
+	
 
 	public void collapseEdgesRandomly(int remainding) {
-		Set<Edge> edges = new HashSet<>();
-		for (Vertex v : hs.getVertices()) {
-			for (HalfEdge h : iter(v.iteratorVE())) {
-				edges.add(new Edge(h));
-			}
-		}
+		Set<Edge> edges = getEdges();
 		int toRemove = edges.size() - remainding;
+		collapseNEdgesRandomly(toRemove);
+	}
+	
+	public void collapseNEdgesRandomly(int toRemove) {
+		Set<Edge> edges = getEdges();
 		List<Edge> l = list(edges);
 		Collections.shuffle(l);
 		Iterator<Edge> it = l.iterator();
@@ -655,6 +653,16 @@ public class HalfEdgeCollapse {
 			toRemove--;
 		}
 		finish();
+	}
+
+	private Set<Edge> getEdges() {
+		Set<Edge> edges = new HashSet<>();
+		for (Vertex v : hs.getVertices()) {
+			for (HalfEdge h : iter(v.iteratorVE())) {
+				edges.add(new Edge(h));
+			}
+		}
+		return edges;
 	}
 
 	/** Edges are equal if their halfedges as a set are equal */

@@ -36,10 +36,14 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 
 		int[] trigs = flatTriags(s);
 		this.addIndices(trigs);
-
-		addExtracted1d(s);
-
-		addExtracted3d(s);
+		
+		if (s.getExtractorFace().isEmpty()) {
+	
+			addExtracted1d(s);
+	
+			addExtracted3d(s);
+		}
+		
 	}
 
 	private void addExtracted3d(HalfEdgeStructure s) {

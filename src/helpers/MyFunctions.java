@@ -97,11 +97,11 @@ public final class MyFunctions {
 		};
 	}
 
-	public static Function<Indexed<Vertex>, Tuple3f> asColor(
-			final Function<Indexed<Vertex>, Float> function) {
-		return new Function<Indexed<Vertex>, Tuple3f>() {
+	public static <T> Function<Indexed<T>, Tuple3f> asColor(
+			final Function<Indexed<T>, Float> function) {
+		return new Function<Indexed<T>, Tuple3f>() {
 			@Override
-			public Tuple3f apply(Indexed<Vertex> a) {
+			public Tuple3f apply(Indexed<T> a) {
 				float v = function.apply(a);
 				return new Vector3f(v, 1 - v, 1 - v);
 			}
@@ -216,11 +216,11 @@ public final class MyFunctions {
 		};
 	}
 
-	public static Function<Indexed<Vertex>, Float> pure(
-			final Function<Vertex, Float> f) {
-		return new Function<Indexed<Vertex>, Float>() {
+	public static <T> Function<Indexed<T>, Float> pure(
+			final Function<T, Float> f) {
+		return new Function<Indexed<T>, Float>() {
 			@Override
-			public Float apply(Indexed<Vertex> input) {
+			public Float apply(Indexed<T> input) {
 				return f.apply(input.value());
 			}
 		};
