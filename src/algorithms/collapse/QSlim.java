@@ -3,8 +3,11 @@ package algorithms.collapse;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector4f;
 
+import meshes.Ellipsoid;
+import meshes.WireframeMesh;
 import openGL.objects.Transformation;
 import datastructure.halfedge.Face;
 import datastructure.halfedge.HalfEdgeStructure;
@@ -20,10 +23,15 @@ import static helpers.StaticHelpers.*;
 public class QSlim {
 
 	HalfEdgeStructure hs;
-	Map<Vertex, Transformation> vertexQs = new HashMap<>();
+	Map<Vertex, Matrix4f> vertexQs = new HashMap<>();
 	
 	public QSlim(HalfEdgeStructure hs) {
 		this.hs = hs;
+		init();
+	}
+	
+	public Matrix4f q(Vertex v) {
+		return vertexQs.get(v);
 	}
 
 	/********************************************
@@ -37,7 +45,7 @@ public class QSlim {
 	 */
 	private void init() {
 		for (Vertex v : hs.getVertices()) {
-			Transformation t = new Transformation();
+			Matrix4f t = new Matrix4f();
 			for (Face f : iter(v.iteratorVF())) {
 				t.add(f.errorQuadric());
 			}
