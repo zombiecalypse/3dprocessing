@@ -5,6 +5,7 @@ import helpers.V;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -388,15 +389,12 @@ public class HalfEdgeCollapse {
 	void finish() {
 
 		hs.getFaces().removeAll(deadFaces);
-		deadFaces.clear();
 		hs.getVertices().removeAll(deadVertices);
-		deadVertices.clear();
 		hs.getHalfEdges().removeAll(deadEdges);
-		deadEdges.clear();
-		hs.enumerate();
 
 		assertEdgesOk(hs);
 		assertVerticesOk(hs);
+		hs.enumerate();
 	}
 
 	/**
@@ -632,21 +630,31 @@ public class HalfEdgeCollapse {
 	}
 
 	public void collapseEdgesRandomly(int remainding) {
-		Set<Edge> edges = new TreeSet<>();
+		Set<Edge> edges = new HashSet<>();
 		for (Vertex v : hs.getVertices()) {
 			for (HalfEdge h : iter(v.iteratorVE())) {
 				edges.add(new Edge(h));
 			}
 		}
-		int removed = edges.size() - remainding;
-		List<Edge> toDelete = sample(list(edges), removed);
-		for (Edge e : toDelete) {
+		int toRemove = edges.size() - remainding;
+		List<Edge> l = list(edges);
+		Collections.shuffle(l);
+		Iterator<Edge> it = l.iterator();
+		while (toRemove > 0 && it.hasNext()) {
+			Edge e = it.next();
+			it.remove();
 			if (isEdgeDead(e.h1) || isEdgeDead(e.h2)) continue;
 			if (isEdgeCollapsable(e.h1)) {
 				collapseEdge(e.h1);
 			}
+			// Refill if necessary
+			if (!it.hasNext()) {
+				Collections.shuffle(l);
+				it = l.iterator();
+			}
+			toRemove--;
 		}
-//		finish();
+		finish();
 	}
 
 	/** Edges are equal if their halfedges as a set are equal */

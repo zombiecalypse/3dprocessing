@@ -3,11 +3,11 @@
 
 // Input variable, passed from vertex to fragment shader
 // and interpolated automatically to each fragment
-in vec4 color_g;
+flat in vec4 color_g;
 flat in vec3 normal_g;
 
 // Output variable, will be written to framebuffer automatically
-out vec4 out_color;
+flat out vec4 out_color;
 
 void main()
 {		

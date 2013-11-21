@@ -16,24 +16,6 @@ import javax.vecmath.Vector3f;
 import com.google.common.base.Function;
 
 public final class StaticHelpers {
-	static Random r = new Random(4);
-
-	public static <T> List<T> sample(List<T> input, int subsetSize) {
-		assert input.size() >= subsetSize;
-		if (subsetSize <= 0) {
-			return Collections.emptyList();
-		}
-	    int inputSize = input.size();
-	    for (int i = 0; i < subsetSize; i++)
-	    {
-	        int indexToSwap = i + r.nextInt(inputSize - i);
-	        T temp = input.get(i);
-	        input.set(i, input.get(indexToSwap));
-	        input.set(indexToSwap, temp);
-	    }
-	    return input.subList(0, subsetSize);
-	}
-	
 	@SafeVarargs
 	public static <A> List<A> chain(List<A>... as) {
 		List<A> l = new ArrayList<>();

@@ -37,6 +37,7 @@ public class Assignment5_vis {
 	public static void main(String[] args) throws Exception {
 		WireframeMesh wf = ObjReader.read("objs/bunny_ear.obj", true);
 		HalfEdgeStructure hs = new HalfEdgeStructure(wf);
+		HalfEdgeStructure hs2 = new HalfEdgeStructure(wf);
 
 		Handler h = new FileHandler("/tmp/collapse.xml");
 		h.setLevel(Level.FINER);
@@ -46,14 +47,14 @@ public class Assignment5_vis {
 		final HalfEdgeCollapse hec = new HalfEdgeCollapse(hs);
 		hec.collapseEdgesRandomly(90);
 
-		hs.putExtractor3d("color", MyFunctions.asColor(MyFunctions
+		hs2.putExtractor3d("color", MyFunctions.asColor(MyFunctions
 				.pure(new Function<Vertex, Float>() {
 					@Override
 					public Float apply(Vertex a) {
 						if (hec.isVertexDead(a)) {
-							return .7f;
+							return 1f;
 						} else {
-							return .3f;
+							return 0f;
 						}
 					}
 				})));
@@ -72,10 +73,16 @@ public class Assignment5_vis {
 		MyDisplay disp = new MyDisplay();
 
 		GLHalfEdgeStructure glear = new GLHalfEdgeStructure(hs);
-		glear.configurePreferredShader("shaders/default.vert", 
-				"shaders/default.frag", null);
+		glear.configurePreferredShader("shaders/trimesh_flatColor3f.vert", 
+				"shaders/trimesh_flatColor3f.frag", "shaders/trimesh_flatColor3f.geom");
 		glear.setTitle("Bunny ear");
 		disp.addToDisplay(glear);
+		
+		GLHalfEdgeStructure glear2 = new GLHalfEdgeStructure(hs2);
+		glear2.configurePreferredShader("shaders/trimesh_flatColor3f.vert", 
+				"shaders/trimesh_flatColor3f.frag", "shaders/trimesh_flatColor3f.geom");
+		glear2.setTitle("Bunny ear marked");
+		disp.addToDisplay(glear2);
 	}
 
 	/**

@@ -9,10 +9,10 @@ layout(triangles) in;
 layout(triangle_strip, max_vertices = 3) out;
 
 in vec4 position_g[];
-in vec4 color_v[];
+flat in vec4 color_v[];
 
 flat out vec3 normal_g;
-out vec4 color_g;
+flat out vec4 color_g;
 
 void main()
 {		
