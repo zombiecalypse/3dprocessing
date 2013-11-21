@@ -77,13 +77,13 @@ public class Assignment5_vis {
 		GLHalfEdgeStructure glear = new GLHalfEdgeStructure(hs);
 		glear.configurePreferredShader("shaders/trimesh_flatColor3f.vert", 
 				"shaders/trimesh_flatColor3f.frag", "shaders/trimesh_flatColor3f.geom");
-		glear.setTitle("Bunny ear");
+		glear.setTitle("Bunny");
 		disp.addToDisplay(glear);
 		
 		GLHalfEdgeFaces glear2 = new GLHalfEdgeFaces(hs2);
 		glear2.configurePreferredShader("shaders/trimesh_flatColor3f.vert", 
 				"shaders/trimesh_flatColor3f.frag", "shaders/trimesh_flatColor3f.geom");
-		glear2.setTitle("Bunny ear marked");
+		glear2.setTitle("Bunny marked");
 		disp.addToDisplay(glear2);
 	}
 }

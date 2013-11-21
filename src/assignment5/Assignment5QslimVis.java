@@ -31,7 +31,7 @@ import datastructure.halfedge.Vertex;
 public class Assignment5QslimVis {
 	private static Logger log = Logger.getLogger("Main");
 
-	static final float E = 0.01f;
+	static final float E = 0.005f;
 
 	static float evToEl(float v) {
 		return (float) (E/Math.sqrt(Math.abs(v)));
@@ -68,7 +68,7 @@ public class Assignment5QslimVis {
 			GLWireframeMesh gwf = new GLWireframeMesh(e.value());
 			gwf.configurePreferredShader("shaders/trimesh_flatColor3f.vert",
 				"shaders/trimesh_flatColor3f.frag", "shaders/trimesh_flatColor3f.geom");
-			gwf.setTitle(String.format("el%s", e.index()));
+			gwf.setTitle(String.format("e[%s]", e.index()));
 			disp.addToDisplay(gwf);
 		}
 	}
