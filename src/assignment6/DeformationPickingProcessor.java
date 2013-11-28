@@ -2,15 +2,16 @@ package assignment6;
 
 import glWrapper.GLUpdatableHEStructure;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
-import meshes.HEData3d;
-import meshes.HalfEdgeStructure;
-import meshes.Vertex;
+import datastructure.halfedge.HalfEdgeStructure;
+import datastructure.halfedge.Vertex;
 import openGL.picking.PickingProcessor;
 import openGL.picking.TransformedBBox;
 
@@ -29,13 +30,13 @@ public class DeformationPickingProcessor implements PickingProcessor{
 	private HalfEdgeStructure hs;
 	
 	//The gl-wrapper for the half-edge structure
-	private GLUpdatableHEStructure hs_visualization;
+	GLUpdatableHEStructure hs_visualization;
 	
 	
 	HashSet<Integer> set1, set2;
 	
 	//colors to highlight selected regions
-	HEData3d colors;
+	List<Tuple3f> colors = new ArrayList<>();
 	private Tuple3f color1 = new Vector3f(0.7f, 0.7f, 0.2f);
 	private Tuple3f color2 = new Vector3f(0.8f, 0.2f, 0.2f);
 	private Tuple3f stdColor = new Vector3f(0.8f, 0.8f, 0.8f);
@@ -45,21 +46,19 @@ public class DeformationPickingProcessor implements PickingProcessor{
 	//the interesting work is delegated to the modeler.
 	RAPS_modelling modeler;
 	
-	public DeformationPickingProcessor(HalfEdgeStructure hs, 
-			GLUpdatableHEStructure vis){
+	public DeformationPickingProcessor(HalfEdgeStructure hs){
 		this.hs = hs;
-		this.hs_visualization = vis;
 		this.set1 = new HashSet<>();
 		this.set2 = new HashSet<>();
 		
-		colors = new HEData3d(hs);
 		for(Vertex v : hs.getVertices()){
-			colors.put(v, new Vector3f(0.7f,0.6f,0.5f));
+			colors.add(new Vector3f(0.7f,0.6f,0.5f));
 		}
-		hs_visualization.add(colors, "color");
+		hs.putExtractor3dList("color", colors);
 		
 		modeler = new RAPS_modelling(hs);
 		
+		this.hs_visualization = new GLUpdatableHEStructure(hs);
 	}
 
 	
@@ -149,13 +148,13 @@ public class DeformationPickingProcessor implements PickingProcessor{
 	private void recomputeColors() {
 		for(Vertex v: hs.getVertices()){
 			if(set1.contains(v.index)){
-				colors.put(v, color1);
+				colors.set(v.index, color1);
 			}
 			else if(set2.contains(v.index)){
-				colors.put(v, color2);
+				colors.set(v.index, color2);
 			}
 			else{
-				colors.put(v, stdColor);
+				colors.set(v.index, stdColor);
 			}
 		}
 	}

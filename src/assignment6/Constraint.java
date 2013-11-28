@@ -1,6 +1,6 @@
 package assignment6;
 
-import meshes.Vertex;
+import datastructure.halfedge.Vertex;
 
 /**
  * Interface for constrained boundary selection, used in {@link Assignment6_examples} 

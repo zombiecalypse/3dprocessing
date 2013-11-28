@@ -4,18 +4,19 @@ import glWrapper.GLUpdatableHEStructure;
 
 import java.io.IOException;
 
+import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
-import meshes.HEData3d;
-import meshes.HalfEdgeStructure;
-import meshes.Vertex;
+import com.google.common.base.Function;
+
+import datastructure.halfedge.HalfEdgeStructure;
+import datastructure.halfedge.Vertex;
 import meshes.WireframeMesh;
 import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;
 import meshes.reader.ObjReader;
 import openGL.MyPickingDisplay;
 import assignment4.Assignment4_2_smoothing;
-import assignment4.generatedMeshes.Cylinder2;
 
 
 
@@ -28,6 +29,12 @@ import assignment4.generatedMeshes.Cylinder2;
  *
  */
 public class Assignment6_interactive {
+	
+	static class Counter {
+		int i = 0;
+		
+		public void inc() { i++; }
+	}
 
 	public static void main(String[] args) throws Exception{
 		
@@ -53,9 +60,9 @@ public class Assignment6_interactive {
 		hs.init(wf);
 		
 
-		GLUpdatableHEStructure glHE = new GLUpdatableHEStructure(hs);
 		MyPickingDisplay disp = new MyPickingDisplay();
-		DeformationPickingProcessor pr = new DeformationPickingProcessor(hs, glHE);
+		DeformationPickingProcessor pr = new DeformationPickingProcessor(hs);
+		GLUpdatableHEStructure glHE = pr.hs_visualization;
 		disp.addAsPickable(glHE, pr);
 	}
 
@@ -65,8 +72,6 @@ public class Assignment6_interactive {
 	 * @throws Exception
 	 */
 	private static void interactivityDemo() throws Exception {
-		
-		
 		//read mesh
 		WireframeMesh wf = ObjReader.read("objs/bunny.obj", true);
 		HalfEdgeStructure hs = new HalfEdgeStructure();
@@ -80,26 +85,27 @@ public class Assignment6_interactive {
 		glHE.configurePreferredShader("shaders/trimesh_flatColor3f.vert",
 				"shaders/trimesh_flatColor3f.frag", 
 				"shaders/trimesh_flatColor3f.geom");
-
-		//associate color data
-		HEData3d color = colors(hs);
-		glHE.add(color, "color");
-		disp.addToDisplay(glHE);
 		
-		int i = 0;
-		while(true && disp.isVisible()){
-			i++;
-			
-			//change data
-			for(Vertex v: hs.getVertices()){
-				color.get(v).x = (float) ( 2+Math.abs(Math.sin(i/4f)))/4;
-				color.get(v).y = (float) ( 2+Math.abs(Math.sin(i/13f + Math.PI/3)))/4;
-				color.get(v).z = (float) ( 2+Math.abs(Math.sin(i/17f)))/4;
+		final Counter counter = new Counter();
+
+		hs.putExtractor3dPure("color", new Function<Vertex, Tuple3f>() {
+			@Override
+			public Tuple3f apply(Vertex v) {
+				final int i = counter.i;
+				Tuple3f c = new Vector3f();
+				c.x = (float) ( 2+Math.abs(Math.sin(i/4f)))/4;
+				c.y = (float) ( 2+Math.abs(Math.sin(i/13f + Math.PI/3)))/4;
+				c.z = (float) ( 2+Math.abs(Math.sin(i/17f)))/4;
 				v.getPos().x+= Math.sin((i+ v.index)/6f)*0.005;
 				v.getPos().y+= Math.sin((i+ v.index)/7f)*0.005;
 				v.getPos().z+= Math.sin((i+ v.index)/5f)*0.005;
+				return c;
 			}
-	
+		});
+		disp.addToDisplay(glHE);
+		
+		int i = 0;
+		while(disp.isVisible()){
 			//update the gpu buffers
 			glHE.updatePosition();
 			glHE.update("color");
@@ -107,17 +113,11 @@ public class Assignment6_interactive {
 			//update the display
 			disp.updateDisplay();
 			
+			counter.inc();
+			
 			//Zzzzz
 			Thread.sleep(30);
 			
 		}
-	}
-
-	private static HEData3d colors(HalfEdgeStructure hs) {
-		HEData3d colors = new HEData3d(hs);
-		for(Vertex v: hs.getVertices()){
-			colors.put(v, new Vector3f(0,1,0));
-		}
-		return colors;
 	}
 }

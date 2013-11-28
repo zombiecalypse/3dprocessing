@@ -9,11 +9,11 @@ import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
-import meshes.HalfEdgeStructure;
-import meshes.Vertex;
+import datastructure.halfedge.HalfEdgeStructure;
+import datastructure.halfedge.Vertex;
 import meshes.WireframeMesh;
+import meshes.generated.Cylinder2;
 import openGL.MyDisplay;
-import assignment4.generatedMeshes.Cylinder2;
 
 
 /**
