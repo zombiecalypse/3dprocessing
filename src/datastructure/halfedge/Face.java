@@ -21,35 +21,36 @@ import openGL.objects.Transformation;
  * 
  */
 public class Face extends HEElement {
-
-	/**
-	 * @throws NoSuchElementException
-	 *             if v is not a vertex of this face.
-	 * @param v
-	 *            , a Vertex, as in sketch
-	 * @return
-	 */
-	public float mixedVoronoiCellArea(Vertex p) {
-
-		HalfEdge toP = edgePointingTo(p);
-		float angleAtP = toP.incidentAngle();
-		float voronoiCellArea;
-		if (!obtuse()) { // non-obtuse
-			HalfEdge PR = toP.getOpposite();
-			HalfEdge PQ = toP.getNext();
-			float areaPR = PR.asVector().lengthSquared()
-					* cot(PQ.incidentAngle());
-			float areaPQ = PQ.asVector().lengthSquared()
-					* cot(PQ.next.incidentAngle());
-			voronoiCellArea = (areaPR + areaPQ) / 8f;
-		} else if (angleAtP > Math.PI / 2) { // obtuse at P
-			voronoiCellArea = getArea() / 2;
-		} else {
-			voronoiCellArea = getArea() / 4;
-		}
-		return voronoiCellArea;
+	
+	private Float aMixedCache = null;
+	
+	public void changed() {
+		aMixedCache = null;
 	}
 
+	public float mixedVoronoiCellArea(Vertex p) {
+		if (aMixedCache == null) {
+			HalfEdge toP = edgePointingTo(p);
+			float angleAtP = toP.incidentAngle();
+			float voronoiCellArea;
+			if (!obtuse()) { // non-obtuse
+				HalfEdge PR = toP.getOpposite();
+				HalfEdge PQ = toP.getNext();
+				float areaPR = PR.asVector().lengthSquared()
+						* cot(PQ.incidentAngle());
+				float areaPQ = PQ.asVector().lengthSquared()
+						* cot(PQ.next.incidentAngle());
+				voronoiCellArea = (areaPR + areaPQ) / 8f;
+			} else if (angleAtP > Math.PI / 2) { // obtuse at P
+				voronoiCellArea = getArea() / 2;
+			} else {
+				voronoiCellArea = getArea() / 4;
+			}
+			aMixedCache = voronoiCellArea;
+		}
+		return aMixedCache;
+	}
+	
 	private HalfEdge edgePointingTo(Vertex v) {
 		for (HalfEdge e : iter(iteratorFE())) {
 			if (e.end() == v)
