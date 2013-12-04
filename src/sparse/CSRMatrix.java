@@ -83,6 +83,16 @@ public class CSRMatrix {
 		}
 		return o;
 	}
+	
+	public SparseDictMatrix toSDM() {
+		SparseDictMatrix m = new SparseDictMatrix();
+		for (Indexed<ArrayList<col_val>> row : withIndex(this.rows)) {
+			for (col_val v : row.value()) {
+				m.putOnce(row.index(), v.col, v.val);
+			}
+		}
+		return m;
+	}
 
 	/**
 	 * number of stored entries

@@ -6,8 +6,10 @@ import static helpers.StaticHelpers.list;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.vecmath.Vector3f;
 
@@ -49,6 +51,41 @@ public class LMatrices {
 		return csr;
 	}
 
+	/**
+	 * The unnormalized cotangent Laplacian
+	 * 
+	 * @param hs
+	 * @param keepFixed 
+	 * @param deform 
+	 * @return
+	 */
+	public static SparseDictMatrix unnormalizedCotanLaplacianBare(HalfEdgeStructure hs, Set<Integer> keepFixed, Set<Integer> deform) {
+		SparseDictMatrix m = new SparseDictMatrix();
+		for (Vertex v : hs.getVertices()) {
+			// In each vertex...
+			if (!keepFixed.contains(v) && !v.isOnBoundary()) {
+				for (HalfEdge e1 : iter(v.iteratorVE())) {
+					// take every edge weighted by cotangens of the adjacent
+					// angles
+					HalfEdge e2 = e1.getOpposite();
+					float alpha = (float) Math.max(0.2, e1.opposingAngle());
+					float beta = (float) Math.max(0.2, e2.opposingAngle());
+					float weight = cot(alpha) + cot(beta);
+					m.putOnce(v.index, e2.start().index, -weight);
+					m.add(v.index, v.index, weight);
+				}
+			} else if (deform.contains(v)){
+				m.add(v.index, v.index, 1);
+			} else {
+				m.add(v.index, v.index, 0);
+			}
+		}
+		return m;
+	}
+	
+	public static CSRMatrix unnormalizedCotanLaplacian(HalfEdgeStructure hs, Set<Integer> keepFixed, Set<Integer> deform) {
+		return unnormalizedCotanLaplacianBare(hs, keepFixed, deform).toCsr();
+	}
 	/**
 	 * The cotangent Laplacian
 	 * 

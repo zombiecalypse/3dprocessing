@@ -14,7 +14,7 @@ import sparse.CSRMatrix.col_val;
 
 public class SparseDictMatrix {
 	private Map<Pair<Integer, Integer>, Float> values = new HashMap<>();
-	int rows = 0, cols = 0;
+	public int rows = 0, cols = 0;
 	
 	public SparseDictMatrix putOnce(int row, int col, float val) {
 		assert !values.containsKey(pair(row, col));

@@ -1,4 +1,4 @@
-package assignment6;
+package sparse;
 
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Vector3f;

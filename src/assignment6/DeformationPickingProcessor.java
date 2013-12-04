@@ -14,6 +14,8 @@ import datastructure.halfedge.HalfEdgeStructure;
 import datastructure.halfedge.Vertex;
 import openGL.picking.PickingProcessor;
 import openGL.picking.TransformedBBox;
+import sparse.solver.JMTSolver;
+import sparse.solver.Solver;
 
 
 /**
@@ -31,7 +33,6 @@ public class DeformationPickingProcessor implements PickingProcessor{
 	
 	//The gl-wrapper for the half-edge structure
 	GLUpdatableHEStructure hs_visualization;
-	
 	
 	HashSet<Integer> set1, set2;
 	

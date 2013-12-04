@@ -9,6 +9,7 @@ import javax.vecmath.Vector4f;
 import openGL.objects.Transformation;
 import sparse.CSRMatrix;
 import sparse.CSRMatrix.col_val;
+import sparse.SparseDictMatrix;
 
 /**
  * Class that makes vector arithmetic functional.
@@ -189,5 +190,18 @@ public final class V {
 		}
 		float[] evs = {eig1, eig2, eig3};
 		return evs;
+	}
+
+	public static void assertSymmetric(SparseDictMatrix m) {
+		assert m.cols == m.rows;
+		for (int row = 0; row < m.rows; row++) {
+			for (int col = 0; col < m.cols; col++) {
+				Float rc = m.get(row, col);
+				Float cr = m.get(col, row);
+				float x = rc == null ? 0 : rc;
+				float y = cr == null? 0 : cr;
+//				assert Math.abs(x-y) < 1e-5;
+			}
+		}
 	}
 }
