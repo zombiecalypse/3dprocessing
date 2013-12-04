@@ -14,10 +14,12 @@ import javax.vecmath.Vector3f;
 import datastructure.halfedge.HalfEdgeStructure;
 import datastructure.halfedge.Vertex;
 import sparse.CSRMatrix;
+import sparse.CSRMatrix.col_val;
 import sparse.Linalg3x3;
-import sparse.SparseDictMatrix;
+import sparse.solver.Cholesky;
 import sparse.solver.JMTSolver;
 import sparse.solver.Solver;
+
 
 /**
  * As rigid as possible deformations.
@@ -26,6 +28,7 @@ import sparse.solver.Solver;
  * 
  */
 public class RAPS_modelling {
+	private final static float weight = 100f;
 
 	// ArrayList containing all optimized rotations,
 	// keyed by vertex.index
@@ -42,7 +45,7 @@ public class RAPS_modelling {
 	// boundary vertices.
 	// It can be computed once at setup time and then be reused
 	// to compute the matrix needed for position optimization
-	CSRMatrix L_cotan;
+	CSRMatrix ltl;
 	// The matrix used when solving for optimal positions
 	CSRMatrix L_deform;
 
@@ -55,6 +58,8 @@ public class RAPS_modelling {
 	private HashSet<Integer> deform;
 
 	Solver solver = new JMTSolver();
+
+	private Cholesky cholesky;
 
 	/**
 	 * The mesh to be deformed
@@ -100,13 +105,48 @@ public class RAPS_modelling {
 	 * constrained vertices. Good place to do the cholesky decomposition
 	 */
 	public void updateL() {
+		// on lifting (um... lifting off a 3d table in a 4d space or something),
+		// we can precompute the cholesky decomposition to solve 
+		// the positioning step easier.
+		final int nverts = hs_original.getVertices().size();
 		CSRMatrix laplacian = LMatrices.unnormalizedCotanLaplacian(hs_original,
 				keepFixed, deform);
-		CSRMatrix ltl = new CSRMatrix(0, 0);
+		CSRMatrix constraints = getConstraints();
+		L_deform = new CSRMatrix(0, nverts);
+		ltl = new CSRMatrix(0, 0);
 		laplacian.transposed().multParallel(laplacian, ltl);
+		L_deform.add(ltl, constraints);
 
 		V.assertSymmetric(ltl.toSDM());
 		
+		cholesky = new Cholesky(ltl);
+		
+		resetRotations();
+	}
+	
+	private CSRMatrix getConstraints() {
+		int nverts = hs_original.getVertices().size();
+		CSRMatrix constraints = new CSRMatrix(nverts, nverts);
+		for (int index = 0; index < nverts; index++) {
+			if (isUserConstrained(index)) {
+				constraints.rows.get(index).add(new col_val(index, weight*weight)); // squared because L is "squared"
+			}
+		}
+		return constraints;
+	}
+
+	private boolean isUserConstrained(int index) {
+		return deform.contains(index) || keepFixed.contains(index);
+	}
+
+	private void resetRotations() {
+		rotations = new ArrayList<Matrix3f>();
+		final int nvert = hs_original.getVertices().size();
+		for (int i = 0; i < nvert; i++) {
+			Matrix3f id = new Matrix3f();
+			id.setIdentity();
+			rotations.add(id);
+		}
 	}
 
 	/**
@@ -176,7 +216,7 @@ public class RAPS_modelling {
 	 */
 	public void optimalPositions() {
 
-		// do your stuff...
+		// TODO do your stuff...
 	}
 
 	/**
@@ -184,8 +224,7 @@ public class RAPS_modelling {
 	 */
 	private void compute_b() {
 		reset_b();
-		// do your stuff...
-
+		
 	}
 
 	/**
