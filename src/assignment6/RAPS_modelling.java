@@ -124,8 +124,9 @@ public class RAPS_modelling {
 		this.laplacian_transposed = laplacian.transposed();
 		laplacian_transposed.multParallel(laplacian, ltl);
 		L_deform.add(ltl, constraints);
+//		L_deform.add(ltl.transposed(), L_deform);
 //		V.assertSymmetric(L_deform.toSDM());
-		V.assertPositiveDefinite(L_deform);
+//		V.assertPositiveDefinite(L_deform);
 
 		solver = new Cholesky(L_deform);
 
@@ -137,7 +138,7 @@ public class RAPS_modelling {
 		int nverts = hs_original.getVertices().size();
 		CSRMatrix constraints = new CSRMatrix(nverts, nverts);
 		for (int index = 0; index < nverts; index++) {
-			if (isUserConstrained(index)) {
+			if (isUserConstrained(index) || hs_original.getVertices().get(index).isOnBoundary()) {
 				constraints.rows.get(index).add(
 						new col_val(index, weight * weight)); // squared because
 																// L is
@@ -230,13 +231,15 @@ public class RAPS_modelling {
 			if (!this.isUserConstrained(v.index) && !v.isOnBoundary()) {
 				for (HalfEdge e : iter(v.iteratorVE())) {
 					// rot ≃ -cotanWeights/2 (rot_begin + rot_end)
-					Matrix3f rot = new Matrix3f(rotations.get(e.start().index));
-					rot.add(rotations.get(e.end().index));
+					Matrix3f rot = new Matrix3f(rotations.get(e.end().index));
+					rot.add(rotations.get(e.start().index));
 					rot.mul(-.5f * e.cotanWeight());
 					Vector3f vector = e.asVector();
 					rot.transform(vector);
 					b.get(v.index).add(vector);
 				}
+			} else {
+				b.get(v.index).set(0, 0, 0);
 			}
 		}
 
@@ -262,6 +265,7 @@ public class RAPS_modelling {
 	 * deformed positions.
 	 */
 	public void optimalRotations() {
+//		if (true) return;
 		// for the svd.
 		Linalg3x3 l = new Linalg3x3(3);// argument controls number of
 										// iterations for ed/svd decompositions
