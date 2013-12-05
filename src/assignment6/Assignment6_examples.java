@@ -56,7 +56,7 @@ public class Assignment6_examples {
 		
 		//Demo 2: a continuous deformation
 		int mode = 2;// 1 = bend, 2 = translate, 3 = twist
-		int nRefinements = 50;
+		int nRefinements = 2;
 		continuousDeformationDemo(hs, boundary1, boundary2, nRefinements,1f,mode);
 		
 	}

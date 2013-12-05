@@ -40,7 +40,7 @@ public class RAPS_modelling {
 
 	// ArrayList containing all optimized rotations,
 	// keyed by vertex.index
-	ArrayList<Matrix3f> rotations;
+	ArrayList<Matrix3f> rotations = new ArrayList<>();
 
 	// A copy of the original half-edge structure. This is needed to compute the
 	// correct
@@ -95,7 +95,9 @@ public class RAPS_modelling {
 		this.keepFixed.clear();
 		this.keepFixed.addAll(verts_idx);
 		for (Vertex v : hs_original.getVertices()) {
-			keepFixed.add(v.index);
+//			if (v.isOnBoundary()) {
+//				keepFixed.add(v.index);
+//			}
 		}
 
 	}
@@ -126,7 +128,7 @@ public class RAPS_modelling {
 		L_deform.add(ltl, constraints);
 //		L_deform.add(ltl.transposed(), L_deform);
 //		V.assertSymmetric(L_deform.toSDM());
-//		V.assertPositiveDefinite(L_deform);
+		V.assertPositiveDefinite(L_deform);
 
 		solver = new Cholesky(L_deform);
 
@@ -136,13 +138,11 @@ public class RAPS_modelling {
 	/** Constraints set by user */
 	private CSRMatrix getConstraints() {
 		int nverts = hs_original.getVertices().size();
-		CSRMatrix constraints = new CSRMatrix(nverts, nverts);
+		CSRMatrix constraints = new CSRMatrix(0, nverts);
 		for (int index = 0; index < nverts; index++) {
-			if (isUserConstrained(index) || hs_original.getVertices().get(index).isOnBoundary()) {
-				constraints.rows.get(index).add(
-						new col_val(index, weight * weight)); // squared because
-																// L is
-																// "squared"
+			ArrayList<col_val> row = constraints.addRow();
+			if (isUserConstrained(index)) {
+				row.add(new col_val(index, weight*weight));
 			}
 		}
 		return constraints;
@@ -153,7 +153,7 @@ public class RAPS_modelling {
 	}
 
 	private void resetRotations() {
-		rotations = new ArrayList<Matrix3f>();
+		rotations.clear();
 		final int nvert = hs_original.getVertices().size();
 		for (int i = 0; i < nvert; i++) {
 			Matrix3f id = new Matrix3f();
@@ -228,27 +228,24 @@ public class RAPS_modelling {
 		reset_b();
 
 		for (Vertex v : hs_original.getVertices()) {
-			if (!this.isUserConstrained(v.index) && !v.isOnBoundary()) {
+			if (! (this.isUserConstrained(v.index) || v.isOnBoundary())) {
 				for (HalfEdge e : iter(v.iteratorVE())) {
 					// rot ≃ -cotanWeights/2 (rot_begin + rot_end)
-					Matrix3f rot = new Matrix3f(rotations.get(e.end().index));
-					rot.add(rotations.get(e.start().index));
-					rot.mul(-.5f * e.cotanWeight());
+					Matrix3f rot = new Matrix3f(rotations.get(e.start().index));
+					rot.add(rotations.get(e.end().index));
 					Vector3f vector = e.asVector();
+					vector.scale(-.5f*e.cotanWeight());
 					rot.transform(vector);
 					b.get(v.index).add(vector);
 				}
-			} else {
-				b.get(v.index).set(0, 0, 0);
 			}
 		}
 
 		// We prefer to solve L^T L x = L^T b
-		laplacian_transposed.multTuple(b, ltb);
+		ltb = new ArrayList<>(laplacian_transposed.multComponentwise(b));
 		ArrayList<Tuple3f> positions = new ArrayList<>(map(MyFunctions.pos,
 				hs_deformed.getVertices()));
-		ArrayList<Tuple3f> newPositions = new ArrayList<>();
-		constraints.multTuple(positions, newPositions);
+		ArrayList<Tuple3f> newPositions = new ArrayList<>(constraints.multComponentwise(positions));
 		for (Pair<Tuple3f, Tuple3f> p : zip(ltb, newPositions)) {
 			p.a.add(p.b);
 		}
