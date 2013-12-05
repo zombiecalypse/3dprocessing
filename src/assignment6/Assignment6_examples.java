@@ -26,7 +26,6 @@ public class Assignment6_examples {
 
 	public static void main(String[] args) throws Exception{
 		
-		//WireframeMesh m = new Cylinder(0.3f,2.f).result;
 		WireframeMesh m = new Cylinder2(0.3f,2f).result;
 		
 		//generate he struture
@@ -56,8 +55,8 @@ public class Assignment6_examples {
 		
 		
 		//Demo 2: a continuous deformation
-		int mode = 3;// 1 = bend, 2 = translate, 3 = twist
-		int nRefinements = 1;
+		int mode = 1;// 1 = bend, 2 = translate, 3 = twist
+		int nRefinements = 50;
 		continuousDeformationDemo(hs, boundary1, boundary2, nRefinements,1f,mode);
 		
 	}

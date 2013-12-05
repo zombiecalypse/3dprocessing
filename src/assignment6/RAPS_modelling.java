@@ -2,6 +2,7 @@ package assignment6;
 
 import helpers.LMatrices;
 import helpers.MyFunctions;
+import helpers.StaticHelpers.Pair;
 import helpers.V;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class RAPS_modelling {
 	private Solver solver;
 	private CSRMatrix laplacian_transposed;
 	private CSRMatrix constraints;
-	private List<Tuple3f> ltb;
+	private ArrayList<Tuple3f> ltb = new ArrayList<>();
 
 	/**
 	 * The mesh to be deformed
@@ -116,17 +117,17 @@ public class RAPS_modelling {
 		// we can precompute the cholesky decomposition to solve
 		// the positioning step easier.
 		final int nverts = hs_original.getVertices().size();
-		CSRMatrix laplacian = LMatrices.mixedCotanLaplacian(hs_original, true);
+		CSRMatrix laplacian = LMatrices.mixedCotanLaplacian(hs_original, false);
 		constraints = getConstraints();
 		L_deform = new CSRMatrix(0, nverts);
-		ltl = new CSRMatrix(0, 0);
+		ltl = new CSRMatrix(0, nverts);
 		this.laplacian_transposed = laplacian.transposed();
 		laplacian_transposed.multParallel(laplacian, ltl);
-		V.assertSymmetric(ltl.toSDM());
-		V.assertPositiveDefinite(ltl);
 		L_deform.add(ltl, constraints);
+//		V.assertSymmetric(L_deform.toSDM());
+		V.assertPositiveDefinite(L_deform);
 
-		solver = new JMTSolver(); // new Cholesky(ltl);
+		solver = new Cholesky(L_deform);
 
 		resetRotations();
 	}
@@ -172,7 +173,7 @@ public class RAPS_modelling {
 		for (int i = 0; i < nRefinements; i++) {
 			optimalPositions();
 			optimalRotations();
-			log.info(String.format("RAPS iteration: %02d", i));
+			log.fine(String.format("RAPS iteration: %02d", i));
 		}
 	}
 
@@ -226,30 +227,33 @@ public class RAPS_modelling {
 		reset_b();
 
 		for (Vertex v : hs_original.getVertices()) {
-			for (HalfEdge e : iter(v.iteratorVE())) {
-				// rot ~ -cotanWeights/2 (rot_begin + rot_end)
-				Matrix3f rot = new Matrix3f(rotations.get(e.start().index));
-				rot.add(rotations.get(e.end().index));
-				rot.mul(-.5f * e.cotanWeight());
-				Vector3f vector = e.asVector();
-				rot.transform(vector);
-				b.get(v.index).add(vector);
+			if (!this.isUserConstrained(v.index) && !v.isOnBoundary()) {
+				for (HalfEdge e : iter(v.iteratorVE())) {
+					// rot ≃ -cotanWeights/2 (rot_begin + rot_end)
+					Matrix3f rot = new Matrix3f(rotations.get(e.start().index));
+					rot.add(rotations.get(e.end().index));
+					rot.mul(-.5f * e.cotanWeight());
+					Vector3f vector = e.asVector();
+					rot.transform(vector);
+					b.get(v.index).add(vector);
+				}
 			}
 		}
 
 		// We prefer to solve L^T L x = L^T b
-		ltb = laplacian_transposed.multComponentwise(b);
-		List<Tuple3f> positions = map(MyFunctions.pos,
-				hs_deformed.getVertices());
-		List<Tuple3f> newPositions = constraints.multComponentwise(positions);
+		laplacian_transposed.multTuple(b, ltb);
+		ArrayList<Tuple3f> positions = new ArrayList<>(map(MyFunctions.pos,
+				hs_deformed.getVertices()));
+		ArrayList<Tuple3f> newPositions = new ArrayList<>();
+		constraints.multTuple(positions, newPositions);
 		for (Pair<Tuple3f, Tuple3f> p : zip(ltb, newPositions)) {
 			p.a.add(p.b);
 		}
 	}
 
 	private void reset_b() {
-		for (Tuple3f v : b) {
-			v.x = v.y = v.z = 0.f;
+		for (Pair<Tuple3f, Tuple3f> v : zip(b, map(MyFunctions.pos, hs_deformed.getVertices()))) {
+			v.a.set(v.b);
 		}
 	}
 

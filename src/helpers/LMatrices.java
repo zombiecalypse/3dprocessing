@@ -83,6 +83,40 @@ public class LMatrices {
 		return m;
 	}
 	
+	public static CSRMatrix unnormalizedCotanLaplacian(HalfEdgeStructure hs, Set<Integer> keepFixed, Set<Integer> deform) {
+		return unnormalizedCotanLaplacianBare(hs, keepFixed, deform).toCsr();
+	}
+	/**
+	 * The cotangent Laplacian
+	 * 
+	 * @param hs
+	 * @return
+	 */
+	public static SparseDictMatrix mixedCotanLaplacianBare(HalfEdgeStructure hs) {
+		// doesn't seem to be wrong.
+		SparseDictMatrix m = new SparseDictMatrix();
+		for (Vertex v : hs.getVertices()) {
+			// In each vertex...
+			if (!v.isOnBoundary()) {
+				float a_mixed2 = 2 * v.aMixed();
+				for (HalfEdge e1 : iter(v.iteratorVE())) {
+					// take every edge weighted by cotangens of the adjacent
+					// angles
+					HalfEdge e2 = e1.getOpposite();
+					float alpha = (float) Math.max(0.2, e1.opposingAngle());
+					float beta = (float) Math.max(0.2, e2.opposingAngle());
+					float weight = cot(alpha) + cot(beta);
+					float val = weight / a_mixed2;
+					// cut off if too small
+					m.putOnce(v.index, e2.start().index, -val);
+					m.add(v.index, v.index, val);
+				}
+			} else {
+				m.add(v.index, v.index, 0);
+			}
+		}
+		return m;
+	}
 	/**
 	 * The cotangent Laplacian
 	 * @param hs
@@ -99,19 +133,17 @@ public class LMatrices {
 				aMixed = v.aMixed();
 			else
 				aMixed = 1/2f;
-			//copy paste from vertex.getCurvature() (I'm so sorry)
 			Iterator<HalfEdge> iter = v.iteratorVE();
 			float sum = 0;
 			while(iter.hasNext()) {
 				HalfEdge current = iter.next();
-				// demeter is crying qq
-				float alpha = current.opposingAngle();
-				float beta = current.getOpposite().opposingAngle();
+				float alpha = (float) Math.max(0.1, current.opposingAngle());
+				float beta = (float) Math.max(0.1, current.getOpposite().opposingAngle());
 				float cot_alpha = cot(alpha);
 				float cot_beta = cot(beta);
 				float entry = (cot_alpha + cot_beta)/(2*aMixed);
 				sum += entry;
-				row.add(new col_val(current.start().index, entry));
+				row.add(new col_val(current.end().index, entry));
 			}		
 			row.add(new col_val(v.index, -sum));
 			
@@ -120,6 +152,10 @@ public class LMatrices {
 		return m;
 	}
 	
+	public static CSRMatrix mixedCotanLaplacian(HalfEdgeStructure hs){
+		return mixedCotanLaplacian(hs, true);
+	}
+
 	/**
 	 * A symmetric cotangent Laplacian, cf Assignment 4, exercise 4.
 	 * 

@@ -212,9 +212,9 @@ public final class V {
 	public static void assertPositiveDefinite(CSRMatrix mat) {
 		ArrayList<Float> evs = new ArrayList<>();
 		try {
-			SCIPYEVD.doSVD(mat, "", 0, evs, new ArrayList<ArrayList<Float>>());
+			SCIPYEVD.doSVD(mat, "", mat.nCols, evs, new ArrayList<ArrayList<Float>>());
 			for (Float e : evs) {
-				assert e > 0;
+				assert e > 0 : evs;
 			}
 		} catch (IOException e) {
 			assert e == null : e;
