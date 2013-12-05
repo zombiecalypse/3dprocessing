@@ -1,5 +1,8 @@
 package helpers;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Tuple4f;
@@ -9,6 +12,7 @@ import javax.vecmath.Vector4f;
 import openGL.objects.Transformation;
 import sparse.CSRMatrix;
 import sparse.CSRMatrix.col_val;
+import sparse.SCIPYEVD;
 import sparse.SparseDictMatrix;
 
 /**
@@ -200,8 +204,20 @@ public final class V {
 				Float cr = m.get(col, row);
 				float x = rc == null ? 0 : rc;
 				float y = cr == null? 0 : cr;
-//				assert Math.abs(x-y) < 1e-5;
+				assert Math.abs(x-y) < 1e-5;
 			}
+		}
+	}
+
+	public static void assertPositiveDefinite(CSRMatrix mat) {
+		ArrayList<Float> evs = new ArrayList<>();
+		try {
+			SCIPYEVD.doSVD(mat, "", 0, evs, new ArrayList<ArrayList<Float>>());
+			for (Float e : evs) {
+				assert e > 0;
+			}
+		} catch (IOException e) {
+			assert e == null : e;
 		}
 	}
 }

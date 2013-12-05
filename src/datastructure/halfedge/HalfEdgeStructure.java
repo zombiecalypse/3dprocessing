@@ -432,4 +432,10 @@ public class HalfEdgeStructure {
 		}
 		return sum;
 	}
+	
+	public <T extends Tuple3f> void setPos(List<T> pos) {
+		for(Vertex v : getVertices()){
+			v.getPos().set(pos.get(v.index));
+		}
+	}
 }

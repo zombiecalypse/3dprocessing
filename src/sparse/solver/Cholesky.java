@@ -20,7 +20,7 @@ import sparse.SparseTools;
  * @author Alf
  *
  */
-public class Cholesky {
+public class Cholesky extends Solver {
 
 	
 	private DenseCholesky chl;
@@ -55,11 +55,11 @@ public class Cholesky {
 		chl = DenseCholesky.factorize(mat);
 		
 		if(!chl.isSPD()){
-			System.out.println("Cholesky Decomposition is not possible: Matrix not symmetric or positive definit");
-			throw new RuntimeException("Cholesky Decomposition is not possible: Matrix not symmetric or positive definit");
+			System.err.println("Cholesky Decomposition is not possible: Matrix not symmetric or positive definite");
+			throw new RuntimeException("Cholesky Decomposition is not possible: Matrix not symmetric or positive definite");
 			
 			//if this Exception is thrown, test if your matrix really is symmetric. If your matrix is not positive definite thought it should be
-			//maybe you have a switched sign naking your matrix negative definite...
+			//maybe you have a switched sign making your matrix negative definite...
 		}
 		
 		UpperTriangDenseMatrix u = chl.getU();
@@ -152,6 +152,12 @@ public class Cholesky {
 	 * @param x
 	 */
 	public void solve(ArrayList<Float> b, ArrayList<Float> x){
+		forwardSubst(z, b);
+		backwardSubst(x, z);
+	}
+
+	@Override
+	public void solve(CSRMatrix mat, ArrayList<Float> b, ArrayList<Float> x) {
 		forwardSubst(z, b);
 		backwardSubst(x, z);
 	}

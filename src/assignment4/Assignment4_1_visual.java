@@ -52,7 +52,7 @@ public class Assignment4_1_visual {
 		final HalfEdgeStructure hs2 = new HalfEdgeStructure(hs);
 		MyDisplay disp = new MyDisplay();
 		
-		CSRMatrix laplacian = LMatrices.mixedCotanLaplacian(hs);
+		CSRMatrix laplacian = LMatrices.mixedCotanLaplacian(hs, false);
 		showLaplacian(hs, disp, laplacian);
 	}
 

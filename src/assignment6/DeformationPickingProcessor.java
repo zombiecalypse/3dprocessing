@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.vecmath.Matrix3f;
+import javax.vecmath.Matrix4f;
 import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
@@ -88,10 +89,14 @@ public class DeformationPickingProcessor implements PickingProcessor{
 	public void move(Vector3f delta, PickTarget target) {
 		
 		HashSet<Integer> set = (target == PickTarget.SET1 ? set1: set2);
-		
-		for(Integer v : set){
-			hs.getVertices().get(v).getPos().add(delta);
-		}
+//		
+//		for(Integer v : set){
+//			hs.getVertices().get(v).getPos().add(delta);
+//		}
+		Matrix4f t = new Matrix4f();
+		t.setIdentity();
+		t.setTranslation(delta);
+		modeler.deform(t, 3);
 		
 		//delegate the work to find the deformed mesh to the modeler..
 		
@@ -105,11 +110,15 @@ public class DeformationPickingProcessor implements PickingProcessor{
 	@Override
 	public void rotate(Matrix3f rot, PickTarget target) {
 		HashSet<Integer> set = (target == PickTarget.SET1 ? set1: set2);
-		
-		for(Integer v : set){
-			rot.transform(hs.getVertices().get(v).getPos());
-		}
-		
+//		
+//		for(Integer v : set){
+//			rot.transform(hs.getVertices().get(v).getPos());
+//		}
+//		
+
+		Matrix4f t = new Matrix4f();
+		t.set(rot);
+		modeler.deform(t, 3);
 		//delegate the work to find the deformed mesh to the modeler..
 		
 		hs_visualization.updatePosition();

@@ -2,6 +2,7 @@ package datastructure.halfedge;
 
 
 import javax.vecmath.Vector3f;
+import static helpers.StaticHelpers.cot;
 
 /**
  * Implementation of a half-edge for the {@link HalfEdgeStructure}
@@ -182,5 +183,12 @@ public class HalfEdge extends HEElement{
 
 	public void setStart(Vertex v) {
 		opposite.incident_v = v;
+	}
+	
+	
+	public float cotanWeight() {
+		float alpha = (float) (this.hasFace() ? this.opposingAngle() : 0.2);
+		float beta = (float) (this.getOpposite().hasFace() ? this.getOpposite().opposingAngle() : 0.2);
+		return cot(alpha) + cot(beta);
 	}
 }

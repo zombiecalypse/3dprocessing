@@ -66,7 +66,7 @@ public class CSRMatrix {
 		this.nCols = Math.max(nCols, col + 1);
 	}
 	
-	public List<Tuple3f> multComponentwise(ArrayList<Tuple3f> a) {
+	public List<Tuple3f> multComponentwise(List<Tuple3f> a) {
 		final ArrayList<Float> nxs = new ArrayList<>();
 		final ArrayList<Float> nys = new ArrayList<>();
 		final ArrayList<Float> nzs = new ArrayList<>();
@@ -289,9 +289,11 @@ public class CSRMatrix {
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for (ArrayList<col_val> v : rows) {
-			for (col_val t : v) {
-				sb.append(String.format("(%d, %.3f)", t.col, t.val));
+		for (Indexed<ArrayList<col_val>> v : withIndex(rows)) {
+			if (v.value().isEmpty()) continue;
+			sb.append(String.format("%03d | ", v.index()));
+			for (col_val t : v.value()) {
+				sb.append(String.format("(%03d, %.3f)", t.col, t.val));
 			}
 			sb.append("\n");
 		}
